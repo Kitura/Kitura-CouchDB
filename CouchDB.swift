@@ -319,13 +319,15 @@ public class CouchDB {
         req.end(attachmentData)
     }
     
-    public func retrieveAttachment (docId: String, attachmentName: String, callback: (NSData?, NSError?) -> ())   {
+    public func retrieveAttachment (docId: String, attachmentName: String, callback: (NSData?, NSError?, String?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(server, method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(docId))/\(Http.escapeUrl(attachmentName))", hasBody: false)
-        var attachment: NSData?
         let req = Http.request(requestOptions) { response in
             var error: NSError?
+            var attachment: NSData?
+            var contentType: String?
             if let response = response {
                 attachment = CouchDBUtils.getBodyAsNSData(response)
+                contentType = response.headers["Content-Type"]
                 if response.statusCode != HttpStatusCode.OK {
                     error = CouchDBUtils.createError(response.statusCode, id: docId, rev: nil)
                 }
@@ -334,7 +336,7 @@ public class CouchDB {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: docId, rev: nil)
             }
             
-            callback(attachment, error)
+            callback(attachment, error, contentType)
         }
         
         req.end()
