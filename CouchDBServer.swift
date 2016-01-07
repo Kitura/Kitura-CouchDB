@@ -47,24 +47,21 @@ public class CouchDBServer {
         req.end()
     }
     
-    public func getDB (dbName: String, callback: (CouchDB?, NSError?) -> ()) {
+    public func dbExists (dbName: String, callback: (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(self, method: "GET", path: "/\(Http.escapeUrl(dbName))", hasBody: false)
         let req = Http.request(requestOptions) { response in
             var error: NSError?
-            var db: CouchDB?
+            var exists = false
             if let response = response {
                 if response.statusCode == HttpStatusCode.OK {
-                    db = CouchDB(server: self, dbName: dbName)
-                }
-                else {
-                    self.createDB(dbName, callback: callback)
+                    exists = true
                 }
             }
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
             }
             
-            callback(db, error)
+            callback(exists, error)
         }
         
         req.end()
