@@ -61,8 +61,8 @@ class CouchDBUtils {
     }
     
     class func getBodyAsJson (response: ClientResponse) -> JSON? {
-        if let body = BodyParser.parse(response, contentType: response.headers["Content-Type"]), let jsonBody = body.asJson() {
-            return jsonBody
+        if let body = BodyParser.parse(response, contentType: response.headers["Content-Type"]) {
+            return JSON(body)
         }
         return nil
     }
