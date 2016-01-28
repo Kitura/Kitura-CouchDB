@@ -17,6 +17,7 @@ public class ConnectionProperties {
   // The database name
   public let databaseName: String
 
+  // Seucred boolean
   public let secured: Bool
 
   // Authentication credentials to access Cloudant
