@@ -13,17 +13,16 @@ import Foundation
 public class CouchDBServer {
     var host: String?
     var port: Int16?
-    
-    
+  
     public init (ipAddress: String, port: Int16) {
         host = ipAddress
         self.port = port
     }
-    
+
     public func db (dbName: String) -> CouchDB {
         return CouchDB(server: self, dbName: dbName)
     }
-    
+
     public func createDB (dbName: String, callback: (CouchDB?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(self, method: "PUT", path: "/\(Http.escapeUrl(dbName))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -40,13 +39,13 @@ public class CouchDBServer {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
             }
-            
+
             callback(db, error)
         }
-        
+
         req.end()
     }
-    
+
     public func dbExists (dbName: String, callback: (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(self, method: "GET", path: "/\(Http.escapeUrl(dbName))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -60,17 +59,17 @@ public class CouchDBServer {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
             }
-            
+
             callback(exists, error)
         }
-        
+
         req.end()
     }
-    
+
     public func deleteDB (db: CouchDB, callback: (NSError?) -> ()) {
         deleteDB(db.name, callback: callback)
     }
-    
+
     public func deleteDB (dbName: String, callback: (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(self, method: "DELETE", path: "/\(Http.escapeUrl(dbName))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -83,13 +82,12 @@ public class CouchDBServer {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
             }
-            
+
             callback(error)
         }
-        
+
         req.end()
     }
 
 
 }
-
