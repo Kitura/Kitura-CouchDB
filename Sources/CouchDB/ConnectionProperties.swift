@@ -17,6 +17,8 @@ public class ConnectionProperties {
   // The database name
   public let databaseName: String
 
+  public let secured: Bool
+
   // Authentication credentials to access Cloudant
   // Cloudant username
   let userName: String?
@@ -28,24 +30,37 @@ public class ConnectionProperties {
   // Derived instance variable (for Cloudant)
   let url: String?
 
-  private init(hostName: String, port: Int16, databaseName: String, userName: String?, password: String?, url: String?) {
+  private init(hostName: String, port: Int16, databaseName: String, secured: Bool, userName: String?, password: String?) {
       self.hostName = hostName
       self.port = port
       self.databaseName = databaseName
       self.userName = userName
       self.password = password
-      self.url = url
+      self.secured = secured
+      let httpProtocol = ConnectionProperties.deriveHttpProtocol(secured)
+      if (userName != nil && password != nil) {
+        self.url = "\(httpProtocol)://\(userName):\(password)\(hostName):\(port)"
+      } else {
+        self.url = "\(httpProtocol)://\(hostName):\(port)"
+      }
   }
 
-  public convenience init(userName: String, password: String, databaseName: String) {
+  public convenience init(userName: String, password: String, secured: Bool, databaseName: String) {
     let hostName = "\(userName).cloudant.com"
-    let port: Int16 = 443
-    let url = "https://\(hostName)"
-    self.init(hostName: hostName, port: port, databaseName: databaseName, userName: userName, password: password, url: url)
+    let port: Int16 = 80
+    // TODO: Switch to HTTPS once ETSocket supports it
+    //let port: Int16 = 443
+    //let url = "https://\(userName):\(password)\(hostName)"
+    self.init(hostName: hostName, port: port, databaseName: databaseName, secured: false, userName: userName, password: password)
   }
 
-  public convenience init(hostName: String, port: Int16, databaseName: String) {
-      self.init(hostName: hostName, port: port, databaseName: databaseName, userName: nil, password: nil, url: nil)
+  public convenience init(hostName: String, port: Int16, secured: Bool, databaseName: String) {
+    self.init(hostName: hostName, port: port, databaseName: databaseName, secured: secured, userName: nil, password: nil)
+  }
+
+  static func deriveHttpProtocol(secured: Bool) -> String {
+    let httpProtocol = (secured) ? "https" : "http"
+    return httpProtocol
   }
 
 }

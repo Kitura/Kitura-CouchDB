@@ -1,3 +1,11 @@
+/*
+* References
+//http://guide.couchdb.org/draft/security.html#authentication
+//http://curl.haxx.se/docs/manual.html
+// curl http://name:passwd@machine.domain/full/path/to/file
+//https://wiki.apache.org/couchdb/HTTP_Document_API
+*
+*/
 import Foundation
 import CouchDB
 import SwiftyJSON
@@ -19,20 +27,13 @@ let jsonData = jsonStr.dataUsingEncoding(NSUTF8StringEncoding)
 // Convert NSData to JSON object
 let json = JSON(data: jsonData!)
 
-do {
-  let couchDBClient = try CouchDBClientBuilder()
-    .hostName("localhost")
-    .port(9080)
-    .databaseName("phoenix_db")
-    .build()
+let connProperties = ConnectionProperties(userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
+  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374", secured: false, databaseName: "phoenix_db")
 
-  print("Hostname is: \(couchDBClient.connProperties.hostName)")
+let couchDBClient = CouchDBClient(connectionProperties: connProperties)
 
-  print("YEAH")
-  print("JSON data is: \(jsonData)")
-  couchDBClient.test(json)
-} catch CouchDBClientBuilder.Error.MissingRequiredParameters {
-  print("Oops... missing parameters")
-}
+print("Hostname is: \(couchDBClient.connProperties.hostName)")
+print("JSON data is: \(jsonData)")
+couchDBClient.test(json)
 
 print("Sample program completed its execution.")
