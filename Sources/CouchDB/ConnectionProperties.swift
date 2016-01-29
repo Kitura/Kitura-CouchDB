@@ -1,8 +1,11 @@
-/**
- * Contains configuration properties for connecting to CouchDB or Cloudant instance.
- *
- * @author Ricardo Olivieri
- */
+//
+//  ConnectionProperties.swift
+//  PhoenixCouchDB
+//  Contains configuration properties for connecting to CouchDB or Cloudant instance.
+//
+//  Authors: Ricardo Olivieri
+//  Copyright © 2016 IBM. All rights reserved.
+//
 
 import Foundation
 
@@ -13,9 +16,6 @@ public class ConnectionProperties {
 
   // Port number where CouchDB server is listening for incoming connections
   public let port: Int16
-
-  // The database name
-  public let databaseName: String
 
   // Seucred boolean
   public let secured: Bool
@@ -28,13 +28,12 @@ public class ConnectionProperties {
   let password: String?
 
   // Cloudant URL
-  // Derived instance variable (for Cloudant)
+  // Derived instance variable
   let url: String?
 
-  private init(hostName: String, port: Int16, databaseName: String, secured: Bool, userName: String?, password: String?) {
+  private init(hostName: String, port: Int16, secured: Bool, userName: String?, password: String?) {
       self.hostName = hostName
       self.port = port
-      self.databaseName = databaseName
       self.userName = userName
       self.password = password
       self.secured = secured
@@ -46,17 +45,14 @@ public class ConnectionProperties {
       }
   }
 
-  public convenience init(userName: String, password: String, secured: Bool, databaseName: String) {
+  public convenience init(userName: String, password: String, secured: Bool) {
     let hostName = "\(userName).cloudant.com"
-    let port: Int16 = 80
-    // TODO: Switch to HTTPS once ETSocket supports it
-    //let port: Int16 = 443
-    //let url = "https://\(userName):\(password)\(hostName)"
-    self.init(hostName: hostName, port: port, databaseName: databaseName, secured: false, userName: userName, password: password)
+    let port: Int16 = secured ? 443 : 80
+    self.init(hostName: hostName, port: port, secured: false, userName: userName, password: password)
   }
 
-  public convenience init(hostName: String, port: Int16, secured: Bool, databaseName: String) {
-    self.init(hostName: hostName, port: port, databaseName: databaseName, secured: secured, userName: nil, password: nil)
+  public convenience init(hostName: String, port: Int16, secured: Bool) {
+    self.init(hostName: hostName, port: port, secured: secured, userName: nil, password: nil)
   }
 
   public func toString() -> String {
@@ -64,7 +60,6 @@ public class ConnectionProperties {
     let pwd = self.password != nil ? self.password : ""
     let str = "\thostName -> \(hostName)\n" +
       "\tport -> \(port)\n" +
-      "\tdatabaseName -> \(databaseName)\n" +
       "\tsecured -> \(secured)\n" +
       "\tuserName -> \(user)\n" +
       "\tpassword -> \(pwd)"

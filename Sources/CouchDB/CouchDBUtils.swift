@@ -1,17 +1,15 @@
 //
-//  Utils.swift
-//  SwiftCouchDB
+//  CouchDBUtils.swift
+//  PhoenixCouchDB
 //
-//  Created by Ira Rosen on 21/12/15.
-//  Copyright © 2015 IBM. All rights reserved.
+//  Authors: Ira Rosen, Ricardo Olivieri
+//  Copyright © 2016 IBM. All rights reserved.
 //
-
-import net
-import router
-
-import SwiftyJSON
 
 import Foundation
+import net
+import router
+import SwiftyJSON
 
 class CouchDBUtils {
 
@@ -22,7 +20,7 @@ class CouchDBUtils {
     }
 
     class func createError(code: Int, id: String?, rev: String?) -> NSError {
-        return createError(code, desc: CouchDB.CouchDBError[code], id: id, rev: rev)
+        return createError(code, desc: Database.Error[code], id: id, rev: rev)
     }
 
     class func createError(code: Int, desc: String?, id: String?, rev: String?) -> NSError {
@@ -44,8 +42,7 @@ class CouchDBUtils {
         return createError(code, id: id, rev: rev)
     }
 
-    //TODO
-    class func prepareRequest2 (connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
+    class func prepareRequest(connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
         var requestOptions = [ClientRequestOptions]()
 
         if let userName = connProperties.userName {
@@ -62,7 +59,7 @@ class CouchDBUtils {
         requestOptions.append(.Path(path))
         var headers = [String:String]()
         headers["Accept"] = "application/json"
-        if hasBody == true {
+        if hasBody {
             headers["Content-Type"] = contentType
         }
         requestOptions.append(.Headers(headers))
@@ -70,24 +67,6 @@ class CouchDBUtils {
         for element in requestOptions {
           print("Request option: \(element)")
         }
-
-        return requestOptions
-    }
-    //TODO
-
-
-    class func prepareRequest (server: CouchDBServer, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
-        var requestOptions = [ClientRequestOptions]()
-        requestOptions.append(.Hostname(server.host!))
-        requestOptions.append(.Port(server.port!))
-        requestOptions.append(.Method(method))
-        requestOptions.append(.Path(path))
-        var headers = [String:String]()
-        headers["Accept"] = "application/json"
-        if hasBody == true {
-            headers["Content-Type"] = contentType
-        }
-        requestOptions.append(.Headers(headers))
         return requestOptions
     }
 
@@ -102,11 +81,10 @@ class CouchDBUtils {
         do {
             let body = try BodyParser.readBodyData(response)
             return body
-        }
-        catch {
+        } catch {
+          //TODO: Log this exception
         }
         return nil
     }
-
 
 }

@@ -1,11 +1,21 @@
+//
+//  main.swift
+//  PhoenixCouchDB
+//  Sample code
+//
+//  Authors: Ricardo Olivieri
+//  Copyright © 2016 IBM. All rights reserved.
+//
+
 /*
 * References
 //http://guide.couchdb.org/draft/security.html#authentication
 //http://curl.haxx.se/docs/manual.html
 // curl http://name:passwd@machine.domain/full/path/to/file
 //https://wiki.apache.org/couchdb/HTTP_Document_API
-*
+//http://docs.cloudmailin.com/receiving_email/securing_your_email_url_target/
 */
+
 import Foundation
 import CouchDB
 import SwiftyJSON
@@ -27,16 +37,28 @@ let jsonData = jsonStr.dataUsingEncoding(NSUTF8StringEncoding)
 // Convert NSData to JSON object
 let json = JSON(data: jsonData!)
 
+// Connection properties for test Cloudant instance
 let connProperties = ConnectionProperties(userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
-  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374", secured: false, databaseName: "phoenix_db")
+  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374", secured: false)
 
 let connPropertiesStr = connProperties.toString()
 print("connPropertiesStr:\n\(connPropertiesStr)")
 
+// Create couchDBClient instance using conn properties
 let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-
 print("Hostname is: \(couchDBClient.connProperties.hostName)")
-print("JSON data is: \(jsonData)")
-couchDBClient.test2(json)
+
+// Create database instance to perform any document operations
+let database = couchDBClient.database("phoenix_db")
+database.retrieve("93868ba2bbea73154974a72eb3ef7144", connProperties: connProperties, callback: { (document: JSON?, error: NSError?) in
+  if (error != nil) {
+    print("Oops something went wrong...")
+    print(error!.code)
+    print(error!.domain)
+    print(error!.userInfo)
+  } else {
+    print("Here is the JSON document returned from Cloudant:\n\t\(document)")
+  }
+})
 
 print("Sample program completed its execution.")
