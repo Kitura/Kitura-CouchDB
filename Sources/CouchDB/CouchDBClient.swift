@@ -34,22 +34,6 @@ public class CouchDBClient {
       }
     })
   }
-
-  public func test2(document: JSON) {
-    print("In test method of couchDB client!")
-    self.couchDB.retrieve2("93868ba2bbea73154974a72eb3ef7144", connProperties: connProperties, callback: { (document: JSON?, error: NSError?) in
-      if (error != nil) {
-
-        print("CRAP!")
-        print(error!.code)
-        print(error!.domain)
-        print(error!.userInfo)
-      } else {
-        print("Hmm.... did it just work?")
-      }
-    })
-  }
-
 */
 
   public func database(dbName: String) -> Database {
