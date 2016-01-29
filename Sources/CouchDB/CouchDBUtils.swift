@@ -63,16 +63,15 @@ class CouchDBUtils {
             headers["Content-Type"] = contentType
         }
         requestOptions.append(.Headers(headers))
-
-        for element in requestOptions {
-          print("Request option: \(element)")
-        }
         return requestOptions
     }
 
     class func getBodyAsJson (response: ClientResponse) -> JSON? {
         if let body = BodyParser.parse(response, contentType: response.headers["Content-Type"]) {
-            return JSON(body)
+          // return JSON(body)
+          if let jsonStr = body.asText() {
+            return JSON.parse(jsonStr)
+          }
         }
         return nil
     }
@@ -82,7 +81,7 @@ class CouchDBUtils {
             let body = try BodyParser.readBodyData(response)
             return body
         } catch {
-          //TODO: Log this exception
+          //Log this exception
         }
         return nil
     }
