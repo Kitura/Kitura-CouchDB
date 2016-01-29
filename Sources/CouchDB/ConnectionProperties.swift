@@ -59,6 +59,18 @@ public class ConnectionProperties {
     self.init(hostName: hostName, port: port, databaseName: databaseName, secured: secured, userName: nil, password: nil)
   }
 
+  public func toString() -> String {
+    let user = self.userName != nil ? self.userName : ""
+    let pwd = self.password != nil ? self.password : ""
+    let str = "\thostName -> \(hostName)\n" +
+      "\tport -> \(port)\n" +
+      "\tdatabaseName -> \(databaseName)\n" +
+      "\tsecured -> \(secured)\n" +
+      "\tuserName -> \(user)\n" +
+      "\tpassword -> \(pwd)"
+    return str
+  }
+
   static func deriveHttpProtocol(secured: Bool) -> String {
     let httpProtocol = (secured) ? "https" : "http"
     return httpProtocol

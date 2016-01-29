@@ -30,10 +30,13 @@ let json = JSON(data: jsonData!)
 let connProperties = ConnectionProperties(userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
   password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374", secured: false, databaseName: "phoenix_db")
 
+let connPropertiesStr = connProperties.toString()
+print("connPropertiesStr:\n\(connPropertiesStr)")
+
 let couchDBClient = CouchDBClient(connectionProperties: connProperties)
 
 print("Hostname is: \(couchDBClient.connProperties.hostName)")
 print("JSON data is: \(jsonData)")
-couchDBClient.test(json)
+couchDBClient.test2(json)
 
 print("Sample program completed its execution.")

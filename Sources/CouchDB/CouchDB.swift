@@ -13,32 +13,56 @@ import SwiftyJSON
 import Foundation
 
 public class CouchDB {
-    
+
     public static let CouchDBError = [
         CouchDB.ERROR_INTERNAL_ERROR: "Internal Error", CouchDB.ERROR_INVALID_DOCUMENT: "Invalid Document Body", CouchDB.ERROR_INVALID_ATTACHMENT: "Invalid attachment"
     ]
-    
+
     public static let ERROR_INTERNAL_ERROR = 0
     public static let ERROR_INVALID_DOCUMENT = 1
     public static let ERROR_INVALID_ATTACHMENT = 2
-    
+
     public let name : String
     let escapedName: String
-    
+
     private let server: CouchDBServer
-    
+
     public init (server: CouchDBServer, dbName: String) {
         name = dbName
         self.server = server
         escapedName = Http.escapeUrl(name)
     }
-    
+
     public init (ipAddress: String, port: Int16, dbName: String) {
         self.server = CouchDBServer(ipAddress: ipAddress, port: port)
         name = dbName
         escapedName = Http.escapeUrl(name)
     }
-    
+
+//TODO
+    public func retrieve2 (id: String, connProperties: ConnectionProperties, callback: (JSON?, NSError?) -> ())   {
+        let requestOptions = CouchDBUtils.prepareRequest2(connProperties,method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(id))", hasBody: false)
+        var document: JSON?
+        let req = Http.request(requestOptions) { response in
+            var error: NSError?
+            if let response = response {
+                document = CouchDBUtils.getBodyAsJson(response)
+                if response.statusCode != HttpStatusCode.OK {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
+                }
+            }
+            else {
+                error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: id, rev: nil)
+            }
+
+            callback(document, error)
+        }
+
+        req.end()
+    }
+
+    //TODO
+
     public func retrieve (id: String, callback: (JSON?, NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(server, method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(id))", hasBody: false)
         var document: JSON?
@@ -53,13 +77,13 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: id, rev: nil)
             }
-            
+
             callback(document, error)
         }
-        
+
         req.end()
     }
-    
+
     public func update (id: String, rev: String, document: JSON, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var doc: JSON?
@@ -77,17 +101,50 @@ public class CouchDB {
                 else {
                     error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: id, rev: rev)
                 }
-                
+
                 callback(rev: revision, document: doc, error: error)
             }
-            
+
             req.end(requestBody)
         }
         else {
             callback(rev: nil, document: nil, error: CouchDBUtils.createError(CouchDB.ERROR_INVALID_DOCUMENT, id: id, rev: rev))
         }
     }
-    
+
+    //TODO
+    public func create2 (document: JSON, connProperties: ConnectionProperties, callback: (id: String?, rev:String?, document: JSON?, error: NSError?) -> ())   {
+        if let requestBody = document.rawString() {
+            var id: String?
+            var doc: JSON?
+            var revision: String?
+            let requestOptions = CouchDBUtils.prepareRequest2(connProperties, method: "POST", path: "/\(escapedName)", hasBody: true)
+            let req = Http.request(requestOptions) { response in
+                var error: NSError?
+                if let response = response {
+                    doc = CouchDBUtils.getBodyAsJson(response)
+                    id = doc?["id"].string
+                    revision = doc?["rev"].string
+                    if response.statusCode != HttpStatusCode.CREATED && response.statusCode != HttpStatusCode.ACCEPTED {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: nil, rev: nil)
+                    }
+                }
+                else {
+                    error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
+                }
+
+                callback(id: id, rev: revision, document: doc, error: error)
+            }
+
+            req.end(requestBody)
+        }
+        else {
+            callback(id: nil, rev: nil, document: nil, error: CouchDBUtils.createError(CouchDB.ERROR_INVALID_DOCUMENT, id: nil, rev: nil))
+        }
+    }
+
+    //TODO
+
     public func create (document: JSON, callback: (id: String?, rev:String?, document: JSON?, error: NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var id: String?
@@ -107,17 +164,17 @@ public class CouchDB {
                 else {
                     error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
                 }
-                
+
                 callback(id: id, rev: revision, document: doc, error: error)
             }
-            
+
             req.end(requestBody)
         }
         else {
             callback(id: nil, rev: nil, document: nil, error: CouchDBUtils.createError(CouchDB.ERROR_INVALID_DOCUMENT, id: nil, rev: nil))
         }
     }
-    
+
     public func delete (id: String, rev: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(server, method: "DELETE", path: "/\(escapedName)/\(Http.escapeUrl(id))?rev=\(Http.escapeUrl(rev))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -131,13 +188,13 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: id, rev: rev)
             }
-            
+
             callback(error)
         }
-        
+
         req.end()
     }
-    
+
     private static func createQueryParamForArray(array: Array<AnyObject>) -> String {
         var result = "["
         var comma = ""
@@ -147,11 +204,11 @@ public class CouchDB {
         }
         return result + "]"
     }
-    
+
     public func queryByView(view: String, ofDesign design: String, usingParameters params: [CouchDBQueryParameters], callback: (JSON?, NSError?) -> ()) {
         var paramString = ""
         var keys: [AnyObject]?
-        
+
         for param in params {
             switch param {
             case .Conflicts (let value):
@@ -212,11 +269,11 @@ public class CouchDB {
                 }
             }
         }
-        
+
         if paramString.characters.count > 0 {
             paramString = "?" + String(paramString.characters.dropLast())
         }
-        
+
         var method = "GET"
         var hasBody = false
         var body: JSON?
@@ -238,10 +295,10 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
             }
-            
+
             callback(document, error)
         }
-        
+
         if let _ = body, let bodyAsString = body!.rawString() {
             req.end(bodyAsString)
         }
@@ -249,7 +306,7 @@ public class CouchDB {
             req.end()
         }
     }
-    
+
     public func createDesign (designName: String, document: JSON, callback: (JSON?, NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var doc: JSON?
@@ -265,17 +322,17 @@ public class CouchDB {
                 else {
                     error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: nil, rev: nil)
                 }
-                
+
                 callback(doc, error)
             }
-            
+
             req.end(requestBody)
         }
         else {
             callback(nil, CouchDBUtils.createError(CouchDB.ERROR_INVALID_DOCUMENT, id: designName, rev: nil))
         }
     }
-    
+
     public func deleteDesign (designName: String, revision: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(server, method: "DELETE", path: "/\(escapedName)/_design/\(Http.escapeUrl(designName))?rev=\(Http.escapeUrl(revision))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -289,10 +346,10 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: designName, rev: revision)
             }
-            
+
             callback(error)
         }
-        
+
         req.end()
     }
 
@@ -312,13 +369,13 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: docId, rev: docRevison)
             }
-            
+
             callback(rev: revision, document: doc, error: error)
         }
-        
+
         req.end(attachmentData)
     }
-    
+
     public func retrieveAttachment (docId: String, attachmentName: String, callback: (NSData?, NSError?, String?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(server, method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(docId))/\(Http.escapeUrl(attachmentName))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -335,13 +392,13 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: docId, rev: nil)
             }
-            
+
             callback(attachment, error, contentType)
         }
-        
+
         req.end()
     }
-    
+
     public func deleteAttachment (docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(server, method: "DELETE", path: "/\(escapedName)/\(Http.escapeUrl(docId))/\(Http.escapeUrl(attachmentName))?rev=\(Http.escapeUrl(docRevison))", hasBody: false)
         let req = Http.request(requestOptions) { response in
@@ -355,10 +412,10 @@ public class CouchDB {
             else {
                 error = CouchDBUtils.createError(CouchDB.ERROR_INTERNAL_ERROR, id: docId, rev: docRevison)
             }
-            
+
             callback(error)
         }
-        
+
         req.end()
     }
 
@@ -391,6 +448,3 @@ public enum CouchDBStaleOptions {
     case OK
     case UpdateAfter
 }
-
-
-
