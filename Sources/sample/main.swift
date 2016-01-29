@@ -7,15 +7,6 @@
 //  Copyright © 2016 IBM. All rights reserved.
 //
 
-/*
-* References
-//http://guide.couchdb.org/draft/security.html#authentication
-//http://curl.haxx.se/docs/manual.html
-// curl http://name:passwd@machine.domain/full/path/to/file
-//https://wiki.apache.org/couchdb/HTTP_Document_API
-//http://docs.cloudmailin.com/receiving_email/securing_your_email_url_target/
-*/
-
 import Foundation
 import CouchDB
 import SwiftyJSON
