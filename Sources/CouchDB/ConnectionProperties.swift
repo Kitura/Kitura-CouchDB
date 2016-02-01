@@ -31,7 +31,7 @@ public class ConnectionProperties {
   // Derived instance variable
   let url: String?
 
-  private init(hostName: String, port: Int16, secured: Bool, userName: String?, password: String?) {
+  public init(hostName: String, port: Int16, secured: Bool, userName: String?, password: String?) {
       self.hostName = hostName
       self.port = port
       self.userName = userName
@@ -43,13 +43,6 @@ public class ConnectionProperties {
       } else {
         self.url = "\(httpProtocol)://\(hostName):\(port)"
       }
-  }
-
-  public convenience init(hostName: String, port: Int16, secured: Bool, userName: String, password: String) {
-    //Official cloudant APIs derive the hostname from username...
-    //let hostName = "\(userName).cloudant.com"
-    //let port: Int16 = secured ? 443 : 80
-    self.init(hostName: hostName, port: port, secured: false, userName: userName, password: password)
   }
 
   public convenience init(hostName: String, port: Int16, secured: Bool) {
