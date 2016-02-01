@@ -45,9 +45,10 @@ public class ConnectionProperties {
       }
   }
 
-  public convenience init(userName: String, password: String, secured: Bool) {
-    let hostName = "\(userName).cloudant.com"
-    let port: Int16 = secured ? 443 : 80
+  public convenience init(hostName: String, port: Int16, secured: Bool, userName: String, password: String) {
+    //Official cloudant APIs derive the hostname from username...
+    //let hostName = "\(userName).cloudant.com"
+    //let port: Int16 = secured ? 443 : 80
     self.init(hostName: hostName, port: port, secured: false, userName: userName, password: password)
   }
 

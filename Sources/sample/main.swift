@@ -14,8 +14,10 @@ import SwiftyJSON
 print("Starting sample program...")
 
 // Connection properties for test Cloudant instance
-let connProperties = ConnectionProperties(userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
-  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374", secured: false)
+let connProperties = ConnectionProperties(hostName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix.cloudant.com",
+  port: 80, secured: false,
+  userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
+  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374")
 
 let connPropertiesStr = connProperties.toString()
 print("connPropertiesStr:\n\(connPropertiesStr)")
@@ -66,5 +68,4 @@ database.create(json, connProperties: connProperties, callback: { (id: String?, 
 })
 
 //Need tests for CouchDB
-
 print("Sample program completed its execution.")
