@@ -1,0 +1,127 @@
+//
+//  main.swift
+//  PhoenixCouchDB
+//  Sample code
+//
+//  Authors: Ricardo Olivieri
+//  Copyright © 2016 IBM. All rights reserved.
+//
+
+import Foundation
+import SwiftyJSON
+import CouchDB
+
+print("Starting sample program...")
+
+// Connection properties for testing Cloudant or CouchDB instance
+let connProperties = ConnectionProperties(hostName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix.cloudant.com",
+  port: 80, secured: false,
+  userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
+  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374")
+
+let connPropertiesStr = connProperties.toString()
+print("connPropertiesStr:\n\(connPropertiesStr)")
+
+// Create couchDBClient instance using conn properties
+let couchDBClient = CouchDBClient(connectionProperties: connProperties)
+print("Hostname is: \(couchDBClient.connProperties.hostName)")
+
+// Create database instance to perform any document operations
+let database = couchDBClient.database("phoenix_db")
+
+// Document ID
+let documentId = "123456"
+
+// JSON document in string format
+let jsonStr =
+  "{" +
+    "\"_id\": \"\(documentId)\"," +
+    "\"coordinates\": null," +
+    "\"truncated\": false," +
+    "\"created_at\": \"Tue Aug 28 21:16:23 +0000 2012\"," +
+    "\"favorited\": false," +
+    "\"value\": \"value1\"" +
+  "}"
+
+// Convert JSON string to NSData
+let jsonData = jsonStr.dataUsingEncoding(NSUTF8StringEncoding)
+// Convert NSData to JSON object
+let json = JSON(data: jsonData!)
+
+func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
+  if let revisionNumber = document?["rev"].string {
+    print("revisionNumber is \(revisionNumber)")
+    next(revisionNumber: revisionNumber)
+  } else if let revisionNumber = document?["_rev"].string {
+    print("revisionNumber is \(revisionNumber)")
+    next(revisionNumber: revisionNumber)
+  } else {
+    print(">> Oops something went wrong... could not get revisionNumber!")
+  }
+}
+
+//Delete document
+func deleteDocument(revisionNumber: String) {
+  database.delete(documentId, rev: revisionNumber, failOnNotFound: false, callback: { (error: NSError?) in
+    if (error != nil) {
+      print(">> Oops something went wrong; could not delete document.")
+      print(error!.code)
+      print(error!.domain)
+      print(error!.userInfo)
+    } else {
+      print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
+    }
+  })
+}
+
+//Update document
+func updateDocument(revisionNumber: String) {
+  //var json = JSON(data: jsonData!)
+  //json["value"] = "value2"
+  database.update(documentId, rev: revisionNumber, document: json, callback: { (rev: String?, document: JSON?, error: NSError?) in
+    if (error != nil) {
+      print(">> Oops something went wrong; could not update document.")
+      print(error!.code)
+      print(error!.domain)
+      print(error!.userInfo)
+    } else {
+      print(">> Successfully updated the JSON document with ID \(documentId) in CouchDB:\n\t\(document)")
+      chainer(document, next: deleteDocument)
+    }
+  })
+}
+
+//Read document
+func readDocument() {
+  database.retrieve(documentId, connProperties: connProperties, callback: { (document: JSON?, error: NSError?) in
+    if (error != nil) {
+      print("Oops something went wrong; could not read document.")
+      print(error!.code)
+      print(error!.domain)
+      print(error!.userInfo)
+    } else {
+      print(">> Successfully read the followiong JSON document with ID \(documentId) from CouchDB:\n\t\(document)")
+      chainer(document, next: updateDocument)
+    }
+  })
+}
+
+//Create document closure
+func createDocument() {
+  database.create(json, connProperties: connProperties, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+    if (error != nil) {
+      print(">> Oops something went wrong; could not persist document.")
+      print(error!.code)
+      print(error!.domain)
+      print(error!.userInfo)
+    } else {
+      print(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
+      readDocument()
+    }
+  })
+}
+
+// Start tests...
+createDocument();
+
+print("Sample program completed its execution.")
