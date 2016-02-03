@@ -10,6 +10,7 @@
 import Foundation
 import SwiftyJSON
 import CouchDB
+import Phoenix
 
 print("Starting sample program...")
 
@@ -44,7 +45,7 @@ let jsonStr =
   "}"
 
 // Convert JSON string to NSData
-let jsonData = jsonStr.dataUsingEncoding(NSUTF8StringEncoding)
+let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
 // Convert NSData to JSON object
 let json = JSON(data: jsonData!)
 
