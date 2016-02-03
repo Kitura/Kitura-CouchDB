@@ -24,7 +24,13 @@ class CouchDBUtils {
     }
 
     class func createError(code: Int, desc: String?, id: String?, rev: String?) -> NSError {
-        var info = [String:String]()
+        // Interim solution while Apple provides clear interoperability on both platforms
+        #if os(Linux)
+          var info = [String:Any]()
+        #else
+          var info = [String:String]()
+        #endif
+        
         info[NSLocalizedDescriptionKey] = desc
         if let id = id {
             info["id"] = id
