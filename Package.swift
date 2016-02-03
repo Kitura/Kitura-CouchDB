@@ -30,6 +30,9 @@ let package = Package(
             name: "CouchDBSample",
             dependencies: [.Target(name: "CouchDB")]),
     ],
+    // Ideally, we should only need to specify Phoenix and SwiftyJSON
+    // as dependencies. For now, due to what seems to be a defect in SPM,
+    // we are specifying these other dependencies.
     dependencies: [
       .Package(url: "git@github.ibm.com:ibmswift/Phoenix.git", majorVersion: 0),
       .Package(url: "git@github.ibm.com:ibmswift/PhoenixCurlHelpers.git", majorVersion: 1),
