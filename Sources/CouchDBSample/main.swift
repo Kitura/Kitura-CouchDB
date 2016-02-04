@@ -94,7 +94,7 @@ func updateDocument(revisionNumber: String) {
 
 //Read document
 func readDocument() {
-  database.retrieve(documentId, connProperties: connProperties, callback: { (document: JSON?, error: NSError?) in
+  database.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
     if (error != nil) {
       print("Oops something went wrong; could not read document.")
       print(error!.code)
@@ -109,7 +109,7 @@ func readDocument() {
 
 //Create document closure
 func createDocument() {
-  database.create(json, connProperties: connProperties, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+  database.create(json, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
     if (error != nil) {
       print(">> Oops something went wrong; could not persist document.")
       print(error!.code)

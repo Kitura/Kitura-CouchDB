@@ -68,7 +68,7 @@ public class Database {
     self.connProperties = connProperties
   }
 
-  public func retrieve(id: String, connProperties: ConnectionProperties, callback: (JSON?, NSError?) -> ())   {
+  public func retrieve(id: String, callback: (JSON?, NSError?) -> ())   {
     let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(id))", hasBody: false)
     var document: JSON?
     let req = Http.request(requestOptions) { response in
@@ -113,7 +113,7 @@ public class Database {
     }
   }
 
-  public func create(document: JSON, connProperties: ConnectionProperties, callback: (id: String?, rev:String?, document: JSON?, error: NSError?) -> ())   {
+  public func create(document: JSON, callback: (id: String?, rev:String?, document: JSON?, error: NSError?) -> ())   {
     if let requestBody = document.rawString() {
       var id: String?
       var doc: JSON?
