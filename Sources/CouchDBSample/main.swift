@@ -10,7 +10,8 @@
 import Foundation
 import SwiftyJSON
 import CouchDB
-import Phoenix
+import router
+//import Phoenix
 
 print("Starting sample program...")
 

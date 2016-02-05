@@ -1,13 +1,19 @@
-//
-//  Package.swift
-//  PhoenixCouchDB
-//
-// @author Ira Rosen, Ricardo Olivieri
-// Copyright © 2015 IBM. All rights reserved.
-//
+/**
+ * Copyright IBM Corporation 2016
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 
-// Using atom with Swift:
-// https://medium.com/@Aciid/hacking-atom-to-create-a-swift-ide-that-runs-on-linux-and-mac-c7d9520a0fac#.1bjuddaq2
 
 import PackageDescription
 
@@ -21,7 +27,7 @@ import PackageDescription
 #endif
 
 let package = Package(
-    name: "PhoenixCouchDB",
+    name: "Kitura-CouchDB",
     targets: [
         Target(
             name: "CouchDB",
@@ -34,10 +40,10 @@ let package = Package(
     // as dependencies. For now, due to what seems to be a defect in SPM,
     // we are specifying these other dependencies.
     dependencies: [
-      .Package(url: "git@github.ibm.com:ibmswift/Phoenix.git", majorVersion: 0),
-      .Package(url: "git@github.ibm.com:ibmswift/PhoenixCurlHelpers.git", majorVersion: 1),
-      .Package(url: "git@github.ibm.com:ibmswift/PhoenixHttpParserHelper.git", majorVersion: 1),
-	    .Package(url: "git@github.ibm.com:ibmswift/PhoenixPcre2.git", majorVersion: 1),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 1),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-router.git", majorVersion: 1),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-CurlHelpers.git", majorVersion: 1),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-HttpParserHelper.git", majorVersion: 1),
       .Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion)
     ]
 )
