@@ -6,6 +6,11 @@
 //  Authors: Ricardo Olivieri
 //  Copyright © 2016 IBM. All rights reserved.
 //
+#if os(Linux)
+import Glibc
+#else
+import Darwin
+#endif
 
 import Foundation
 import SwiftyJSON
@@ -15,11 +20,21 @@ import router
 
 print("Starting sample program...")
 
+// Parse runtime args... this is just an interim solution
+let args = Array(Process.arguments[1..<Process.arguments.count])
+if args.count != 3 {
+  print("Hostname, username and password are required as arguments!")
+  exit(1)
+}
+let hostName = args[0]
+let userName = args[1]
+let password = args[2]
+
 // Connection properties for testing Cloudant or CouchDB instance
-let connProperties = ConnectionProperties(hostName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix.cloudant.com",
+let connProperties = ConnectionProperties(hostName: hostName,
   port: 80, secured: false,
-  userName: "fee33f3a-cdbc-4c9b-bf9a-f1541ee68c06-bluemix",
-  password: "2e2c5dc953727c763ff19b1ff399bd8b97ef5e3d7c249e55879eb849deafe374")
+  userName: userName,
+  password: password)
 
 let connPropertiesStr = connProperties.toString()
 print("connPropertiesStr:\n\(connPropertiesStr)")
