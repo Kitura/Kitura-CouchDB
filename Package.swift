@@ -36,15 +36,15 @@ let package = Package(
             name: "CouchDBSample",
             dependencies: [.Target(name: "CouchDB")]),
     ],
-    // Ideally, we should only need to specify Phoenix and SwiftyJSON
+    // Ideally, we should only need to specify Kitura-router (or Kitura-net) and SwiftyJSON
     // as dependencies. For now, due to what seems to be a defect in SPM,
     // we are specifying these other dependencies.
     dependencies: [
+      .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 1),
+      .Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 1),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", majorVersion: 1),
       .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 1),
       .Package(url: "https://github.com/IBM-Swift/Kitura-router.git", majorVersion: 1),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", majorVersion: 1),
-      .Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 1),
-      .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 1),
       .Package(url: "https://github.com/IBM-Swift/Kitura-Pcre2.git", majorVersion: 1),
       .Package(url: "https://github.com/IBM-Swift/Kitura-CurlHelpers.git", majorVersion: 1),
       .Package(url: "https://github.com/IBM-Swift/Kitura-HttpParserHelper.git", majorVersion: 1),
