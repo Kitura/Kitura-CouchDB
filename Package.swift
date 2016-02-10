@@ -40,6 +40,7 @@ let package = Package(
     // as dependencies. For now, due to what seems to be a defect in SPM,
     // we are specifying these other dependencies.
     dependencies: [
+      .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 0),
       .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0),
       .Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 0),
       .Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", majorVersion: 0),
