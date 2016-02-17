@@ -19,7 +19,8 @@ import PackageDescription
 
 // Dual pathing for O/S differences
 #if os(Linux)
-   let swiftyJsonUrl = "https://github.com/IBM-Swift/SwiftyJSON.git"
+   //let swiftyJsonUrl = "https://github.com/IBM-Swift/SwiftyJSON.git"
+   let swiftyJsonUrl = "git@github.com:IBM-Swift/SwiftyJSON.git"
    let swiftyJsonVersion = 3
 #else
    let swiftyJsonUrl = "https://github.com/SwiftyJSON/SwiftyJSON.git"
