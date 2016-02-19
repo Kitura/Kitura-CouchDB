@@ -42,27 +42,27 @@ let package = Package(
     // we are specifying these other dependencies.
     dependencies: [
       //.Package(url: "git@github.com:IBM-Swift/LoggerAPI.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/HeliumLogger.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/BlueSocket.git", majorVersion: 0),
       .Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 0),
       //.Package(url: "git@github.com:IBM-Swift/Kitura-sys.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/Kitura-net.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/Kitura-router.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-router.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-router.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/Kitura-Pcre2.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-Pcre2.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-Pcre2.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/Kitura-CurlHelpers.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-CurlHelpers.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-CurlHelpers.git", versions: Version(0,2,0)..<Version(0,3,0)),
       //.Package(url: "git@github.com:IBM-Swift/Kitura-HttpParserHelper.git", majorVersion: 0),
-      .Package(url: "https://github.com/IBM-Swift/Kitura-HttpParserHelper.git", majorVersion: 0),
+      .Package(url: "https://github.com/IBM-Swift/Kitura-HttpParserHelper.git", versions: Version(0,2,0)..<Version(0,3,0)),
       .Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion)
     ],
   testDependencies: [
         //.Package(url: "git@github.com:IBM-Swift/Kitura-TestFramework.git", majorVersion: 0)
-        .Package(url: "https://github.com/IBM-Swift/Kitura-TestFramework.git", majorVersion: 0)
+        .Package(url: "https://github.com/IBM-Swift/Kitura-TestFramework.git", versions: Version(0,2,0)..<Version(0,3,0))
         ]
 )
