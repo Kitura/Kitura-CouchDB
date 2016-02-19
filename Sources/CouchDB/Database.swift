@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftyJSON
-import net
+import KituraNet
 
 public class Database {
 
