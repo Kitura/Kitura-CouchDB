@@ -8,7 +8,7 @@
 
 import Foundation
 import KituraNet
-import router
+import KituraRouter
 import SwiftyJSON
 
 class CouchDBUtils {
