@@ -49,7 +49,7 @@ let package = Package(
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", versions: Version(0,2,0)..<Version(0,3,0)))
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", versions: Version(0,2,0)..<Version(0,3,0)))
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 0))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", versions: Version(0,2,0)..<Version(0,3,0)))
+package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", versions: Version(0,3,0)..<Version(0,4,0)))
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-net.git", versions: Version(0,2,0)..<Version(0,3,0)))
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-router.git", versions: Version(0,2,0)..<Version(0,3,0)))
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-Pcre2.git", versions: Version(0,2,0)..<Version(0,3,0)))
