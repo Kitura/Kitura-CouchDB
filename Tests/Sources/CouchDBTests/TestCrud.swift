@@ -39,9 +39,39 @@ class TestCrud : XCTestCase {
     var jsonDocument: JSON?
     
     func crudTest() {
-    
+        let credentials = readCredentials()
+        
+        // Connection properties for testing Cloudant or CouchDB instance
+        let connProperties = ConnectionProperties(hostName: credentials.host,
+            port: 80, secured: false,
+            userName: credentials.username,
+            password: credentials.password)
+        
+        // Create couchDBClient instance using conn properties
+        let couchDBClient = CouchDBClient(connectionProperties: connProperties)
+        print("Hostname is: \(couchDBClient.connProperties.hostName)")
+        
+        // Create database instance to perform any document operations
+        database = couchDBClient.database("kitura_db")
+        
+        // Start tests...
+        createDocument()
+    }
+
+    struct Credentials {
+        let host:String
+        let username:String
+        let password:String
+        init(host:String, username:String, password:String) {
+            self.host = host
+            self.username = username
+            self.password = password
+        }
+    }
+
+    func readCredentials() -> Credentials {
         // Read in credentials file
-        let fstream = fopen("Tests/Sources/Crud/credentials.json", "r")
+        let fstream = fopen("Tests/Sources/CouchDBTests/credentials.json", "r")
         XCTAssertNotNil(fstream, "Error opening credentials.json, try running from root directory")
         
         var credentialsString = ""
@@ -65,22 +95,7 @@ class TestCrud : XCTestCase {
             exit(1)
         }
         print(">> Successfully read in credentials")
-        
-        // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(hostName: hostName,
-            port: 80, secured: false,
-            userName: userName,
-            password: password)
-        
-        // Create couchDBClient instance using conn properties
-        let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-        print("Hostname is: \(couchDBClient.connProperties.hostName)")
-        
-        // Create database instance to perform any document operations
-        database = couchDBClient.database("kitura_db")
-        
-        // Start tests...
-        createDocument()
+        return Credentials(host: hostName, username: userName, password: password)
     }
     
     func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
