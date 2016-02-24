@@ -32,7 +32,12 @@ public class CouchDBClient {
                   db = Database(connProperties: self.connProperties, dbName: dbName)
               }
               else {
-                  error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                  if let descOpt = try? response.readString(), let desc = descOpt {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: JSON.parse(desc), id: nil, rev: nil)
+                  }
+                  else {
+                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                  }
               }
           }
           else {
@@ -71,7 +76,12 @@ public class CouchDBClient {
           var error: NSError?
           if let response = response {
               if response.statusCode != HttpStatusCode.OK {
-                  error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                  if let descOpt = try? response.readString(), let desc = descOpt {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: JSON.parse(desc), id: nil, rev: nil)
+                  }
+                  else {
+                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                  }
               }
           }
           else {
