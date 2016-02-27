@@ -30,7 +30,7 @@ class CouchDBUtils {
         #else
           var info = [String:String]()
         #endif
-        
+
         info[NSLocalizedDescriptionKey] = desc
         if let id = id {
             info["id"] = id
