@@ -44,7 +44,8 @@ export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PA
 echo ">> About to build Kitura-CouchDB..."
 swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib
 
+# Work in progress...
 # Execute test cases for Kitura-CouchDB
-echo ">> About to execute test cases for Kitura..."
-swift test
-echo ">> Execution of test cases completed (see above for results)."
+#echo ">> About to execute test cases for Kitura..."
+#swift test
+#echo ">> Execution of test cases completed (see above for results)."
