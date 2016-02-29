@@ -15,6 +15,7 @@
 **/
 
 import XCTest
+
 #if os(Linux)
     import Glibc
 #else
@@ -23,20 +24,26 @@ import XCTest
 
 import Foundation
 import SwiftyJSON
-import CouchDB
 
-class TestDocumentCrud : XCTestCase {
-    var allTests : [(String, () throws -> Void)] {
-        return [
-            ("documentCRUDTest", crudTest),
-        ]
+@testable import CouchDB
+
+#if os(Linux)
+    extension TestDocumentCrud : XCTestCaseProvider {
+        var allTests : [(String, () throws -> Void)] {
+            return [
+                ("documentCRUDTest", crudTest),
+            ]
+        }
     }
+#endif
 
+class DocumentCrudTests : XCTestCase {
+    
     var database: Database?
     let documentId = "123456"
     var jsonDocument: JSON?
 
-    func crudTest() {
+    func testCrudTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
