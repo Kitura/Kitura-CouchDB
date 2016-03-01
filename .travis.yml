@@ -22,7 +22,7 @@ matrix:
 before_install:
   - echo "Operating system -> '$TRAVIS_OS_NAME'"
   - echo "Travis build directory -> '$TRAVIS_BUILD_DIR'"
-#  - git clone -b master https://hub.jazz.net/git/milbuild/MIL.DevOps
+  - git clone -b master https://$JAZZHUB_USER:$JAZZHUB_PWD@hub.jazz.net/git/milbuild/MIL.DevOps
 
 script:
   - echo "About to build and test Kitura for branch '$TRAVIS_BRANCH'."
