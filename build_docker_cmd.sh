@@ -26,6 +26,7 @@ set -e
 echo ">> About to build Kitura-CouchDB..."
 cd /root/Kitura-CouchDB
 swift build -Xcc -fblocks
-echo ">> About to execute test cases for Kitura..."
-swift test
-echo ">> Execution of test cases completed (see above for results)."
+# Work in progress...
+#echo ">> About to execute test cases for Kitura..."
+#swift test
+#echo ">> Execution of test cases completed (see above for results)."
