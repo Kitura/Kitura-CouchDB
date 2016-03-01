@@ -41,7 +41,6 @@ export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PA
 # swiftlint
 
 # Build Kitura-CouchDB
-echo ">> About to build Kitura-CouchDB..."
 swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib
 
 # Work in progress...

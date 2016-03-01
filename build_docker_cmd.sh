@@ -23,9 +23,10 @@
 # If any commands fail, we want the shell script to exit immediately.
 set -e
 
-echo ">> About to build Kitura-CouchDB..."
+# Build Kitura-CouchDB
 cd /root/Kitura-CouchDB
 swift build -Xcc -fblocks
+
 # Work in progress...
 #echo ">> About to execute test cases for Kitura..."
 #swift test
