@@ -22,10 +22,12 @@ matrix:
 before_install:
   - echo "Operating system -> '$TRAVIS_OS_NAME'"
   - echo "Travis build directory -> '$TRAVIS_BUILD_DIR'"
+  - git clone https://github.com/IBM-Swift/Kitura-CI.git
+  - cp ./Kitura-CI/*.sh .
   - git clone -b master https://$JAZZHUB_USER:$JAZZHUB_PWD@hub.jazz.net/git/milbuild/MIL.DevOps
 
 script:
   - echo "About to build and test Kitura-CouchDB for branch '$TRAVIS_BRANCH'."
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./build_ubuntu.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./build_ubuntu.sh $TRAVIS_BRANCH $TRAVIS_BUILD_DIR Kitura-CouchDB ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./build_osx.sh ; fi
   - echo "Build and tests completed. See above for status."
