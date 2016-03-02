@@ -26,10 +26,7 @@ before_install:
   - cp ./Kitura-CI/*.sh $TRAVIS_BUILD_DIR/
   - rm -rf ./Kitura-CI
   - git clone -b master https://$JAZZHUB_USER:$JAZZHUB_PWD@hub.jazz.net/git/milbuild/MIL.DevOps
-  - ls -la
-  - ls -la ./Kitura-CI
-  - pwd
-
+  
 script:
   - echo "About to build and test Kitura-CouchDB for branch '$TRAVIS_BRANCH'."
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./build_ubuntu.sh $TRAVIS_BRANCH $TRAVIS_BUILD_DIR Kitura-CouchDB ; fi
