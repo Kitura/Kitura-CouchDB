@@ -24,7 +24,7 @@ before_install:
   - echo "Travis build directory -> '$TRAVIS_BUILD_DIR'"
   - git clone https://github.com/IBM-Swift/Kitura-CI.git
   - cp ./Kitura-CI/*.sh $TRAVIS_BUILD_DIR/
-#  - rm -rf ./Kitura-CI
+  - rm -rf ./Kitura-CI
   - git clone -b master https://$JAZZHUB_USER:$JAZZHUB_PWD@hub.jazz.net/git/milbuild/MIL.DevOps
   - ls -la
   - ls -la ./Kitura-CI
