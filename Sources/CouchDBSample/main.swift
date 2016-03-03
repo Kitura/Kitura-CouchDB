@@ -15,7 +15,6 @@ import Darwin
 import Foundation
 import SwiftyJSON
 import CouchDB
-import KituraRouter
 
 
 print("Starting sample program...")
