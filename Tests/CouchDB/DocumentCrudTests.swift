@@ -38,17 +38,18 @@ import SwiftyJSON
 #endif
 
 class DocumentCrudTests : XCTestCase {
-    
+
     var database: Database?
     let documentId = "123456"
     var jsonDocument: JSON?
+    let dbName = "kitura_db"
 
     func testCrudTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(hostName: credentials.host,
-            port: 80, secured: false,
+            port: credentials.port, secured: false,
             userName: credentials.username,
             password: credentials.password)
 
@@ -56,11 +57,35 @@ class DocumentCrudTests : XCTestCase {
         let couchDBClient = CouchDBClient(connectionProperties: connProperties)
         print("Hostname is: \(couchDBClient.connProperties.hostName)")
 
-        // Create database instance to perform any document operations
-        database = couchDBClient.database("kitura_db")
+        // Check if DB exists
+        couchDBClient.dbExists(dbName) {exists, error in
+            if  error != nil  {
+                XCTFail("Failed checking existence of database \(self.dbName)")
+            }
+            else {
+                if  exists  {
+                    // Create database handle to perform any document operations
+                    self.database = couchDBClient.database(self.dbName)
 
-        // Start tests...
-        createDocument()
+                    // Start tests...
+                    self.createDocument()
+                }
+                else {
+                    // Create database
+                    couchDBClient.createDB(self.dbName) {db, error in
+                        if  error != nil  {
+                            XCTFail("Failed creating the database \(self.dbName)")
+                        }
+                        else {
+                            self.database = db
+
+                            // Start tests...
+                            self.createDocument()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {

@@ -29,45 +29,36 @@ class Utils {
 
     struct Credentials {
         let host:String
-        let username:String
-        let password:String
-        init(host:String, username:String, password:String) {
+        let port:Int16
+        let username:String?
+        let password:String?
+        init(host:String, port:Int16, username:String?, password:String?) {
             self.host = host
+            self.port = port
             self.username = username
             self.password = password
         }
     }
 
     static func readCredentials() -> Credentials {
-        // Read in credentials file
-        let fstream = fopen("Tests/Sources/CouchDBTests/credentials.json", "r")
-        XCTAssertNotNil(fstream, "Error opening credentials.json. Please try running from root directory.")
+        // Read in credentials an NSData
+        let credentialsData = NSData(contentsOfFile: "Tests/CouchDB/credentials.json")
+        XCTAssertNotNil(credentialsData, "Failed to read in the credentials.json file")
 
-        var credentialsString = ""
-        while(true) {
-            let char = fgetc(fstream)
-            // EOF?
-            if char == -1 {
-                break
-            }
-            credentialsString += String(Character(UnicodeScalar(UInt32(char))))
-        }
-
-        // Convert JSON string to NSData
-        let credentialsData = credentialsString.bridge().dataUsingEncoding(NSUTF8StringEncoding)
         // Convert NSData to JSON object
         let credentialsJson = JSON(data: credentialsData!)
 
         guard
           let hostName = credentialsJson["host"].string,
-          let userName = credentialsJson["username"].string,
-          let password = credentialsJson["password"].string
+          let port = credentialsJson["port"].int16
         else {
             XCTFail("Error in credentials.json.")
             exit(1)
         }
+        let userName = credentialsJson["username"].string
+        let password = credentialsJson["password"].string
 
         print(">> Successfully read in credentials.")
-        return Credentials(host: hostName, username: userName, password: password)
+        return Credentials(host: hostName, port: port, username: userName, password: password)
     }
 }
