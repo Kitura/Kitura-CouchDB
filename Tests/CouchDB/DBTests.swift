@@ -27,25 +27,20 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-#if os(Linux)
-    extension TestDB : XCTestCaseProvider {
-        var allTests : [(String, () throws -> Void)] {
-            return [
-                ("dbTest", dbTest),
-            ]
-        }
-    }
-#endif
-
 class DBTests : XCTestCase {
-  
+
+  var allTests : [(String, () throws -> Void)] {
+    return [
+        ("testDB", testDB),
+    ]
+  }
+
   func testDB() {
-    
     let credentials = Utils.readCredentials()
 
     // Connection properties for testing Cloudant or CouchDB instance
     let connProperties = ConnectionProperties(hostName: credentials.host,
-      port: 80, secured: false,
+      port: credentials.port, secured: false,
       userName: credentials.username,
       password: credentials.password)
 
@@ -54,22 +49,22 @@ class DBTests : XCTestCase {
     print("Hostname is: \(couchDBClient.connProperties.hostName)")
 
     couchDBClient.createDB("test_db") {(db: Database?, error: NSError?) in
-    	if let error = error {
-    		XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
-    	}
+        if let error = error {
+            XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
+        }
 
-    	guard let db = db else {
-    		XCTFail("Created database is nil")
-    		return
-    	}
+        guard let db = db else {
+            XCTFail("Created database is nil")
+            return
+        }
 
-    	print(">> Database successfully created")
-    	couchDBClient.deleteDB(db) {(error: NSError?) in
-    		if let error = error {
-    			XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-    		}
-    		print(">> Database successfully deleted")
-    	}
+        print(">> Database successfully created")
+        couchDBClient.deleteDB(db) {(error: NSError?) in
+            if let error = error {
+                XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+            }
+            print(">> Database successfully deleted")
+        }
     }
   }
 
