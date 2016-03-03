@@ -41,5 +41,5 @@ let package = Package(
 
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", versions: Version(0,3,0)..<Version(0,4,0)))
 package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", versions: Version(0,3,0)..<Version(0,4,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-router.git", versions: Version(0,3,0)..<Version(0,4,0)))
+package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-net.git", versions: Version(0,3,0)..<Version(0,4,0)))
 package.dependencies.append(.Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion))
