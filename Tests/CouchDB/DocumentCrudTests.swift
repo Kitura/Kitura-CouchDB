@@ -28,10 +28,10 @@ import SwiftyJSON
 @testable import CouchDB
 
 #if os(Linux)
-    extension TestDocumentCrud : XCTestCaseProvider {
+    extension DocumentCrudTests : XCTestCaseProvider {
         var allTests : [(String, () throws -> Void)] {
             return [
-                ("documentCRUDTest", crudTest),
+                ("testCrudTest", testCrudTest),
             ]
         }
     }
