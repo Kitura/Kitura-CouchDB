@@ -1,4 +1,4 @@
-# Travis CI build file for Kitura-CouchDB.
+# Travis CI build file for the Kitura-CouchDB Swift package.
 # Kitura runs on OS X and Linux (Ubuntu v15.10).
 
 # whitelist (branches that should be built)
