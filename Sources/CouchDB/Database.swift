@@ -1,21 +1,37 @@
-//
-//  Database.swift
-//  PhoenixCouchDB
-//
-//  Authors: Ira Rosen, Ricardo Olivieri
-//  Copyright © 2016 IBM. All rights reserved.
-//
+/**
+ * Copyright IBM Corporation 2016
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 
 import Foundation
 import SwiftyJSON
 import KituraNet
 
+// MARK: Database 
+
 public class Database {
 
-  public enum StaleOptions {
-    case OK
-    case UpdateAfter
-  }
+    ///
+    /// Options handling when to update
+    ///
+    /// - OK: CouchDB will not refresh the view even if it is stale
+    /// - UpdateAfter: CouchDB will update the view after the stale result is returned
+    ///
+    public enum StaleOptions {
+        case OK
+        case UpdateAfter
+    }
 
   public enum QueryParameters {
     case Conflicts (Bool)
@@ -62,55 +78,77 @@ public class Database {
     return result + "]"
   }
 
-  public init (connProperties: ConnectionProperties, dbName: String) {
-    self.name = dbName
-    self.escapedName = Http.escapeUrl(name)
-    self.connProperties = connProperties
-  }
+    ///
+    /// Initializes a new Database instance
+    ///
+    /// - Parameter connProperties: ConnectionProperty to use
+    /// - Parameter dbName: the String representing the database name 
+    ///
+    /// - Returns: a new Database instance
+    ///
+    public init (connProperties: ConnectionProperties, dbName: String) {
+        self.name = dbName
+        self.escapedName = Http.escapeUrl(name)
+        self.connProperties = connProperties
+    }
 
-  public func retrieve(id: String, callback: (JSON?, NSError?) -> ())   {
-    let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(id))", hasBody: false)
-    var document: JSON?
-    let req = Http.request(requestOptions) { response in
-      var error: NSError?
-      if let response = response {
-        document = CouchDBUtils.getBodyAsJson(response)
-        if response.statusCode != HttpStatusCode.OK {
-          error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
-        }
-      }
-      else {
-        error = CouchDBUtils.createError(Database.INTERNAL_ERROR, id: id, rev: nil)
-      }
-      callback(document, error)
+    ///
+    /// Retrieve a document from the database by ID 
+    ///
+    /// - Parameter id: String ID for the document 
+    /// - Parameter callback: callback function with the document's JSON 
+    ///
+    public func retrieve(id: String, callback: (JSON?, NSError?) -> ())   {
+        
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(Http.escapeUrl(id))", hasBody: false)
+        var document: JSON?
+        let req = Http.request(requestOptions) { response in
+            var error: NSError?
+            if let response = response {
+                document = CouchDBUtils.getBodyAsJson(response)
+                if response.statusCode != HttpStatusCode.OK {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
+                }
+            }
+            else {
+                error = CouchDBUtils.createError(Database.INTERNAL_ERROR, id: id, rev: nil)
+            }
+            callback(document, error)
+            }
+        req.end()
     }
-    req.end()
-  }
 
-  public func update(id: String, rev: String, document: JSON, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
-    if let requestBody = document.rawString() {
-      var doc: JSON?
-      var revision: String?
-      let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(Http.escapeUrl(id))?rev=\(Http.escapeUrl(rev))", hasBody: true)
-      let req = Http.request(requestOptions) { response in
-        var error: NSError?
-        if let response = response {
-          doc = CouchDBUtils.getBodyAsJson(response)
-          revision = doc?["rev"].string
-          if response.statusCode != HttpStatusCode.CREATED && response.statusCode != HttpStatusCode.ACCEPTED {
-            error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: id, rev: rev)
-          }
+    ///
+    /// Update a document in the database 
+    /// 
+    /// - Parameter id: String ID for the document 
+    /// - Parameter rev: revision number
+    /// - Parameter document: JSON data for the document 
+    /// - Parameter callback: callback containing the new document 
+    ///
+    public func update(id: String, rev: String, document: JSON, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
+        
+        if let requestBody = document.rawString() {
+            var doc: JSON?
+            var revision: String?
+            let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(Http.escapeUrl(id))?rev=\(Http.escapeUrl(rev))", hasBody: true)
+            let req = Http.request(requestOptions) { response in
+                var error: NSError?
+                if let response = response {
+                    doc = CouchDBUtils.getBodyAsJson(response)
+                    revision = doc?["rev"].string
+                    if response.statusCode != HttpStatusCode.CREATED && response.statusCode != HttpStatusCode.ACCEPTED {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: id, rev: rev)
+                    }
+                } else {
+                    error = CouchDBUtils.createError(Database.INTERNAL_ERROR, id: id, rev: rev)
+                }
+                callback(rev: revision, document: doc, error: error)
+            }
+            req.end(requestBody)
+        } else {
+            callback(rev: nil, document: nil, error: CouchDBUtils.createError(Database.INVALID_DOCUMENT, id: id, rev: rev))
         }
-        else {
-          error = CouchDBUtils.createError(Database.INTERNAL_ERROR, id: id, rev: rev)
-        }
-        callback(rev: revision, document: doc, error: error)
-      }
-      req.end(requestBody)
-    }
-    else {
-      callback(rev: nil, document: nil, error: CouchDBUtils.createError(Database.INVALID_DOCUMENT, id: id, rev: rev))
-    }
   }
 
   public func create(document: JSON, callback: (id: String?, rev:String?, document: JSON?, error: NSError?) -> ())   {
