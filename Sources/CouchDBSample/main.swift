@@ -1,15 +1,23 @@
-//
-//  main.swift
-//  PhoenixCouchDB
-//  Sample code
-//
-//  Authors: Ricardo Olivieri
-//  Copyright © 2016 IBM. All rights reserved.
-//
+/**
+* Copyright IBM Corporation 2016
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+**/
+
 #if os(Linux)
-import Glibc
+    import Glibc
 #else
-import Darwin
+    import Darwin
 #endif
 
 import Foundation
@@ -78,15 +86,16 @@ func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
 
 //Delete document
 func deleteDocument(revisionNumber: String) {
-  database.delete(documentId, rev: revisionNumber, failOnNotFound: false, callback: { (error: NSError?) in
-    if (error != nil) {
-      print(">> Oops something went wrong; could not delete document.")
-      print(error!.code)
-      print(error!.domain)
-      print(error!.userInfo)
-    } else {
-      print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
-    }
+  database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
+    callback: { (error: NSError?) in
+        if error != nil {
+            print(">> Oops something went wrong; could not delete document.")
+            print(error!.code)
+            print(error!.domain)
+            print(error!.userInfo)
+        } else {
+            print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
+        }
   })
 }
 
@@ -94,29 +103,32 @@ func deleteDocument(revisionNumber: String) {
 func updateDocument(revisionNumber: String) {
   //var json = JSON(data: jsonData!)
   //json["value"] = "value2"
-  database.update(documentId, rev: revisionNumber, document: json, callback: { (rev: String?, document: JSON?, error: NSError?) in
-    if (error != nil) {
-      print(">> Oops something went wrong; could not update document.")
-      print(error!.code)
-      print(error!.domain)
-      print(error!.userInfo)
-    } else {
-      print(">> Successfully updated the JSON document with ID \(documentId) in CouchDB:\n\t\(document)")
-      chainer(document, next: deleteDocument)
-    }
+  database.update(documentId, rev: revisionNumber, document: json,
+    callback: { (rev: String?, document: JSON?, error: NSError?) in
+        if error != nil {
+            print(">> Oops something went wrong; could not update document.")
+            print(error!.code)
+            print(error!.domain)
+            print(error!.userInfo)
+        } else {
+            print(">> Successfully updated the JSON document with ID" +
+                "\(documentId) in CouchDB:\n\t\(document)")
+            chainer(document, next: deleteDocument)
+        }
   })
 }
 
 //Read document
 func readDocument() {
   database.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
-    if (error != nil) {
+    if error != nil {
       print("Oops something went wrong; could not read document.")
       print(error!.code)
       print(error!.domain)
       print(error!.userInfo)
     } else {
-      print(">> Successfully read the followiong JSON document with ID \(documentId) from CouchDB:\n\t\(document)")
+      print(">> Successfully read the following JSON document with ID " +
+            "\(documentId) from CouchDB:\n\t\(document)")
       chainer(document, next: updateDocument)
     }
   })
@@ -125,7 +137,7 @@ func readDocument() {
 //Create document closure
 func createDocument() {
   database.create(json, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-    if (error != nil) {
+    if error != nil {
       print(">> Oops something went wrong; could not persist document.")
       print(error!.code)
       print(error!.domain)
@@ -138,6 +150,6 @@ func createDocument() {
 }
 
 // Start tests...
-createDocument();
+createDocument()
 
 print("Sample program completed its execution.")
