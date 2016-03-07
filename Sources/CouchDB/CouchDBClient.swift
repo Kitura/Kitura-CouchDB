@@ -38,8 +38,7 @@ public class CouchDBClient {
     ///
     /// Returns a Database instance by name
     ///
-    /// - Parameter dbName: String for the database name 
-    ///
+    /// - Parameter dbName: String for the database name
     /// - Returns: a database instance matching the name
     ///
     public func database(dbName: String) -> Database {
@@ -53,7 +52,6 @@ public class CouchDBClient {
     /// - Parameter callback: a function containing the Database instance
     ///
     public func createDB(dbName: String, callback: (Database?, NSError?) -> ()) {
-        
       let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
         path: "/\(Http.escapeUrl(dbName))", hasBody: false)
       let req = Http.request(requestOptions) { response in
@@ -62,18 +60,15 @@ public class CouchDBClient {
           if let response = response {
               if response.statusCode == HttpStatusCode.CREATED {
                   db = Database(connProperties: self.connProperties, dbName: dbName)
-              }
-              else {
+              } else {
                   if let descOpt = try? response.readString(), let desc = descOpt {
                     error = CouchDBUtils.createError(response.statusCode,
                         errorDesc: JSON.parse(desc), id: nil, rev: nil)
-                  }
-                  else {
+                  } else {
                     error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                   }
               }
-          }
-          else {
+          } else {
               error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
           }
           callback(db, error)
@@ -97,8 +92,7 @@ public class CouchDBClient {
               if response.statusCode == HttpStatusCode.OK {
                   exists = true
               }
-          }
-          else {
+          } else {
               error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
           }
           callback(exists, error)
@@ -106,20 +100,20 @@ public class CouchDBClient {
       req.end()
     }
 
-    /// 
+    ///
     /// Delete a database by instance
-    /// 
-    /// - Parameter db: instance of Database to delete 
+    ///
+    /// - Parameter db: instance of Database to delete
     /// - Parameter callback: a function that contains an NSerror? if a problem occurred
     ///
-    public func deleteDB(db: Database, callback: (NSError?) -> ()) {
-      deleteDB(db.name, callback: callback)
+    public func deleteDB(database: Database, callback: (NSError?) -> ()) {
+      deleteDB(database.name, callback: callback)
     }
 
     ///
-    /// Delete a database by name 
-    /// 
-    /// - Parameter dbName: a String for the name of the database 
+    /// Delete a database by name
+    ///
+    /// - Parameter dbName: a String for the name of the database
     /// - Parameter callback: a function containing an NSError? if a problem occurred
     ///
     public func deleteDB(dbName: String, callback: (NSError?) -> ()) {
@@ -132,13 +126,11 @@ public class CouchDBClient {
                   if let descOpt = try? response.readString(), let desc = descOpt {
                     error = CouchDBUtils.createError(response.statusCode,
                         errorDesc: JSON.parse(desc), id: nil, rev: nil)
-                  }
-                  else {
+                  } else {
                     error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                   }
               }
-          }
-          else {
+          } else {
               error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
           }
           callback(error)
