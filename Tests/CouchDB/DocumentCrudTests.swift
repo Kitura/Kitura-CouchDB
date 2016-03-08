@@ -15,6 +15,7 @@
 **/
 
 import XCTest
+
 #if os(Linux)
     import Glibc
 #else
@@ -23,66 +24,70 @@ import XCTest
 
 import Foundation
 import SwiftyJSON
-import CouchDB
 
-class TestCrud : XCTestCase {
-    var allTests : [(String, () throws -> Void)] {
-        return [
-            ("CrudTest", crudTest),
-        ]
+@testable import CouchDB
+
+#if os(Linux)
+    extension DocumentCrudTests : XCTestCaseProvider {
+        var allTests : [(String, () throws -> Void)] {
+            return [
+                ("testCrudTest", testCrudTest),
+            ]
+        }
     }
+#endif
+
+class DocumentCrudTests : XCTestCase {
 
     var database: Database?
-    
     let documentId = "123456"
-    
     var jsonDocument: JSON?
-    
-    func crudTest() {
-    
-        // Read in credentials file
-        let fstream = fopen("Tests/Sources/Crud/credentials.json", "r")
-        XCTAssertNotNil(fstream, "Error opening credentials.json, try running from root directory")
-        
-        var credentialsString = ""
-        while(true) {
-            let c = fgetc(fstream)
-            if c == -1 {
-                break
-            }
-            credentialsString += String(Character(UnicodeScalar(UInt32(c))))
-        }
-        
-        // Convert JSON string to NSData
-        let credentialsData = credentialsString.bridge().dataUsingEncoding(NSUTF8StringEncoding)
-        // Convert NSData to JSON object
-        let credentialsJson = JSON(data: credentialsData!)
-        
-        guard let hostName = credentialsJson["host"].string,
-        let userName = credentialsJson["username"].string,
-        let password = credentialsJson["password"].string else {
-            XCTFail("Error in credentials.json")
-            exit(1)
-        }
-        print(">> Successfully read in credentials")
-        
+    let dbName = "kitura_db"
+
+    func testCrudTest() {
+        let credentials = Utils.readCredentials()
+
         // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(hostName: hostName,
-            port: 80, secured: false,
-            userName: userName,
-            password: password)
-        
+        let connProperties = ConnectionProperties(hostName: credentials.host,
+            port: credentials.port, secured: false,
+            userName: credentials.username,
+            password: credentials.password)
+
         // Create couchDBClient instance using conn properties
         let couchDBClient = CouchDBClient(connectionProperties: connProperties)
         print("Hostname is: \(couchDBClient.connProperties.hostName)")
-        
-        // Create database instance to perform any document operations
-        database = couchDBClient.database("kitura_db")
-        
-        // Start tests...
-        createDocument()
+
+        // Check if DB exists
+        couchDBClient.dbExists(dbName) {exists, error in
+            if  error != nil  {
+                XCTFail("Failed checking existence of database \(self.dbName)")
+            }
+            else {
+                if  exists  {
+                    // Create database handle to perform any document operations
+                    self.database = couchDBClient.database(self.dbName)
+
+                    // Start tests...
+                    self.createDocument()
+                }
+                else {
+                    // Create database
+                    couchDBClient.createDB(self.dbName) {db, error in
+                        if  error != nil  {
+                            XCTFail("Failed creating the database \(self.dbName)")
+                        }
+                        else {
+                            self.database = db
+
+                            // Start tests...
+                            self.createDocument()
+                        }
+                    }
+                }
+            }
+        }
     }
-    
+
     func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
         if let revisionNumber = document?["rev"].string {
             print("revisionNumber is \(revisionNumber)")
@@ -94,20 +99,20 @@ class TestCrud : XCTestCase {
             XCTFail(">> Oops something went wrong... could not get revisionNumber!")
         }
     }
-    
+
     //Delete document
     func deleteDocument(revisionNumber: String) {
         database!.delete(documentId, rev: revisionNumber, failOnNotFound: true, callback: { (error: NSError?) in
             if (error != nil) {
                 XCTFail("Error in rereading document \(error!.code) \(error!.domain) \(error!.userInfo)")
-                
+
             } else {
                 print(">> Successfully deleted the JSON document with ID \(self.documentId) from CouchDB.")
             }
         })
     }
-    
-    //Reread document to confirm update
+
+    //Re-read document to confirm update
     func confirmUpdate() {
         database!.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
             if error != nil {
@@ -126,7 +131,7 @@ class TestCrud : XCTestCase {
             }
         })
     }
-    
+
     //Update document
     func updateDocument(revisionNumber: String) {
         //var json = JSON(data: jsonData!)
@@ -141,12 +146,12 @@ class TestCrud : XCTestCase {
                         exit(1)
                 }
                 XCTAssertEqual(self.documentId, id, "Wrong documentId read from updated document")
-                print(">> Successfully updated the JSON document")
+                print(">> Successfully updated the JSON document.")
                 self.confirmUpdate()
             }
         })
     }
-    
+
     //Read document
     func readDocument() {
         database!.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
@@ -167,10 +172,9 @@ class TestCrud : XCTestCase {
             }
         })
     }
-    
+
     //Create document closure
     func createDocument() {
-        
         // JSON document in string format
         let jsonStr =
         "{" +
@@ -181,7 +185,7 @@ class TestCrud : XCTestCase {
             "\"favorited\": false," +
             "\"value\": \"value1\"" +
         "}"
-        
+
         // Convert JSON string to NSData
         let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
         // Convert NSData to JSON object
@@ -190,7 +194,7 @@ class TestCrud : XCTestCase {
             if (error != nil) {
                 XCTFail("Error in creating document \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
-                print(">> Successfully created the JSON document")
+                print(">> Successfully created the JSON document.")
                 self.readDocument()
             }
         })

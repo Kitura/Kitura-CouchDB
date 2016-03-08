@@ -16,6 +16,8 @@
 
 import Foundation
 
+// MARK: ConnectionProperties
+
 public class ConnectionProperties {
 
   // Hostname or IP address to the CouchDB server
@@ -45,7 +47,7 @@ public class ConnectionProperties {
       self.password = password
       self.secured = secured
       let httpProtocol = ConnectionProperties.deriveHttpProtocol(secured)
-      if (userName != nil && password != nil) {
+      if userName != nil && password != nil {
         self.url = "\(httpProtocol)://\(userName):\(password)\(hostName):\(port)"
       } else {
         self.url = "\(httpProtocol)://\(hostName):\(port)"

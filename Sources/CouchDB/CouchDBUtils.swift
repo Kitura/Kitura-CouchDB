@@ -16,7 +16,6 @@
 
 import Foundation
 import KituraNet
-import KituraRouter
 import SwiftyJSON
 
 class CouchDBUtils {
@@ -38,7 +37,7 @@ class CouchDBUtils {
         #else
           var info = [String:String]()
         #endif
-        
+
         info[NSLocalizedDescriptionKey] = desc
         if let id = id {
             info["id"] = id
@@ -56,7 +55,8 @@ class CouchDBUtils {
         return createError(code, id: id, rev: rev)
     }
 
-    class func prepareRequest(connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
+    class func prepareRequest(connProperties: ConnectionProperties, method: String, path: String,
+        hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
         var requestOptions = [ClientRequestOptions]()
 
         if let userName = connProperties.userName {
@@ -81,15 +81,21 @@ class CouchDBUtils {
     }
 
     class func getBodyAsJson (response: ClientResponse) -> JSON? {
-        if let body = BodyParser.parse(response, contentType: response.headers["Content-Type"]) {
-           return body.asJson()
+        do {
+            let body = NSMutableData()
+            try response.readAllData(body)
+            let json = JSON(data: body)
+            return json
+        } catch {
+          //Log this exception
         }
         return nil
     }
 
     class func getBodyAsNSData (response: ClientResponse) -> NSData? {
         do {
-            let body = try BodyParser.readBodyData(response)
+            let body = NSMutableData()
+            try response.readAllData(body)
             return body
         } catch {
           //Log this exception

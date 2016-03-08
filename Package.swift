@@ -14,13 +14,11 @@
  * limitations under the License.
  **/
 
-
 import PackageDescription
 
 // Dual pathing for O/S differences
 #if os(Linux)
    let swiftyJsonUrl = "https://github.com/IBM-Swift/SwiftyJSON.git"
-   //let swiftyJsonUrl = "git@github.com:IBM-Swift/SwiftyJSON.git"
    let swiftyJsonVersion = 3
 #else
    let swiftyJsonUrl = "https://github.com/SwiftyJSON/SwiftyJSON.git"
@@ -32,27 +30,17 @@ let package = Package(
     targets: [
         Target(
             name: "CouchDB",
-            dependencies: []),
+            dependencies: []
+        ),
         Target(
             name: "CouchDBSample",
-            dependencies: [.Target(name: "CouchDB")]),
+            dependencies: [.Target(name: "CouchDB")]
+        ),
     ],
-    testDependencies: [
-        //.Package(url: "git@github.com:IBM-Swift/Kitura-TestFramework.git", majorVersion: 0)
-      .Package(url: "https://github.com/IBM-Swift/Kitura-TestFramework.git", versions: Version(0,2,0)..<Version(0,3,0))
-    ])
-
-    // Ideally, we should only need to specify Kitura-router (or Kitura-net) and SwiftyJSON
-    // as dependencies. For now, due to what seems to be a defect in SPM,
-    // we are specifying these other dependencies.
-
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 0))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-sys.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-net.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-router.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-Pcre2.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-CurlHelpers.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: "https://github.com/IBM-Swift/Kitura-HttpParserHelper.git", versions: Version(0,2,0)..<Version(0,3,0)))
-package.dependencies.append(.Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion))
+    dependencies: [
+        .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 0, minor: 4),
+        .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0, minor: 4),
+        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 4),
+        .Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion)
+    ]
+)
