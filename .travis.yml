@@ -6,7 +6,6 @@ branches:
   only:
     - master
     - develop
-    - makefile-use
 
 notifications:
   slack: ibmswift:RHkwcHYh4kkYVRVzm9nZk5TF
