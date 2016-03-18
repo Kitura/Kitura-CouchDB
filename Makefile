@@ -26,7 +26,7 @@ ifeq ($(UNAME), Linux)
 	@echo --- Checking Linux release
 	-lsb_release -d
 	@echo --- Invoking swift build
-	swift build -Xcc -fblocks
+	swift build -Xcc -fblocks `bash ${KITURA_CI_BUILD_SCRIPTS_DIR}/make_ccflags_for_module_maps`
 else
 	@echo --- Invoking swift build
 	swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib
