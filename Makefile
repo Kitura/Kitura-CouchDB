@@ -14,6 +14,8 @@
 
 # Makefile
 
+UNAME = ${shell uname}
+
 all: build
 
 build:
