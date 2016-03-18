@@ -13,25 +13,11 @@
 # limitations under the License.
 
 # Makefile
+export KITURA_CI_BUILD_SCRIPTS_DIR=Kitura-CI/build
 
-UNAME = ${shell uname}
+-include Kitura-CI/build/Makefile
 
-all: build
-
-build:
-	@echo --- Checking swift version
-	swift --version
-	@echo --- Checking git revision and branch
-	-git rev-parse HEAD
-	-git rev-parse --abbrev-ref HEAD
-ifeq ($(UNAME), Linux)
-	@echo --- Checking Linux release
-	-lsb_release -d
-	@echo --- Fetching dependencies
-	swift build --fetch
-	@echo --- Invoking swift build
-	swift build -Xcc -fblocks `bash ${KITURA_CI_BUILD_SCRIPTS_DIR}/make_ccflags_for_module_maps`
-else
-	@echo --- Invoking swift build
-	swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib
-endif
+Kitura-CI/build/Makefile:
+	@echo --- Fetching Kitura-CI submodule
+	git submodule init
+	git submodule update --remote --merge
