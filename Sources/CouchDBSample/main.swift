@@ -94,7 +94,7 @@ func deleteDocument(revisionNumber: String) {
     callback: { (error: NSError?) in
         if let error = error {
             Log.error(">> Oops something went wrong; could not delete document.")
-            Log.error(error.localizedDescription)
+            Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
         } else {
             Log.info(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
         }
@@ -109,7 +109,7 @@ func updateDocument(revisionNumber: String) {
     callback: { (rev: String?, document: JSON?, error: NSError?) in
         if let error = error {
             Log.error(">> Oops something went wrong; could not update document.")
-            Log.error(error.localizedDescription)
+            Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
         } else {
             Log.info(">> Successfully updated the JSON document with ID" +
                 "\(documentId) in CouchDB:\n\t\(document)")
@@ -123,7 +123,7 @@ func readDocument() {
   database.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
     if let error = error {
       Log.error("Oops something went wrong; could not read document.")
-      Log.error(error.localizedDescription)
+      Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
     } else {
       Log.info(">> Successfully read the following JSON document with ID " +
             "\(documentId) from CouchDB:\n\t\(document)")
@@ -137,7 +137,7 @@ func createDocument() {
   database.create(json, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
     if let error = error {
       Log.error(">> Oops something went wrong; could not persist document.")
-      Log.error(error.localizedDescription)
+      Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
     } else {
       Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
       readDocument()
