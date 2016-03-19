@@ -24,13 +24,17 @@ import Foundation
 import SwiftyJSON
 import CouchDB
 
+import LoggerAPI
+import HeliumLogger
 
-print("Starting sample program...")
+Log.logger = HeliumLogger()
+
+Log.info("Starting sample program...")
 
 // Parse runtime args... this is just an interim solution
 let args = Array(Process.arguments[1..<Process.arguments.count])
 if args.count != 3 {
-  print("Hostname, username and password are required as arguments!")
+  Log.error("Hostname, username and password are required as arguments!")
   exit(1)
 }
 let hostName = args[0]
@@ -44,11 +48,11 @@ let connProperties = ConnectionProperties(hostName: hostName,
   password: password)
 
 let connPropertiesStr = connProperties.toString()
-print("connPropertiesStr:\n\(connPropertiesStr)")
+Log.info("connPropertiesStr:\n\(connPropertiesStr)")
 
 // Create couchDBClient instance using conn properties
 let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-print("Hostname is: \(couchDBClient.connProperties.hostName)")
+Log.info("Hostname is: \(couchDBClient.connProperties.hostName)")
 
 // Create database instance to perform any document operations
 let database = couchDBClient.database("kitura_test_db")
@@ -74,13 +78,13 @@ let json = JSON(data: jsonData!)
 
 func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
   if let revisionNumber = document?["rev"].string {
-    print("revisionNumber is \(revisionNumber)")
+    Log.info("revisionNumber is \(revisionNumber)")
     next(revisionNumber: revisionNumber)
   } else if let revisionNumber = document?["_rev"].string {
-    print("revisionNumber is \(revisionNumber)")
+    Log.info("revisionNumber is \(revisionNumber)")
     next(revisionNumber: revisionNumber)
   } else {
-    print(">> Oops something went wrong... could not get revisionNumber!")
+    Log.error(">> Oops something went wrong... could not get revisionNumber!")
   }
 }
 
@@ -88,13 +92,11 @@ func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
 func deleteDocument(revisionNumber: String) {
   database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
     callback: { (error: NSError?) in
-        if error != nil {
-            print(">> Oops something went wrong; could not delete document.")
-            print(error!.code)
-            print(error!.domain)
-            print(error!.userInfo)
+        if let error = error {
+            Log.error(">> Oops something went wrong; could not delete document.")
+            Log.error(error.localizedDescription)
         } else {
-            print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
+            Log.info(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
         }
   })
 }
@@ -105,13 +107,11 @@ func updateDocument(revisionNumber: String) {
   //json["value"] = "value2"
   database.update(documentId, rev: revisionNumber, document: json,
     callback: { (rev: String?, document: JSON?, error: NSError?) in
-        if error != nil {
-            print(">> Oops something went wrong; could not update document.")
-            print(error!.code)
-            print(error!.domain)
-            print(error!.userInfo)
+        if let error = error {
+            Log.error(">> Oops something went wrong; could not update document.")
+            Log.error(error.localizedDescription)
         } else {
-            print(">> Successfully updated the JSON document with ID" +
+            Log.info(">> Successfully updated the JSON document with ID" +
                 "\(documentId) in CouchDB:\n\t\(document)")
             chainer(document, next: deleteDocument)
         }
@@ -121,13 +121,11 @@ func updateDocument(revisionNumber: String) {
 //Read document
 func readDocument() {
   database.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
-    if error != nil {
-      print("Oops something went wrong; could not read document.")
-      print(error!.code)
-      print(error!.domain)
-      print(error!.userInfo)
+    if let error = error {
+      Log.error("Oops something went wrong; could not read document.")
+      Log.error(error.localizedDescription)
     } else {
-      print(">> Successfully read the following JSON document with ID " +
+      Log.info(">> Successfully read the following JSON document with ID " +
             "\(documentId) from CouchDB:\n\t\(document)")
       chainer(document, next: updateDocument)
     }
@@ -137,13 +135,11 @@ func readDocument() {
 //Create document closure
 func createDocument() {
   database.create(json, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-    if error != nil {
-      print(">> Oops something went wrong; could not persist document.")
-      print(error!.code)
-      print(error!.domain)
-      print(error!.userInfo)
+    if let error = error {
+      Log.error(">> Oops something went wrong; could not persist document.")
+      Log.error(error.localizedDescription)
     } else {
-      print(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
+      Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
       readDocument()
     }
   })
@@ -152,4 +148,4 @@ func createDocument() {
 // Start tests...
 createDocument()
 
-print("Sample program completed its execution.")
+Log.info("Sample program completed its execution.")
