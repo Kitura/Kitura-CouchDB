@@ -39,7 +39,7 @@ let password = args[2]
 
 // Connection properties for testing Cloudant or CouchDB instance
 let connProperties = ConnectionProperties(hostName: hostName,
-  port: 80, secured: false,
+  port: 5984, secured: false,
   userName: userName,
   password: password)
 
@@ -51,7 +51,7 @@ let couchDBClient = CouchDBClient(connectionProperties: connProperties)
 print("Hostname is: \(couchDBClient.connProperties.hostName)")
 
 // Create database instance to perform any document operations
-let database = couchDBClient.database("phoenix_db")
+let database = couchDBClient.database("kitura_test_db")
 
 // Document ID
 let documentId = "123456"
