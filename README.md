@@ -17,16 +17,28 @@ Depends on [Kitura-router](https://github.com/IBM-Swift/Kitura-router).
 
 3. Create a database with the name `kitura_test_db`.
 
-2. Open a Terminal window to the `Kitura-CouchDB` folder and run `make`:
+4. Update the following code in `main.swift` with your admin username and password:
+
+	```swift
+	let connProperties = ConnectionProperties(
+    	host: "127.0.0.1",  // httpd address
+    	port: 5984,         // httpd port
+    	secured: false,     // https or http
+    	username: nil,      // admin username
+    	password: nil       // admin password
+	)
+	```
+
+5. Open a Terminal window to the `Kitura-CouchDB` folder and run `make`:
 
 	```bash
 	make
 	```
 
-3. Run the CouchDBSample executable, passing in your admin username and password:
+6. Run the CouchDBSample executable:
 
 	```bash
-	.build/debug/CouchDBSample 127.0.0.1 ADMIN_USERNAME ADMIN_PASSWORD
+	.build/debug/CouchDBSample
 	```
 
 ## Usage:
