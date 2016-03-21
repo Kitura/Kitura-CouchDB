@@ -16,6 +16,8 @@
 
 import Foundation
 
+import LoggerAPI
+
 // MARK: ConnectionProperties
 
 public struct ConnectionProperties {
@@ -34,18 +36,21 @@ public struct ConnectionProperties {
     // MARK: Authentication credentials to access CouchDB
     
     // CouchDB admin username
-    let username: String
+    let username: String?
     
     // CouchDB admin password
-    let password: String
+    let password: String?
     
     
-    public init(host: String, port: Int16, secured: Bool, username: String, password: String) {
+    public init(host: String, port: Int16, secured: Bool, username: String?, password: String?) {
         self.host = host
         self.port = port
         self.secured = secured
         self.username = username
         self.password = password
+        if self.username == nil || self.password == nil {
+            Log.warning("Initializing a CouchDB connection without a username or password.")
+        }
     }
 
     
@@ -58,7 +63,11 @@ public struct ConnectionProperties {
     
     // CouchDB URL
     var URL: String {
-        return "\(HTTPProtocol)://\(username):\(password)@\(host):\(port)"
+        if let username = username, let password = password {
+            return "\(HTTPProtocol)://\(username):\(password)@\(host):\(port)"
+        } else {
+            return "\(HTTPProtocol)://\(host):\(port)"
+        }
     }
 }
 

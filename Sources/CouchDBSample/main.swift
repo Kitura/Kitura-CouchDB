@@ -29,23 +29,13 @@ import HeliumLogger
 Log.logger = HeliumLogger()
 Log.info("Starting sample program...")
 
-// Parse runtime args... this is just an interim solution
-let args = Array(Process.arguments[1..<Process.arguments.count])
-if args.count != 3 {
-    Log.error("Hostname, username and password are required as arguments!")
-    exit(1)
-}
-let host = args[0]
-let username = args[1]
-let password = args[2]
-
 // Connection properties for testing Cloudant or CouchDB instance
 let connProperties = ConnectionProperties(
-    host: host,
-    port: 5984,
-    secured: false,
-    username: username,
-    password: password
+    host: "127.0.0.1",  // httpd address
+    port: 5984,         // httpd port
+    secured: false,     // https or http
+    username: nil,      // admin username
+    password: nil       // admin password
 )
 
 Log.info("Connection Properties:\n\(connProperties)")
