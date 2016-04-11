@@ -29,7 +29,7 @@ import SwiftyJSON
 
 class DBTests : XCTestCase {
 
-  var allTests : [(String, () throws -> Void)] {
+  static var allTests : [(String, DBTests -> () throws -> Void)] {
     return [
         ("testDB", testDB),
     ]

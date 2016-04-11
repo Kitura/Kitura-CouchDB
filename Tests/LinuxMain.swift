@@ -16,9 +16,9 @@
 
 import XCTest
 
-@testable import CouchDBtest
+@testable import CouchDBTestSuite
 
 XCTMain([
-    DocumentCrudTests(),
-    DBTests()
+    testCase(DocumentCrudTests.allTests),
+    testCase(DBTests.allTests)
 ])

@@ -68,7 +68,11 @@ let jsonStr =
   "}"
 
 // Convert JSON string to NSData
+#if os(Linux)
 let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
+#else
+let jsonData = jsonStr.bridge().data(usingEncoding: NSUTF8StringEncoding)
+#endif
 // Convert NSData to JSON object
 let json = JSON(data: jsonData!)
 
