@@ -16,15 +16,6 @@
 
 import PackageDescription
 
-// Dual pathing for O/S differences
-#if os(Linux)
-   let swiftyJsonUrl = "https://github.com/IBM-Swift/SwiftyJSON.git"
-   let swiftyJsonVersion = 3
-#else
-   let swiftyJsonUrl = "https://github.com/SwiftyJSON/SwiftyJSON.git"
-   let swiftyJsonVersion = 2
-#endif
-
 let package = Package(
     name: "Kitura-CouchDB",
     targets: [
@@ -40,7 +31,7 @@ let package = Package(
     dependencies: [
         .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 0, minor: 4),
         .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0, minor: 4),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 7),
-        .Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion)
+        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 8),
+        .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 5)
     ]
 )

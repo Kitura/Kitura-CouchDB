@@ -27,17 +27,13 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-#if os(Linux)
-    extension DocumentCrudTests : XCTestCaseProvider {
-        var allTests : [(String, () throws -> Void)] {
-            return [
-                ("testCrudTest", testCrudTest),
-            ]
-        }
-    }
-#endif
-
 class DocumentCrudTests : XCTestCase {
+
+    static var allTests : [(String, DocumentCrudTests -> () throws -> Void)] {
+        return [
+            ("testCrudTest", testCrudTest)
+        ]
+    }
 
     var database: Database?
     let documentId = "123456"
@@ -187,7 +183,11 @@ class DocumentCrudTests : XCTestCase {
         "}"
 
         // Convert JSON string to NSData
+        #if os(Linux)
         let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
+        #else
+        let jsonData = jsonStr.bridge().data(usingEncoding: NSUTF8StringEncoding)
+        #endif
         // Convert NSData to JSON object
         jsonDocument = JSON(data: jsonData!)
         database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
