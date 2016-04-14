@@ -20,58 +20,59 @@ import Foundation
 
 public class ConnectionProperties {
 
-  // Hostname or IP address to the CouchDB server
-  public let hostName: String
+    // Hostname or IP address to the CouchDB server
+    public let hostName: String
 
-  // Port number where CouchDB server is listening for incoming connections
-  public let port: Int16
+    // Port number where CouchDB server is listening for incoming connections
+    public let port: Int16
 
-  // Seucred boolean
-  public let secured: Bool
+    // Secured boolean
+    public let secured: Bool
 
-  // Authentication credentials to access Cloudant
-  // Cloudant username
-  let userName: String?
+    // Authentication credentials to access Cloudant
+    // Cloudant username
+    let userName: String?
 
-  // Cloudant password
-  let password: String?
+    // Cloudant password
+    let password: String?
 
-  // Cloudant URL
-  // Derived instance variable
-  let url: String?
+    // Cloudant URL
+    // Derived instance variable
+    let url: String?
 
-  public init(hostName: String, port: Int16, secured: Bool, userName: String?, password: String?) {
-      self.hostName = hostName
-      self.port = port
-      self.userName = userName
-      self.password = password
-      self.secured = secured
-      let httpProtocol = ConnectionProperties.deriveHttpProtocol(secured)
-      if userName != nil && password != nil {
-        self.url = "\(httpProtocol)://\(userName):\(password)\(hostName):\(port)"
-      } else {
-        self.url = "\(httpProtocol)://\(hostName):\(port)"
-      }
-  }
+    public init(hostName: String, port: Int16, secured: Bool, userName: String?, password: String?) {
+        self.hostName = hostName
+        self.port = port
+        self.userName = userName
+        self.password = password
+        self.secured = secured
+        let httpProtocol = ConnectionProperties.deriveHttpProtocol(secured)
+        if let userName = userName, password = password {
+            self.url = "\(httpProtocol)://\(userName):\(password)@\(hostName):\(port)"
+        }
+        else {
+            self.url = "\(httpProtocol)://\(hostName):\(port)"
+        }
+    }
 
-  public convenience init(hostName: String, port: Int16, secured: Bool) {
-    self.init(hostName: hostName, port: port, secured: secured, userName: nil, password: nil)
-  }
+    public convenience init(hostName: String, port: Int16, secured: Bool) {
+        self.init(hostName: hostName, port: port, secured: secured, userName: nil, password: nil)
+    }
 
-  public func toString() -> String {
-    let user = self.userName != nil ? self.userName : ""
-    let pwd = self.password != nil ? self.password : ""
-    let str = "\thostName -> \(hostName)\n" +
-      "\tport -> \(port)\n" +
-      "\tsecured -> \(secured)\n" +
-      "\tuserName -> \(user)\n" +
-      "\tpassword -> \(pwd)"
-    return str
-  }
+    public func toString() -> String {
+        let user = self.userName != nil ? self.userName : ""
+        let pwd = self.password != nil ? self.password : ""
+        let str = "\thostName -> \(hostName)\n" +
+            "\tport -> \(port)\n" +
+            "\tsecured -> \(secured)\n" +
+            "\tuserName -> \(user)\n" +
+            "\tpassword -> \(pwd)"
+        return str
+    }
 
-  static func deriveHttpProtocol(secured: Bool) -> String {
-    let httpProtocol = (secured) ? "https" : "http"
-    return httpProtocol
-  }
-
+    static func deriveHttpProtocol(secured: Bool) -> String {
+        let httpProtocol = (secured) ? "https" : "http"
+        return httpProtocol
+    }
+    
 }
