@@ -33,9 +33,9 @@ class CouchDBUtils {
     class func createError(code: Int, desc: String?, id: String?, rev: String?) -> NSError {
         // Interim solution while Apple provides clear interoperability on both platforms
         #if os(Linux)
-          var info = [String:Any]()
+            var info = [String:Any]()
         #else
-          var info = [String:String]()
+            var info = [String:String]()
         #endif
 
         info[NSLocalizedDescriptionKey] = desc
@@ -55,23 +55,30 @@ class CouchDBUtils {
         return createError(code, id: id, rev: rev)
     }
 
-    class func prepareRequest(connProperties: ConnectionProperties, method: String, path: String,
-        hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
+    class func prepareRequest(connProperties: ConnectionProperties,
+                              method: String,
+                              path: String,
+                              hasBody: Bool,
+                              contentType: String = "application/json") -> [ClientRequestOptions] {
         var requestOptions = [ClientRequestOptions]()
 
         if let userName = connProperties.userName {
-          requestOptions.append(.Username(userName))
+            requestOptions.append(.Username(userName))
         }
 
         if let password = connProperties.password {
-          requestOptions.append(.Password(password))
+            requestOptions.append(.Password(password))
+        }
+
+        if connProperties.secured {
+            requestOptions.append(.Schema("https://"))
         }
 
         requestOptions.append(.Hostname(connProperties.hostName))
         requestOptions.append(.Port(connProperties.port))
         requestOptions.append(.Method(method))
         requestOptions.append(.Path(path))
-        var headers = [String:String]()
+        var headers = [String : String]()
         headers["Accept"] = "application/json"
         if hasBody {
             headers["Content-Type"] = contentType
@@ -87,7 +94,7 @@ class CouchDBUtils {
             let json = JSON(data: body)
             return json
         } catch {
-          //Log this exception
+            //Log this exception
         }
         return nil
     }
@@ -98,9 +105,8 @@ class CouchDBUtils {
             try response.readAllData(body)
             return body
         } catch {
-          //Log this exception
+            //Log this exception
         }
         return nil
     }
-
 }
