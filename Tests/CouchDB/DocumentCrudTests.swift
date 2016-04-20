@@ -44,14 +44,14 @@ class DocumentCrudTests : XCTestCase {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(hostName: credentials.host,
+        let connProperties = ConnectionProperties(host: credentials.host,
             port: credentials.port, secured: false,
-            userName: credentials.username,
+            username: credentials.username,
             password: credentials.password)
 
         // Create couchDBClient instance using conn properties
         let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-        print("Hostname is: \(couchDBClient.connProperties.hostName)")
+        print("Hostname is: \(couchDBClient.connProperties.host)")
 
         // Check if DB exists
         couchDBClient.dbExists(dbName) {exists, error in
