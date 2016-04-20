@@ -24,24 +24,24 @@ public struct ConnectionProperties {
 
     // Hostname or IP address to the CouchDB server
     public let host: String
-    
+
     // Port number where CouchDB server is listening for incoming connections
     public let port: Int16
-    
+
     // Whether or not to use a secured connection
     public let secured: Bool
-    
-    
-    
+
+
+
     // MARK: Authentication credentials to access CouchDB
-    
+
     // CouchDB admin username
     let username: String?
-    
+
     // CouchDB admin password
     let password: String?
-    
-    
+
+
     public init(host: String, port: Int16, secured: Bool, username: String?, password: String?) {
         self.host = host
         self.port = port
@@ -53,14 +53,14 @@ public struct ConnectionProperties {
         }
     }
 
-    
+
     // MARK: Computed properties
-    
+
     // Use https or http
     var HTTPProtocol: String {
         return secured ? "https" : "http"
     }
-    
+
     // CouchDB URL
     var URL: String {
         if let username = username, let password = password {
@@ -76,10 +76,10 @@ public struct ConnectionProperties {
 extension ConnectionProperties: CustomStringConvertible {
     public var description:String {
         return  "\thost -> \(host)\n" +
-                "\tport -> \(port)\n" +
-                "\tsecured -> \(secured)\n" +
-                "\tusername -> \(username)\n" +
-                "\tpassword -> \(password)\n" +
-                "\tURL -> \(URL)"
+            "\tport -> \(port)\n" +
+            "\tsecured -> \(secured)\n" +
+            "\tusername -> \(username)\n" +
+            "\tpassword -> \(password)\n" +
+            "\tURL -> \(URL)"
     }
 }
