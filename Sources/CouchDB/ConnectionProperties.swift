@@ -16,62 +16,70 @@
 
 import Foundation
 
+import LoggerAPI
+
 // MARK: ConnectionProperties
 
-public class ConnectionProperties {
+public struct ConnectionProperties {
 
-  // Hostname or IP address to the CouchDB server
-  public let hostName: String
+    // Hostname or IP address to the CouchDB server
+    public let host: String
+    
+    // Port number where CouchDB server is listening for incoming connections
+    public let port: Int16
+    
+    // Whether or not to use a secured connection
+    public let secured: Bool
+    
+    
+    
+    // MARK: Authentication credentials to access CouchDB
+    
+    // CouchDB admin username
+    let username: String?
+    
+    // CouchDB admin password
+    let password: String?
+    
+    
+    public init(host: String, port: Int16, secured: Bool, username: String?, password: String?) {
+        self.host = host
+        self.port = port
+        self.secured = secured
+        self.username = username
+        self.password = password
+        if self.username == nil || self.password == nil {
+            Log.warning("Initializing a CouchDB connection without a username or password.")
+        }
+    }
 
-  // Port number where CouchDB server is listening for incoming connections
-  public let port: Int16
+    
+    // MARK: Computed properties
+    
+    // Use https or http
+    var HTTPProtocol: String {
+        return secured ? "https" : "http"
+    }
+    
+    // CouchDB URL
+    var URL: String {
+        if let username = username, let password = password {
+            return "\(HTTPProtocol)://\(username):\(password)@\(host):\(port)"
+        } else {
+            return "\(HTTPProtocol)://\(host):\(port)"
+        }
+    }
+}
 
-  // Seucred boolean
-  public let secured: Bool
+// MARK: Extension for <CustomStringConvertible>
 
-  // Authentication credentials to access Cloudant
-  // Cloudant username
-  let userName: String?
-
-  // Cloudant password
-  let password: String?
-
-  // Cloudant URL
-  // Derived instance variable
-  let url: String?
-
-  public init(hostName: String, port: Int16, secured: Bool, userName: String?, password: String?) {
-      self.hostName = hostName
-      self.port = port
-      self.userName = userName
-      self.password = password
-      self.secured = secured
-      let httpProtocol = ConnectionProperties.deriveHttpProtocol(secured)
-      if userName != nil && password != nil {
-        self.url = "\(httpProtocol)://\(userName):\(password)\(hostName):\(port)"
-      } else {
-        self.url = "\(httpProtocol)://\(hostName):\(port)"
-      }
-  }
-
-  public convenience init(hostName: String, port: Int16, secured: Bool) {
-    self.init(hostName: hostName, port: port, secured: secured, userName: nil, password: nil)
-  }
-
-  public func toString() -> String {
-    let user = self.userName != nil ? self.userName : ""
-    let pwd = self.password != nil ? self.password : ""
-    let str = "\thostName -> \(hostName)\n" +
-      "\tport -> \(port)\n" +
-      "\tsecured -> \(secured)\n" +
-      "\tuserName -> \(user)\n" +
-      "\tpassword -> \(pwd)"
-    return str
-  }
-
-  static func deriveHttpProtocol(secured: Bool) -> String {
-    let httpProtocol = (secured) ? "https" : "http"
-    return httpProtocol
-  }
-
+extension ConnectionProperties: CustomStringConvertible {
+    public var description:String {
+        return  "\thost -> \(host)\n" +
+                "\tport -> \(port)\n" +
+                "\tsecured -> \(secured)\n" +
+                "\tusername -> \(username)\n" +
+                "\tpassword -> \(password)\n" +
+                "\tURL -> \(URL)"
+    }
 }
