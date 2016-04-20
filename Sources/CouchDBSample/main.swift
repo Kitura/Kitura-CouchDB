@@ -75,14 +75,21 @@ let database = couchDBClient.database("kitura_test_db")
 // Document ID
 let documentId = "123456"
 
+#if os(Linux)
+typealias valuetype = Any
+#else
+typealias valuetype = AnyObject
+#endif
+
 // JSON document in string format
-let json: JSON = [
+let jsonDict: [String: valuetype] = [
     "_id": documentId,
     "truncated": false,
     "created_at": "Tue Aug 28 21:16:23 +0000 2012",
     "favorited": false,
-    "value": "value1",
+    "value": "value1"
 ]
+let json = JSON(jsonDict)
 
 
 // MARK: Chainer
