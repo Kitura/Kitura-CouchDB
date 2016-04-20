@@ -29,7 +29,7 @@ import SwiftyJSON
 
 class DBTests : XCTestCase {
 
-  var allTests : [(String, () throws -> Void)] {
+  static var allTests : [(String, DBTests -> () throws -> Void)] {
     return [
         ("testDB", testDB),
     ]
@@ -39,14 +39,14 @@ class DBTests : XCTestCase {
     let credentials = Utils.readCredentials()
 
     // Connection properties for testing Cloudant or CouchDB instance
-    let connProperties = ConnectionProperties(hostName: credentials.host,
+    let connProperties = ConnectionProperties(host: credentials.host,
       port: credentials.port, secured: false,
-      userName: credentials.username,
+      username: credentials.username,
       password: credentials.password)
 
     // Create couchDBClient instance using conn properties
     let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-    print("Hostname is: \(couchDBClient.connProperties.hostName)")
+    print("Hostname is: \(couchDBClient.connProperties.host)")
 
     couchDBClient.createDB("test_db") {(db: Database?, error: NSError?) in
         if let error = error {
