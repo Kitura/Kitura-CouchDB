@@ -42,7 +42,7 @@ public struct ConnectionProperties {
     let password: String?
 
 
-    public init(host: String, port: Int16, secured: Bool, username: String?, password: String?) {
+    public init(host: String, port: Int16, secured: Bool, username: String?=nil, password: String?=nil) {
         self.host = host
         self.port = port
         self.secured = secured
