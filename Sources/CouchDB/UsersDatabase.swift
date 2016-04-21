@@ -70,7 +70,9 @@ public class UsersDatabase : Database {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func getSessionCookie(name: String, password: String, callback: (String?, JSON?, NSError?) -> ()) {
+    public func getSessionCookie(name: String,
+                                 password: String,
+                                 callback: (String?, JSON?, NSError?) -> ()) {
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
