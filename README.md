@@ -44,6 +44,11 @@ Depends on [Kitura-router](https://github.com/IBM-Swift/Kitura-router).
 ## Usage:
 
 (Todo)
+#### Get the "_users" database from the client
+
+```swift
+let userDatabase = databaseClient.usersDatabase()
+```
 
 #### Add user to the "_users" database:
 
