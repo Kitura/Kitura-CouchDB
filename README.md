@@ -45,7 +45,7 @@ Depends on [Kitura-router](https://github.com/IBM-Swift/Kitura-router).
 
 (Todo)
 
-## Add user to the "_users" database:
+### Add user to the "_users" database:
 
 ```swift
 var user = JSONDictionary()
@@ -74,7 +74,7 @@ userDatabase.signupUser(document) { (id, doc, error) in
 })
 ```
 
-## Get a session cookie for the user:
+### Get a session cookie for the user:
 
 ```swift
 userDatabase.getSessionCookie(name, password: password, callback: { (cookie, document, error) in
