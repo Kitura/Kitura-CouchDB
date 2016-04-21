@@ -31,7 +31,7 @@ public class UsersDatabase : Database {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func signupUser(document: JSON,
+    public func createUser(document: JSON,
                            callback: (id: String?, document: JSON?, error: NSError?) -> ()) {
         if let requestBody = document.rawString(), name = document["name"].string {
             let id = "org.couchdb.user:\(name)"
@@ -102,6 +102,50 @@ public class UsersDatabase : Database {
         req.end(body)
     }
 
+    ///
+    /// Verify a session cookie
+    ///
+    /// - Parameter cookie: String of cookie
+    /// - Parameter callback: callback function with the cookie and document's JSON
+    ///
+    public func verifySession(cookie: String, callback: SessionCallback) {
+
+        var requestOptions = [ClientRequestOptions]()
+        requestOptions.append(.Hostname(connProperties.host))
+        requestOptions.append(.Port(connProperties.port))
+        requestOptions.append(.Method("GET"))
+        requestOptions.append(.Path("/_session"))
+
+        var headers = [String : String]()
+        headers["Accept"] = "application/json"
+        headers["Content-Type"] = "application/json"
+        headers["Cookie"] = cookie
+        requestOptions.append(.Headers(headers))
+
+        let req = Http.request(requestOptions) { response in
+            var error: NSError?
+            var document: JSON?
+            if let response = response {
+                document = CouchDBUtils.getBodyAsJson(response)
+
+                if response.statusCode != HttpStatusCode.OK {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                }
+            }
+            else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(cookie: cookie, document: document, error: error)
+        }
+        req.end()
+    }
+
+    ///
+    /// Logout a session
+    ///
+    /// - Parameter cookie: String of cookie
+    /// - Parameter callback: callback function with the cookie and document's JSON
+    ///
     public func sessionLogout(cookie: String, callback: SessionCallback) {
 
         var requestOptions = [ClientRequestOptions]()
