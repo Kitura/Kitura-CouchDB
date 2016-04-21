@@ -23,15 +23,56 @@ import KituraNet
 public class UsersDatabase : Database {
 
     ///
+    /// Create new user by name and password
+    ///
+    /// - Parameter name: String of username
+    /// - Parameter password: String of password
+    /// - Parameter callback: callback function with the cookie and document's JSON
+    ///
+    public func signupUser(document: JSON,
+                           callback: (id: String?, document: JSON?, error: NSError?) -> ()) {
+        if let requestBody = document.rawString(), name = document["name"].string {
+            let id = "org.couchdb.user:\(name)"
+            var doc: JSON?
+            let requestOptions = CouchDBUtils.prepareRequest(connectionProperties,
+                                                method: "PUT",
+                                                path: "/_users/\(id)/",
+                                                hasBody: true,
+                                                contentType: "application/json")
+            let req = Http.request(requestOptions) { response in
+                var error: NSError?
+                if let response = response {
+                    doc = CouchDBUtils.getBodyAsJson(response)
+                    if response.statusCode != HttpStatusCode.CREATED && response.statusCode != HttpStatusCode.ACCEPTED {
+                        error = self.createError(response.statusCode, errorDesc: doc, id: id, rev: nil)
+                    }
+                }
+                else {
+                    error = self.createError(Database.InternalError, id: id, rev: nil)
+                }
+                callback(id: id, document: doc, error: error)
+            }
+            req.end(requestBody)
+        }
+        else {
+            callback(id: nil,
+                     document: nil,
+                     error: self.createError(Database.InvalidDocument, id: nil, rev: nil))
+        }
+    }
+
+    ///
     /// Retrieve a session cookie from the database by name and password
     ///
     /// - Parameter name: String of username
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func getSessionCookie(name: String, password: String, callback: (String?, JSON?, NSError?) -> ()) {
+    public func getSessionCookie(name: String,
+                                 password: String,
+                                 callback: (String?, JSON?, NSError?) -> ()) {
 
-        let requestOptions = userDatabase.prepareRequest(connectionProperties,
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
                                                          path: "/_session",
                                                          hasBody: true,
@@ -50,7 +91,7 @@ public class UsersDatabase : Database {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
                 }
 
-                cookie = sessionResponse?.headers["Set-Cookie"]
+                cookie = response.headers["Set-Cookie"]
             }
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
