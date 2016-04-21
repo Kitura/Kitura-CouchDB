@@ -50,51 +50,46 @@ Depends on [Kitura-router](https://github.com/IBM-Swift/Kitura-router).
 ```swift
 var user = JSONDictionary()
 
-user["type"]        = "user"
-user["roles"]       = []
-user["name"]        = name
-user["password"]    = password
-
-if let email = json["email"].string {
-user["email"]   = email
-}
+user["type"]        	= "user"
+user["roles"]       	= []
+user["name"]        	= name
+user["password"]    	= password
+user["email"]   	= email
 
 let document = JSON(user)
 
 userDatabase.signupUser(document) { (id, doc, error) in
-if let document = doc, let id = id where error == nil {
-print(document)
-response.status(HttpStatusCode.OK).sendJson(document)
-}
-else {
-if let error = error {
-response.status(error.code).sendJson(JSON(error.userInfo))
-}
-else {
-response.status(HttpStatusCode.BAD_REQUEST).send("Signup failed")
-}
-}
-next()
-}
-)
+	if let document = doc, let id = id where error == nil {
+		response.status(HttpStatusCode.OK).sendJson(document)
+	}
+	else {
+		if let error = error {
+			response.status(error.code).sendJson(JSON(error.userInfo))
+		}
+		else {
+			response.status(HttpStatusCode.BAD_REQUEST).send("Signup failed")
+		}
+	}
+	next()
+})
 ```
 
 ## Get a session cookie for the user:
 
 ```swift
 userDatabase.getSessionCookie(name, password: password, callback: { (cookie, document, error) in
-if let error = error {
-response.status(error.code).sendJson(JSON(error.userInfo))
-}
-else {
-var document = JSONDictionary()
+	if let error = error {
+		response.status(error.code).sendJson(JSON(error.userInfo))
+	}
+	else {
+		var document = JSONDictionary()
 
-document["ok"] = true
-document["cookie"] = cookie
+		document["ok"] = true
+		document["cookie"] = cookie
 
-let json = JSON(document)
-response.status(HttpStatusCode.OK).sendJson(json)
-}
-next()
+		let json = JSON(document)
+		response.status(HttpStatusCode.OK).sendJson(json)
+	}
+	next()
 })
 ```
