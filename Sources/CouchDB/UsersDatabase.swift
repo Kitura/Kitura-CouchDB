@@ -18,10 +18,11 @@ import Foundation
 import SwiftyJSON
 import KituraNet
 
-
 // MARK: Users Database
 
 public class UsersDatabase : Database {
+
+    public typealias SessionCallback = (cookie: String?, document: JSON?, error: NSError?) -> ()
 
     ///
     /// Create new user by name and password
@@ -70,9 +71,7 @@ public class UsersDatabase : Database {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func getSessionCookie(name: String,
-                                 password: String,
-                                 callback: (String?, JSON?, NSError?) -> ()) {
+    public func getSessionCookie(name: String, password: String, callback: SessionCallback) {
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
@@ -98,8 +97,43 @@ public class UsersDatabase : Database {
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
             }
-            callback(cookie, document, error)
+            callback(cookie: cookie, document: document, error: error)
         }
         req.end(body)
+    }
+
+    public func sessionLogout(cookie: String, callback: SessionCallback) {
+
+        var requestOptions = [ClientRequestOptions]()
+        requestOptions.append(.Hostname(connProperties.host))
+        requestOptions.append(.Port(connProperties.port))
+        requestOptions.append(.Method("DELETE"))
+        requestOptions.append(.Path("/_session"))
+
+        var headers = [String : String]()
+        headers["Accept"] = "application/json"
+        headers["Content-Type"] = "application/json"
+        headers["Cookie"] = cookie
+        requestOptions.append(.Headers(headers))
+
+        let req = Http.request(requestOptions) { response in
+            var error: NSError?
+            var document: JSON?
+            var cookie: String?
+            if let response = response {
+                document = CouchDBUtils.getBodyAsJson(response)
+
+                if response.statusCode != HttpStatusCode.OK {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                }
+
+                cookie = response.headers["Set-Cookie"]
+            }
+            else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(cookie: cookie, document: document, error: error)
+        }
+        req.end()
     }
 }
