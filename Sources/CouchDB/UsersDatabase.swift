@@ -18,6 +18,7 @@ import Foundation
 import SwiftyJSON
 import KituraNet
 
+
 // MARK: Users Database
 
 public class UsersDatabase : Database {
@@ -34,30 +35,31 @@ public class UsersDatabase : Database {
         if let requestBody = document.rawString(), name = document["name"].string {
             let id = "org.couchdb.user:\(name)"
             var doc: JSON?
-            let requestOptions = CouchDBUtils.prepareRequest(connectionProperties,
-                                                method: "PUT",
-                                                path: "/_users/\(id)/",
-                                                hasBody: true,
-                                                contentType: "application/json")
+            let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                             method: "PUT",
+                                                             path: "/_users/\(id)",
+                                                             hasBody: true,
+                                                             contentType: "application/json")
             let req = Http.request(requestOptions) { response in
                 var error: NSError?
                 if let response = response {
                     doc = CouchDBUtils.getBodyAsJson(response)
                     if response.statusCode != HttpStatusCode.CREATED && response.statusCode != HttpStatusCode.ACCEPTED {
-                        error = self.createError(response.statusCode, errorDesc: doc, id: id, rev: nil)
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: id, rev: nil)
                     }
                 }
                 else {
-                    error = self.createError(Database.InternalError, id: id, rev: nil)
+                    error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
                 }
                 callback(id: id, document: doc, error: error)
             }
+            print(requestBody)
             req.end(requestBody)
         }
         else {
             callback(id: nil,
                      document: nil,
-                     error: self.createError(Database.InvalidDocument, id: nil, rev: nil))
+                     error: CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
         }
     }
 
@@ -68,9 +70,7 @@ public class UsersDatabase : Database {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func getSessionCookie(name: String,
-                                 password: String,
-                                 callback: (String?, JSON?, NSError?) -> ()) {
+    public func getSessionCookie(name: String, password: String, callback: (String?, JSON?, NSError?) -> ()) {
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
