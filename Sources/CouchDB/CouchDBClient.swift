@@ -46,6 +46,15 @@ public class CouchDBClient {
     }
 
     ///
+    /// Returns a UsersDatabase instance
+    ///
+    /// - Returns: a database instance matching the name
+    ///
+    public func usersDatabase() -> UsersDatabase {
+        return UsersDatabase(connProperties: self.connProperties, dbName: "_users")
+    }
+
+    ///
     /// Create a new database
     ///
     /// - Parameter dbName: String for the name of the database
