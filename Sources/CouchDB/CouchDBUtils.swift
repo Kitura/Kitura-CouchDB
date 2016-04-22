@@ -64,6 +64,8 @@ class CouchDBUtils {
         if let password = connProperties.password {
             requestOptions.append(.Password(password))
         }
+
+        requestOptions.append(.Schema("\(connProperties.HTTPProtocol)://"))
         requestOptions.append(.Hostname(connProperties.host))
         requestOptions.append(.Port(connProperties.port))
         requestOptions.append(.Method(method))
@@ -99,5 +101,5 @@ class CouchDBUtils {
         }
         return nil
     }
-    
+
 }
