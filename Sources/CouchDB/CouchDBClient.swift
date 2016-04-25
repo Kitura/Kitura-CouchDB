@@ -158,7 +158,7 @@ public class CouchDBClient {
     ///
     /// - Parameter keyPath: String key path to the parameter
     /// - Parameter value: Value to set
-    /// - Parameter responseBody: Response body of operation
+    /// - Parameter callback: Success of operation
     ///
 
     public func config(keyPath: String, value: CouchDBValue, callback: (Bool, NSError?) -> ()) {
