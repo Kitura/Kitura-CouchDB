@@ -161,7 +161,7 @@ public class CouchDBClient {
     /// - Parameter responseBody: Response body of operation
     ///
 
-    public func config(keyPath: CouchDBKeyPath, value: CouchDBValue, callback: (Bool, NSError?) -> ()) {
+    public func config(keyPath: String, value: CouchDBValue, callback: (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "PUT",
                                                          path: "/_config/\(keyPath)",
