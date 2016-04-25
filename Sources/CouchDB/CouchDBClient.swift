@@ -20,6 +20,12 @@ import KituraNet
 
 // MARK: CouchDBClient
 
+#if os(OSX)
+    public typealias CouchDBValue = AnyObject
+#else
+    public typealias CouchDBValue = Any
+#endif
+
 public class CouchDBClient {
 
     ///
@@ -146,5 +152,41 @@ public class CouchDBClient {
         }
         req.end()
     }
-    
+
+    ///
+    /// Configure CouchDB
+    ///
+    /// - Parameter keyPath: String key path to the parameter
+    /// - Parameter value: Value to set
+    /// - Parameter responseBody: Response body of operation
+    ///
+
+    public func config(keyPath: CouchDBKeyPath, value: CouchDBValue, callback: (Bool, NSError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                         method: "PUT",
+                                                         path: "/_config/\(keyPath)",
+                                                         hasBody: true,
+                                                         contentType: "application/json")
+        let req = Http.request(requestOptions) { response in
+            var configError: NSError?
+            var success = false
+            if let response = response {
+                if response.statusCode == .OK {
+                    success = true
+                }
+                else {
+                    configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                }
+            }
+            callback(success, configError)
+        }
+        let body = JSON("\"\(value)\"")
+
+        if let body = body.rawString() {
+            req.end(body)
+        }
+        else {
+            req.end()
+        }
+    }
 }
