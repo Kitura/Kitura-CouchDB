@@ -189,4 +189,35 @@ public class CouchDBClient {
             req.end()
         }
     }
+    
+    ///
+    /// Get CouchDB Configuration
+    ///
+    /// - Parameter callback: Response body of /_config
+    ///
+
+    public func getConfig(callback: (JSON?, NSError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                         method: "GET",
+                                                         path: "/_config",
+                                                         hasBody: false,
+                                                         contentType: "application/json")
+        let req = Http.request(requestOptions) { response in
+            var configError: NSError?
+            var configJSON: JSON?
+            if let response = response {
+                do {
+                    let body = try response.readString()
+                    if let body = body {
+                        configJSON = JSON(body)
+                    }
+                } catch {
+                    configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                }
+            }
+            callback(configJSON, configError)
+        }
+
+        req.end()
+    }
 }
