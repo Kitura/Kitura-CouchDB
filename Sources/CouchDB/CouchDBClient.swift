@@ -161,7 +161,7 @@ public class CouchDBClient {
     /// - Parameter callback: Success of operation
     ///
 
-    public func config(keyPath: String, value: CouchDBValue, callback: (Bool, NSError?) -> ()) {
+    public func setConfig(keyPath: String, value: CouchDBValue, callback: (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "PUT",
                                                          path: "/_config/\(keyPath)",
@@ -169,16 +169,12 @@ public class CouchDBClient {
                                                          contentType: "application/json")
         let req = Http.request(requestOptions) { response in
             var configError: NSError?
-            var success = false
             if let response = response {
-                if response.statusCode == .OK {
-                    success = true
-                }
-                else {
+                if response.statusCode != .OK {
                     configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
             }
-            callback(success, configError)
+            callback(configError)
         }
         let body = JSON("\"\(value)\"")
 
@@ -189,17 +185,17 @@ public class CouchDBClient {
             req.end()
         }
     }
-    
+
     ///
     /// Get CouchDB Configuration
     ///
-    /// - Parameter callback: Response body of /_config
+    /// - Parameter callback: Response body of /_config/keyPath
     ///
 
-    public func getConfig(callback: (JSON?, NSError?) -> ()) {
+    public func getConfig(keyPath: String, callback: (JSON?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
-                                                         path: "/_config",
+                                                         path: "/_config/\(keyPath)",
                                                          hasBody: false,
                                                          contentType: "application/json")
         let req = Http.request(requestOptions) { response in
