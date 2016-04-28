@@ -67,7 +67,7 @@ public class UsersDatabase : Database {
     ///
     public func getUser(name: String, callback: (document: JSON?, error: NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
-        userDatabase.retrieve(id, callback: { (doc, error) in
+        retrieve(id, callback: { (doc, error) in
             var json = JSONDictionary()
             if let document = doc where error == nil {
                 json["user"] = document.object
