@@ -26,6 +26,11 @@ import KituraNet
     public typealias CouchDBValue = Any
 #endif
 
+///
+/// CouchDB _session callback
+///
+public typealias SessionCallback = (cookie: String?, document: JSON?, error: NSError?) -> ()
+
 public class CouchDBClient {
 
     ///

@@ -21,9 +21,6 @@ import KituraNet
 // MARK: Users Database
 
 public class UsersDatabase : Database {
-
-    public typealias SessionCallback = (cookie: String?, document: JSON?, error: NSError?) -> ()
-
     ///
     /// Create new user by name and password
     ///
