@@ -36,11 +36,7 @@ public class Database {
     public enum QueryParameters {
         case Conflicts (Bool)
         case Descending (Bool)
-        #if os(Linux)
-        case EndKey ([Any])
-        #else
-        case EndKey ([AnyObject])
-        #endif
+        case EndKey (Any)
         case EndKeyDocID (String)
         case Group (Bool)
         case GroupLevel (Int)
@@ -52,11 +48,7 @@ public class Database {
         case Reduce (Bool)
         case Skip (Int)
         case Stale (StaleOptions)
-        #if os(Linux)
-        case StartKey ([Any])
-        #else
-        case StartKey ([AnyObject])
-        #endif
+        case StartKey (Any)
         case StartKeyDocID (String)
         case UpdateSequence (Bool)
         #if os(Linux)
