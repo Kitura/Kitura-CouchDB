@@ -72,7 +72,7 @@ public class Database {
     public let escapedName: String
     public let connProperties: ConnectionProperties
 
-    private static func createQueryParamForArray(array: [Any]) -> String {
+    private static func createQueryParamForArray(_ array: [Any]) -> String {
         var result = "["
         var comma = ""
         for element in array {
