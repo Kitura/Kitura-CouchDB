@@ -21,6 +21,13 @@ import KituraNet
 // MARK: Users Database
 
 public class UsersDatabase : Database {
+
+    #if os(Linux)
+    typealias JSONDictionary = [String: Any]
+    #else
+    typealias JSONDictionary = [String: AnyObject]
+    #endif
+    
     ///
     /// Create new user by name and password
     ///
