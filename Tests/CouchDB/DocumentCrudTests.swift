@@ -40,7 +40,7 @@ class DocumentCrudTests : XCTestCase {
     var jsonDocument: JSON?
     let dbName = "kitura_db"
 
-    func getDatabaseClient() {
+    func getDatabaseClient() -> CouchDBClient {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
@@ -213,15 +213,19 @@ class DocumentCrudTests : XCTestCase {
         let couchDBClient = getDatabaseClient()
         let path = "couch_httpd_auth/allow_persistent_cookies"
 
-        checkDatabase(couchDBClient, path: path, nil) { setValue in
+        checkDatabase(couchDBClient, path: path, value: nil) { setValue in
+            var newValue = "true"
+            if setValue == "\"true\"" {
+                newValue = "false"
+            }
             couchDBClient.setConfig("couch_httpd_auth/allow_persistent_cookies", value: newValue) { (error) in
                 guard error == nil else {
                     XCTFail("Error in configuring the database --> \(error!.code) \(error!.domain) \(error!.userInfo)")
                     return
                 }
 
-                checkDatabase(couchDBClient, path: path, nil) { setValue in
-                    guard value != nil else {
+                self.checkDatabase(couchDBClient, path: path, value: newValue) { setValue in
+                    guard setValue != nil else {
                         XCTFail("Error getting a config value")
                         return
                     }
@@ -232,7 +236,7 @@ class DocumentCrudTests : XCTestCase {
     }
 
     func checkDatabase(client: CouchDBClient, path: String, value: String?, callback: (String?) -> ()) {
-        couchDBClient.getConfig(path) { (document, error) in
+        client.getConfig(path) { (document, error) in
             guard error == nil else {
                 XCTFail("Error getting a config value --> \(error!.code) \(error!.domain) \(error!.userInfo)")
                 callback(nil)
@@ -245,7 +249,7 @@ class DocumentCrudTests : XCTestCase {
                 return
             }
 
-            guard setValue == newValue && value != nil else {
+            guard setValue == value && value != nil else {
                 XCTFail("Error value was already set")
                 callback(nil)
                 return
