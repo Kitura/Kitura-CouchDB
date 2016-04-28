@@ -22,15 +22,15 @@ class CouchDBUtils {
 
     static let couchDBDomain = "CouchDBDomain"
 
-    class func createError(code: HttpStatusCode, id: String?, rev: String?) -> NSError {
+    class func createError(_ code: HttpStatusCode, id: String?, rev: String?) -> NSError {
         return createError(code.rawValue, desc: Http.statusCodes[code.rawValue], id: id, rev: rev)
     }
 
-    class func createError(code: Int, id: String?, rev: String?) -> NSError {
+    class func createError(_ code: Int, id: String?, rev: String?) -> NSError {
         return createError(code, desc: Database.Error[code], id: id, rev: rev)
     }
 
-    class func createError(code: Int, desc: String?, id: String?, rev: String?) -> NSError {
+    class func createError(_ code: Int, desc: String?, id: String?, rev: String?) -> NSError {
         // Interim solution while Apple provides clear interoperability on both platforms
         #if os(Linux)
             var info = [String:Any]()
@@ -48,14 +48,14 @@ class CouchDBUtils {
         return NSError(domain: couchDBDomain, code: code, userInfo: info)
     }
 
-    class func createError(code: HttpStatusCode, errorDesc: JSON?, id: String?, rev: String?) -> NSError {
+    class func createError(_ code: HttpStatusCode, errorDesc: JSON?, id: String?, rev: String?) -> NSError {
         if let errorDesc = errorDesc, let err = errorDesc["error"].string, let reason = errorDesc["reason"].string {
             return createError(code.rawValue, desc: "Error: \(err), reason: \(reason)", id: id, rev: nil)
         }
         return createError(code, id: id, rev: rev)
     }
 
-    class func prepareRequest(connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
+    class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
         var requestOptions = [ClientRequestOptions]()
 
         if let username = connProperties.username {
@@ -64,6 +64,8 @@ class CouchDBUtils {
         if let password = connProperties.password {
             requestOptions.append(.Password(password))
         }
+
+        requestOptions.append(.Schema("\(connProperties.HTTPProtocol)://"))
         requestOptions.append(.Hostname(connProperties.host))
         requestOptions.append(.Port(connProperties.port))
         requestOptions.append(.Method(method))
@@ -77,10 +79,10 @@ class CouchDBUtils {
         return requestOptions
     }
 
-    class func getBodyAsJson (response: ClientResponse) -> JSON? {
+    class func getBodyAsJson (_ response: ClientResponse) -> JSON? {
         do {
             let body = NSMutableData()
-            try response.readAllData(body)
+            try response.readAllData(into: body)
             let json = JSON(data: body)
             return json
         } catch {
@@ -89,15 +91,15 @@ class CouchDBUtils {
         return nil
     }
 
-    class func getBodyAsNSData (response: ClientResponse) -> NSData? {
+    class func getBodyAsNSData (_ response: ClientResponse) -> NSData? {
         do {
             let body = NSMutableData()
-            try response.readAllData(body)
+            try response.readAllData(into: body)
             return body
         } catch {
             //Log this exception
         }
         return nil
     }
-    
+
 }
