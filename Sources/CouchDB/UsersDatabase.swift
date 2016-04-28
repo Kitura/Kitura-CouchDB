@@ -27,7 +27,7 @@ public class UsersDatabase : Database {
     #else
     typealias JSONDictionary = [String: AnyObject]
     #endif
-    
+
     ///
     /// Create new user by name and password
     ///
@@ -78,9 +78,8 @@ public class UsersDatabase : Database {
             var json = JSONDictionary()
             if let document = doc where error == nil {
                 json["user"] = document.object
-                let jsonWithUser = JSON(json)
             }
-            callback(document: jsonWithUser, error: error)
+            callback(document: JSON(json), error: error)
         })
     }
 }
