@@ -94,7 +94,7 @@ let json = JSON(jsonDict)
 
 // MARK: Chainer
 
-func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
+func chainer(_ document: JSON?, next: (revisionNumber: String) -> Void) {
     if let revisionNumber = document?["rev"].string {
         Log.info("revisionNumber is \(revisionNumber)")
         next(revisionNumber: revisionNumber)
