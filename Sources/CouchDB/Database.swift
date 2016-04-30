@@ -36,7 +36,7 @@ public class Database {
     public enum QueryParameters {
         case Conflicts (Bool)
         case Descending (Bool)
-        case EndKey (AnyObject)
+        case EndKey ([AnyObject])
         case EndKeyDocID (String)
         case Group (Bool)
         case GroupLevel (Int)
@@ -48,7 +48,7 @@ public class Database {
         case Reduce (Bool)
         case Skip (Int)
         case Stale (StaleOptions)
-        case StartKey (AnyObject)
+        case StartKey ([AnyObject])
         case StartKeyDocID (String)
         case UpdateSequence (Bool)
         case Keys ([AnyObject])
@@ -72,9 +72,18 @@ public class Database {
         var result = "["
         var comma = ""
         for element in array {
-          result += "\(comma)\(element)"
-          comma = ","
-        }
+          if let item = element as? String {
+            result += "\(comma)\"\(Http.escapeUrl(item))\""
+          } else {
+            let objMirror = Mirror(reflecting: element)
+            if objMirror.subjectType == NSObject.self {
+                result += "\(comma){}"
+            } else {
+                result += "\(comma)\(element)"
+            }
+          }
+           comma = ","
+        }         
         return result + "]"
     }
 
@@ -223,20 +232,20 @@ public class Database {
             case .Descending (let value):
                 paramString += "descending=\(value)&"
             case .EndKey (let value):
-                // if value.count == 1 {
-                //   if let endKey = value[0] as? String {
-                //     paramString += "endkey=\"\(Http.escapeUrl(endKey))\"&"
-                //   } else {
-                //     paramString += "endkey=\"\(value[0])\"&"
-                //   }
-                // } else {
-                //   paramString += "endkey=" + Database.createQueryParamForArray(value) + "&"
-                // }
-                if let value = value as? String {
-                    paramString += "endkey=\"\(Http.escapeUrl(value))\"&"
-                } else if value is Array<AnyObject> {
-                    paramString += "endkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
+                if value.count == 1 {
+                  if let endKey = value[0] as? String {
+                    paramString += "endkey=\"\(Http.escapeUrl(endKey))\"&"
+                  } else {
+                    paramString += "endkey=\(value[0])&"
+                  }
+                } else {
+                  paramString += "endkey=" + Database.createQueryParamForArray(value) + "&"
                 }
+                // if let value = value as? String {
+                //     paramString += "endkey=\"\(Http.escapeUrl(value))\"&"
+                // } else if value is Array<AnyObject> {
+                //     paramString += "endkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
+                // }
             case .EndKeyDocID (let value):
                 paramString += "endkey_docid=\"\(Http.escapeUrl(value))\"&"
             case .Group (let value):
@@ -260,20 +269,20 @@ public class Database {
             case .Stale (let value):
                 paramString += "stale=\"\(value)\"&"
             case .StartKey (let value):
-              // if value.count == 1 {
-              //   if let startKey = value[0] as? String {
-              //     paramString += "startkey=\"\(Http.escapeUrl(startKey))\"&"
-              //   } else {
-              //     paramString += "startkey=\"\(value[0])\"&"
-              //   }
-              // } else {
-              //   paramString += "startkey=" + Database.createQueryParamForArray(value) + "&"
-              // }
-                if value is String {
-                    paramString += "startkey=\"\(Http.escapeUrl(value as! String))\"&"
-                } else if value is Array<AnyObject> {
-                    paramString += "startkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
+              if value.count == 1 {
+                if let startKey = value[0] as? String {
+                  paramString += "startkey=\"\(Http.escapeUrl(startKey))\"&"
+                } else {
+                  paramString += "startkey=\(value[0])&"
                 }
+              } else {
+                paramString += "startkey=" + Database.createQueryParamForArray(value) + "&"
+              }
+                // if value is String {
+                //     paramString += "startkey=\"\(Http.escapeUrl(value as! String))\"&"
+                // } else if value is Array<AnyObject> {
+                //     paramString += "startkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
+                // }
             case .StartKeyDocID (let value):
                 paramString += "start_key_doc_id=\"\(Http.escapeUrl(value))\"&"
             case .UpdateSequence (let value):
