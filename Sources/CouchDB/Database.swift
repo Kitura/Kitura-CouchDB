@@ -36,7 +36,7 @@ public class Database {
     public enum QueryParameters {
         case Conflicts (Bool)
         case Descending (Bool)
-        case EndKey (Any)
+        case EndKey ([AnyObject])
         case EndKeyDocID (String)
         case Group (Bool)
         case GroupLevel (Int)
@@ -48,14 +48,10 @@ public class Database {
         case Reduce (Bool)
         case Skip (Int)
         case Stale (StaleOptions)
-        case StartKey (Any)
+        case StartKey ([AnyObject])
         case StartKeyDocID (String)
         case UpdateSequence (Bool)
-        #if os(Linux)
-        case Keys ([Any])
-        #else
         case Keys ([AnyObject])
-        #endif
     }
 
     public static let Error = [
@@ -72,13 +68,22 @@ public class Database {
     public let escapedName: String
     public let connProperties: ConnectionProperties
 
-    private static func createQueryParamForArray(_ array: [Any]) -> String {
+    private static func createQueryParamForArray(_ array: Array<AnyObject>) -> String {
         var result = "["
         var comma = ""
         for element in array {
-            result += "\(comma)\(element)"
-            comma = ","
-        }
+          if let item = element as? String {
+            result += "\(comma)\"\(Http.escapeUrl(item))\""
+          } else {
+            let objMirror = Mirror(reflecting: element)
+            if objMirror.subjectType == NSObject.self {
+                result += "\(comma){}"
+            } else {
+                result += "\(comma)\(element)"
+            }
+          }
+           comma = ","
+        }         
         return result + "]"
     }
 
@@ -218,12 +223,7 @@ public class Database {
 
     public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: (JSON?, NSError?) -> ()) {
         var paramString = ""
-
-        #if os(Linux)
-            var keys: [Any]?
-        #else
-            var keys: [AnyObject]?
-        #endif
+        var keys: [AnyObject]?
 
         for param in params {
             switch param {
@@ -232,11 +232,20 @@ public class Database {
             case .Descending (let value):
                 paramString += "descending=\(value)&"
             case .EndKey (let value):
-                if let value = value as? String {
-                    paramString += "endkey=\"\(Http.escapeUrl(value))\"&"
-                } else if value is [Any] {
-                    paramString += "endkey=" + Database.createQueryParamForArray(value as! [Any]) + "&"
+                if value.count == 1 {
+                  if let endKey = value[0] as? String {
+                    paramString += "endkey=\"\(Http.escapeUrl(endKey))\"&"
+                  } else {
+                    paramString += "endkey=\(value[0])&"
+                  }
+                } else {
+                  paramString += "endkey=" + Database.createQueryParamForArray(value) + "&"
                 }
+                // if let value = value as? String {
+                //     paramString += "endkey=\"\(Http.escapeUrl(value))\"&"
+                // } else if value is Array<AnyObject> {
+                //     paramString += "endkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
+                // }
             case .EndKeyDocID (let value):
                 paramString += "endkey_docid=\"\(Http.escapeUrl(value))\"&"
             case .Group (let value):
@@ -260,11 +269,20 @@ public class Database {
             case .Stale (let value):
                 paramString += "stale=\"\(value)\"&"
             case .StartKey (let value):
-                if value is String {
-                    paramString += "startkey=\"\(Http.escapeUrl(value as! String))\"&"
-                } else if value is [Any] {
-                    paramString += "startkey=" + Database.createQueryParamForArray(value as! [Any]) + "&"
+              if value.count == 1 {
+                if let startKey = value[0] as? String {
+                  paramString += "startkey=\"\(Http.escapeUrl(startKey))\"&"
+                } else {
+                  paramString += "startkey=\(value[0])&"
                 }
+              } else {
+                paramString += "startkey=" + Database.createQueryParamForArray(value) + "&"
+              }
+                // if value is String {
+                //     paramString += "startkey=\"\(Http.escapeUrl(value as! String))\"&"
+                // } else if value is Array<AnyObject> {
+                //     paramString += "startkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
+                // }
             case .StartKeyDocID (let value):
                 paramString += "start_key_doc_id=\"\(Http.escapeUrl(value))\"&"
             case .UpdateSequence (let value):
@@ -273,8 +291,8 @@ public class Database {
                 if value.count == 1 {
                     if value[0] is String {
                         paramString += "key=\"\(Http.escapeUrl(value[0] as! String))\"&"
-                    } else if value[0] is [Any] {
-                        paramString += "key=" + Database.createQueryParamForArray(value[0] as! [Any]) + "&"
+                    } else if value[0] is Array<AnyObject> {
+                        paramString += "key=" + Database.createQueryParamForArray(value[0] as! Array<AnyObject>) + "&"
                     }
                 } else {
                     keys = value
@@ -395,7 +413,7 @@ public class Database {
         }
         req.end()
     }
-    
+
     public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(Http.escapeUrl(docId))/\(Http.escapeUrl(attachmentName))?rev=\(Http.escapeUrl(docRevison))", hasBody: false)
         let req = Http.request(requestOptions) { response in
