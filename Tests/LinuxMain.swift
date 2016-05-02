@@ -20,5 +20,6 @@ import XCTest
 
 XCTMain([
     testCase(DocumentCrudTests.allTests),
-    testCase(DBTests.allTests)
+    testCase(DBTests.allTests),
+    testable(DocumentViewTests.allTests)
 ])
