@@ -1,18 +1,18 @@
 /**
- * Copyright IBM Corporation 2016
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- **/
+* Copyright IBM Corporation 2016
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+**/
 
 import XCTest
 
@@ -31,7 +31,7 @@ class DocumentCrudTests : XCTestCase {
 
     static var allTests : [(String, DocumentCrudTests -> () throws -> Void)] {
         return [
-                   ("testCrudTest", testCrudTest)
+            ("testCrudTest", testCrudTest)
         ]
     }
 
@@ -40,58 +40,51 @@ class DocumentCrudTests : XCTestCase {
     var jsonDocument: JSON?
     let dbName = "kitura_db"
 
-    func getDatabaseClient() -> CouchDBClient {
+    func testCrudTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port, secured: false,
-                                                  username: credentials.username,
-                                                  password: credentials.password)
+            port: credentials.port, secured: false,
+            username: credentials.username,
+            password: credentials.password)
 
         // Create couchDBClient instance using conn properties
         let couchDBClient = CouchDBClient(connectionProperties: connProperties)
         print("Hostname is: \(couchDBClient.connProperties.host)")
 
-        return couchDBClient
-    }
-
-    func testCrudTest() {
-        // Create couchDBClient instance using conn properties
-        let couchDBClient = getDatabaseClient()
-
         // Check if DB exists
         couchDBClient.dbExists(dbName) {exists, error in
-            guard error == nil else {
+            if  error != nil  {
                 XCTFail("Failed checking existence of database \(self.dbName)")
-                return
-            }
-            if  exists  {
-                // Create database handle to perform any document operations
-                self.database = couchDBClient.database(self.dbName)
-
-                // Start tests...
-                self.createDocument()
-                self.setDatabaseConfig()
             }
             else {
-                // Create database
-                couchDBClient.createDB(self.dbName) {db, error in
-                    guard error == nil else {
-                        XCTFail("Failed creating the database \(self.dbName)")
-                        return
-                    }
-                    self.database = db
+                if  exists  {
+                    // Create database handle to perform any document operations
+                    self.database = couchDBClient.database(self.dbName)
 
                     // Start tests...
                     self.createDocument()
-                    self.setDatabaseConfig()
+                }
+                else {
+                    // Create database
+                    couchDBClient.createDB(self.dbName) {db, error in
+                        if  error != nil  {
+                            XCTFail("Failed creating the database \(self.dbName)")
+                        }
+                        else {
+                            self.database = db
+
+                            // Start tests...
+                            self.createDocument()
+                        }
+                    }
                 }
             }
         }
     }
 
-    func chainer(document: JSON?, next: (revisionNumber: String) -> Void) {
+    func chainer(_ document: JSON?, next: (revisionNumber: String) -> Void) {
         if let revisionNumber = document?["rev"].string {
             print("revisionNumber is \(revisionNumber)")
             next(revisionNumber: revisionNumber)
@@ -104,7 +97,7 @@ class DocumentCrudTests : XCTestCase {
     }
 
     //Delete document
-    func deleteDocument(revisionNumber: String) {
+    func deleteDocument(_ revisionNumber: String) {
         database!.delete(documentId, rev: revisionNumber, failOnNotFound: true, callback: { (error: NSError?) in
             if (error != nil) {
                 XCTFail("Error in rereading document \(error!.code) \(error!.domain) \(error!.userInfo)")
@@ -136,7 +129,7 @@ class DocumentCrudTests : XCTestCase {
     }
 
     //Update document
-    func updateDocument(revisionNumber: String) {
+    func updateDocument(_ revisionNumber: String) {
         //var json = JSON(data: jsonData!)
         jsonDocument!["value"] = "value2"
         database!.update(documentId, rev: revisionNumber, document: jsonDocument!, callback: { (rev: String?, document: JSON?, error: NSError?) in
@@ -159,7 +152,7 @@ class DocumentCrudTests : XCTestCase {
     func readDocument() {
         database!.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
             if error != nil {
-                XCTFail("Error in reading document \(error!.code) \(error!.domain) \(error!.userInfo)")
+               XCTFail("Error in reading document \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
                 guard let document = document as JSON!,
                     let id = document["_id"].string,
@@ -180,20 +173,20 @@ class DocumentCrudTests : XCTestCase {
     func createDocument() {
         // JSON document in string format
         let jsonStr =
-            "{" +
-                "\"_id\": \"\(documentId)\"," +
-                "\"coordinates\": null," +
-                "\"truncated\": false," +
-                "\"created_at\": \"Tue Aug 28 21:16:23 +0000 2012\"," +
-                "\"favorited\": false," +
-                "\"value\": \"value1\"" +
+        "{" +
+            "\"_id\": \"\(documentId)\"," +
+            "\"coordinates\": null," +
+            "\"truncated\": false," +
+            "\"created_at\": \"Tue Aug 28 21:16:23 +0000 2012\"," +
+            "\"favorited\": false," +
+            "\"value\": \"value1\"" +
         "}"
 
         // Convert JSON string to NSData
         #if os(Linux)
-            let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
+        let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
         #else
-            let jsonData = jsonStr.bridge().data(usingEncoding: NSUTF8StringEncoding)
+        let jsonData = jsonStr.bridge().data(using: NSUTF8StringEncoding)
         #endif
         // Convert NSData to JSON object
         jsonDocument = JSON(data: jsonData!)
@@ -205,57 +198,5 @@ class DocumentCrudTests : XCTestCase {
                 self.readDocument()
             }
         })
-    }
-
-    // Database configuration
-    func setDatabaseConfig() {
-        print(">> Configuring the database.")
-        let couchDBClient = getDatabaseClient()
-        let path = "couch_httpd_auth/allow_persistent_cookies"
-
-        checkDatabase(couchDBClient, path: path, value: nil) { setValue in
-            var newValue = "true"
-            if setValue == "\"true\"" {
-                newValue = "false"
-            }
-            couchDBClient.setConfig("couch_httpd_auth/allow_persistent_cookies", value: newValue) { (error) in
-                guard error == nil else {
-                    XCTFail("Error in configuring the database --> \(error!.code) \(error!.domain) \(error!.userInfo)")
-                    return
-                }
-
-                self.checkDatabase(couchDBClient, path: path, value: newValue) { setValue in
-                    guard setValue != nil else {
-                        XCTFail("Error getting a config value")
-                        return
-                    }
-                    print(">> Successfully configured the database.")
-                }
-            }
-        }
-    }
-
-    func checkDatabase(client: CouchDBClient, path: String, value: String?, callback: (String?) -> ()) {
-        client.getConfig(path) { (document, error) in
-            guard error == nil else {
-                XCTFail("Error getting a config value --> \(error!.code) \(error!.domain) \(error!.userInfo)")
-                callback(nil)
-                return
-            }
-
-            guard let setValue = document?.string else {
-                XCTFail("Error getting a config value --> \(document)")
-                callback(nil)
-                return
-            }
-
-            guard setValue == value && value != nil else {
-                XCTFail("Error value was already set")
-                callback(nil)
-                return
-            }
-
-            callback(setValue)
-        }
     }
 }
