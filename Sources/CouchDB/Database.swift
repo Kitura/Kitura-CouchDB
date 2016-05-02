@@ -51,7 +51,11 @@ public class Database {
         case StartKey ([AnyObject])
         case StartKeyDocID (String)
         case UpdateSequence (Bool)
+        #if os(Linux)
+        case Keys ([Any])
+        #else
         case Keys ([AnyObject])
+        #endif
     }
 
     public static let Error = [
