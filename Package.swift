@@ -30,7 +30,7 @@ let package = Package(
     ],
     dependencies: [
         .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0, minor: 6),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 11),
+        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 12),
         .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 6)
     ]
 )
