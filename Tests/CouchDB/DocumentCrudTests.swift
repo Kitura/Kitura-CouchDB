@@ -183,11 +183,7 @@ class DocumentCrudTests : XCTestCase {
         "}"
 
         // Convert JSON string to NSData
-        #if os(Linux)
-        let jsonData = jsonStr.bridge().dataUsingEncoding(NSUTF8StringEncoding)
-        #else
-        let jsonData = jsonStr.bridge().data(using: NSUTF8StringEncoding)
-        #endif
+        let jsonData = jsonStr.data(using: NSUTF8StringEncoding)
         // Convert NSData to JSON object
         jsonDocument = JSON(data: jsonData!)
         database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
