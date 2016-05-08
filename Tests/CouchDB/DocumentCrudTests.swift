@@ -44,6 +44,7 @@ class DocumentCrudTests : XCTestCase {
 #else
     let dbName = "kitura_db"
 #endif
+    var couchDBClient: CouchDBClient?
 
     func testCrudTest() {
         let credentials = Utils.readCredentials()
@@ -55,7 +56,12 @@ class DocumentCrudTests : XCTestCase {
             password: credentials.password)
 
         // Create couchDBClient instance using conn properties
-        let couchDBClient = CouchDBClient(connectionProperties: connProperties)
+        couchDBClient = CouchDBClient(connectionProperties: connProperties)
+        guard let couchDBClient = couchDBClient  else {
+            XCTFail("Failed to create CouchDB Client.")
+            exit(1)
+        }
+
         print("Hostname is: \(couchDBClient.connProperties.host)")
 
         // Check if DB exists
@@ -65,25 +71,21 @@ class DocumentCrudTests : XCTestCase {
             }
             else {
                 if  exists  {
-                    // Create database handle to perform any document operations
-                    self.database = couchDBClient.database(self.dbName)
-
-                    // Start tests...
-                    self.createDocument()
+                    // Delete the old database and then re-create it to avoid state issues
+                    let db = couchDBClient.database(self.dbName)
+                    couchDBClient.deleteDB(db) {error in
+                        if let error = error {
+                            XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+                        }
+                        else {
+                            // Create database
+                            self.createDatabase()
+                        }
+                    }
                 }
                 else {
                     // Create database
-                    couchDBClient.createDB(self.dbName) {db, error in
-                        if  error != nil  {
-                            XCTFail("Failed creating the database \(self.dbName). Error=\(error!.localizedDescription)")
-                        }
-                        else {
-                            self.database = db
-
-                            // Start tests...
-                            self.createDocument()
-                        }
-                    }
+                    self.createDatabase()
                 }
             }
         }
@@ -199,5 +201,26 @@ class DocumentCrudTests : XCTestCase {
                 self.readDocument()
             }
         })
+    }
+
+    // Create Database closure
+    func createDatabase() {
+        guard let couchDBClient = couchDBClient  else {
+            XCTFail("Failed to create CouchDB Client.")
+            return
+        }
+
+        couchDBClient.createDB(self.dbName) {db, error in
+            if  error != nil  {
+                XCTFail("Failed creating the database \(self.dbName). Error=\(error!.localizedDescription)")
+                exit(1)
+            }
+            else {
+                self.database = db
+
+                // Start tests...
+                self.createDocument()
+            }
+        }
     }
 }
