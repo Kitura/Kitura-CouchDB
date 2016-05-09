@@ -53,12 +53,12 @@ public class CouchDBClient {
     ///
     public func createDB(_ dbName: String, callback: (Database?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
-                                                         path: "/\(Http.escapeUrl(dbName))", hasBody: false)
-        let req = Http.request(requestOptions) { response in
+                                                         path: "/\(HTTP.escapeUrl(dbName))", hasBody: false)
+        let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var db: Database?
             if let response = response {
-                if response.statusCode == HttpStatusCode.CREATED {
+                if response.statusCode == .Created {
                     db = Database(connProperties: self.connProperties, dbName: dbName)
                 } else {
                     if let descOpt = try? response.readString(), let desc = descOpt {
@@ -84,12 +84,12 @@ public class CouchDBClient {
     ///
     public func dbExists(_ dbName: String, callback: (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
-                                                         path: "/\(Http.escapeUrl(dbName))", hasBody: false)
-        let req = Http.request(requestOptions) { response in
+                                                         path: "/\(HTTP.escapeUrl(dbName))", hasBody: false)
+        let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var exists = false
             if let response = response {
-                if response.statusCode == HttpStatusCode.OK {
+                if response.statusCode == HTTPStatusCode.OK {
                     exists = true
                 }
             } else {
@@ -118,11 +118,11 @@ public class CouchDBClient {
     ///
     public func deleteDB(_ dbName: String, callback: (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
-                                                         path: "/\(Http.escapeUrl(dbName))", hasBody: false)
-        let req = Http.request(requestOptions) { response in
+                                                         path: "/\(HTTP.escapeUrl(dbName))", hasBody: false)
+        let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
-                if response.statusCode != HttpStatusCode.OK {
+                if response.statusCode != HTTPStatusCode.OK {
                     if let descOpt = try? response.readString(), let desc = descOpt {
                         error = CouchDBUtils.createError(response.statusCode,
                                                          errorDesc: JSON.parse(string: desc), id: nil, rev: nil)
