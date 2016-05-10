@@ -59,23 +59,23 @@ class CouchDBUtils {
         var requestOptions = [ClientRequestOptions]()
 
         if let username = connProperties.username {
-            requestOptions.append(.Username(username))
+            requestOptions.append(.username(username))
         }
         if let password = connProperties.password {
-            requestOptions.append(.Password(password))
+            requestOptions.append(.password(password))
         }
 
-        requestOptions.append(.Schema("\(connProperties.HTTPProtocol)://"))
-        requestOptions.append(.Hostname(connProperties.host))
-        requestOptions.append(.Port(connProperties.port))
-        requestOptions.append(.Method(method))
-        requestOptions.append(.Path(path))
+        requestOptions.append(.schema("\(connProperties.HTTPProtocol)://"))
+        requestOptions.append(.hostname(connProperties.host))
+        requestOptions.append(.port(connProperties.port))
+        requestOptions.append(.method(method))
+        requestOptions.append(.path(path))
         var headers = [String:String]()
         headers["Accept"] = "application/json"
         if hasBody {
             headers["Content-Type"] = contentType
         }
-        requestOptions.append(.Headers(headers))
+        requestOptions.append(.headers(headers))
         return requestOptions
     }
 

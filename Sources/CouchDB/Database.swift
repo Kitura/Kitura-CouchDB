@@ -30,28 +30,28 @@ public class Database {
     ///
     public enum StaleOptions {
         case OK
-        case UpdateAfter
+        case updateAfter
     }
 
     public enum QueryParameters {
-        case Conflicts (Bool)
-        case Descending (Bool)
-        case EndKey ([AnyObject])
-        case EndKeyDocID (String)
-        case Group (Bool)
-        case GroupLevel (Int)
-        case IncludeDocs (Bool)
-        case Attachments (Bool)
-        case AttachmentEncodingInfo (Bool)
-        case InclusiveEnd(Bool)
-        case Limit (Int)
-        case Reduce (Bool)
-        case Skip (Int)
-        case Stale (StaleOptions)
-        case StartKey ([AnyObject])
-        case StartKeyDocID (String)
-        case UpdateSequence (Bool)
-        case Keys ([AnyObject])
+        case conflicts (Bool)
+        case descending (Bool)
+        case endKey ([AnyObject])
+        case endKeyDocID (String)
+        case group (Bool)
+        case groupLevel (Int)
+        case includeDocs (Bool)
+        case attachments (Bool)
+        case attachmentEncodingInfo (Bool)
+        case inclusiveEnd(Bool)
+        case limit (Int)
+        case reduce (Bool)
+        case skip (Int)
+        case stale (StaleOptions)
+        case startKey ([AnyObject])
+        case startKeyDocID (String)
+        case updateSequence (Bool)
+        case keys ([AnyObject])
     }
 
     public static let Error = [
@@ -83,7 +83,7 @@ public class Database {
             }
           }
            comma = ","
-        }         
+        }
         return result + "]"
     }
 
@@ -148,7 +148,7 @@ public class Database {
                 if let response = response {
                     doc = CouchDBUtils.getBodyAsJson(response)
                     revision = doc?["rev"].string
-                    if response.statusCode != .Created && response.statusCode != .Accepted {
+                    if response.statusCode != .created && response.statusCode != .accepted {
                         error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: id, rev: rev)
                     }
                 } else {
@@ -181,7 +181,7 @@ public class Database {
                     doc = CouchDBUtils.getBodyAsJson(response)
                     id = doc?["id"].string
                     revision = doc?["rev"].string
-                    if response.statusCode != .Created && response.statusCode != .Accepted {
+                    if response.statusCode != .created && response.statusCode != .accepted {
                         error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: nil, rev: nil)
                     }
                 } else {
@@ -209,8 +209,8 @@ public class Database {
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .Accepted)
-                    || (response.statusCode == .NotFound && failOnNotFound) {
+                if (response.statusCode != .OK && response.statusCode != .accepted)
+                    || (response.statusCode == .notFound && failOnNotFound) {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsJson(response), id: id, rev: rev)
                 }
             } else {
@@ -227,11 +227,11 @@ public class Database {
 
         for param in params {
             switch param {
-            case .Conflicts (let value):
+            case .conflicts (let value):
                 paramString += "conflicts=\(value)&"
-            case .Descending (let value):
+            case .descending (let value):
                 paramString += "descending=\(value)&"
-            case .EndKey (let value):
+            case .endKey (let value):
                 if value.count == 1 {
                   if let endKey = value[0] as? String {
                     paramString += "endkey=\"\(HTTP.escapeUrl(endKey))\"&"
@@ -246,29 +246,29 @@ public class Database {
                 // } else if value is Array<AnyObject> {
                 //     paramString += "endkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
                 // }
-            case .EndKeyDocID (let value):
+            case .endKeyDocID (let value):
                 paramString += "endkey_docid=\"\(HTTP.escapeUrl(value))\"&"
-            case .Group (let value):
+            case .group (let value):
                 paramString += "group=\(value)&"
-            case .GroupLevel (let value):
+            case .groupLevel (let value):
                 paramString += "group_level=\(value)&"
-            case .IncludeDocs (let value):
+            case .includeDocs (let value):
                 paramString += "include_docs=\(value)&"
-            case .Attachments (let value):
+            case .attachments (let value):
                 paramString += "attachments=\(value)&"
-            case .AttachmentEncodingInfo (let value):
+            case .attachmentEncodingInfo (let value):
                 paramString += "att_encoding_info=\(value)&"
-            case .InclusiveEnd (let value):
+            case .inclusiveEnd (let value):
                 paramString += "inclusive_end=\(value)&"
-            case .Limit (let value):
+            case .limit (let value):
                 paramString += "limit=\(value)&"
-            case .Reduce (let value):
+            case .reduce (let value):
                 paramString += "reduce=\(value)&"
-            case .Skip (let value):
+            case .skip (let value):
                 paramString += "skip=\(value)&"
-            case .Stale (let value):
+            case .stale (let value):
                 paramString += "stale=\"\(value)\"&"
-            case .StartKey (let value):
+            case .startKey (let value):
               if value.count == 1 {
                 if let startKey = value[0] as? String {
                   paramString += "startkey=\"\(HTTP.escapeUrl(startKey))\"&"
@@ -283,11 +283,11 @@ public class Database {
                 // } else if value is Array<AnyObject> {
                 //     paramString += "startkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
                 // }
-            case .StartKeyDocID (let value):
+            case .startKeyDocID (let value):
                 paramString += "start_key_doc_id=\"\(HTTP.escapeUrl(value))\"&"
-            case .UpdateSequence (let value):
+            case .updateSequence (let value):
                 paramString += "update_seq=\(value)&"
-            case .Keys (let value):
+            case .keys (let value):
                 if value.count == 1 {
                     if value[0] is String {
                         paramString += "key=\"\(HTTP.escapeUrl(value[0] as! String))\"&"
@@ -343,7 +343,7 @@ public class Database {
                 var error: NSError?
                 if let response = response {
                     doc = CouchDBUtils.getBodyAsJson(response)
-                    if response.statusCode != .Created && response.statusCode != .Accepted {
+                    if response.statusCode != .created && response.statusCode != .accepted {
                         error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: nil, rev: nil)
                     }
                 } else {
@@ -362,8 +362,8 @@ public class Database {
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .Accepted)
-                    || (response.statusCode == .NotFound && failOnNotFound) {
+                if (response.statusCode != .OK && response.statusCode != .accepted)
+                    || (response.statusCode == .notFound && failOnNotFound) {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsJson(response), id: designName, rev: revision)
                 }
             } else {
@@ -383,7 +383,7 @@ public class Database {
             if let response = response {
                 doc = CouchDBUtils.getBodyAsJson(response)
                 revision = doc?["rev"].string
-                if response.statusCode != .Created && response.statusCode != .Accepted {
+                if response.statusCode != .created && response.statusCode != .accepted {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: docId, rev: docRevison)
                 }
             } else {
@@ -419,8 +419,8 @@ public class Database {
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .Accepted)
-                    || (response.statusCode == .NotFound && failOnNotFound) {
+                if (response.statusCode != .OK && response.statusCode != .accepted)
+                    || (response.statusCode == .notFound && failOnNotFound) {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsJson(response), id: docId, rev: docRevison)
                 }
             } else {

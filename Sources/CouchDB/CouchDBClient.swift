@@ -58,7 +58,7 @@ public class CouchDBClient {
             var error: NSError?
             var db: Database?
             if let response = response {
-                if response.statusCode == .Created {
+                if response.statusCode == .created {
                     db = Database(connProperties: self.connProperties, dbName: dbName)
                 } else {
                     if let descOpt = try? response.readString(), let desc = descOpt {
