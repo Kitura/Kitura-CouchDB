@@ -21,7 +21,7 @@ import KituraNet
 // MARK: Database
 
 public class Database {
-
+    
     ///
     /// Options handling when to update
     ///
@@ -32,11 +32,17 @@ public class Database {
         case OK
         case updateAfter
     }
-
+    
+    #if os(Linux)
+    public typealias KeyType = Any
+    #else
+    public typealias KeyType = AnyObject
+    #endif
+    
     public enum QueryParameters {
         case conflicts (Bool)
         case descending (Bool)
-        case endKey ([AnyObject])
+        case endKey ([KeyType])
         case endKeyDocID (String)
         case group (Bool)
         case groupLevel (Int)
@@ -48,45 +54,45 @@ public class Database {
         case reduce (Bool)
         case skip (Int)
         case stale (StaleOptions)
-        case startKey ([AnyObject])
+        case startKey ([KeyType])
         case startKeyDocID (String)
         case updateSequence (Bool)
-        case keys ([AnyObject])
+        case keys ([KeyType])
     }
-
+    
     public static let Error = [
                                   InternalError: "Internal Error",
                                   InvalidDocument: "Invalid Document Body",
                                   InvalidAttachment: "Invalid attachment"
     ]
-
+    
     public static let InternalError = 0
     public static let InvalidDocument = 1
     public static let InvalidAttachment = 2
-
+    
     public let name : String
     public let escapedName: String
     public let connProperties: ConnectionProperties
-
-    private static func createQueryParamForArray(_ array: Array<AnyObject>) -> String {
+    
+    private static func createQueryParamForArray(_ array: [KeyType]) -> String {
         var result = "["
         var comma = ""
         for element in array {
-          if let item = element as? String {
-            result += "\(comma)\"\(HTTP.escapeUrl(item))\""
-          } else {
-            let objMirror = Mirror(reflecting: element)
-            if objMirror.subjectType == NSObject.self {
-                result += "\(comma){}"
+            if let item = element as? String {
+                result += "\(comma)\"\(HTTP.escapeUrl(item))\""
             } else {
-                result += "\(comma)\(element)"
+                let objMirror = Mirror(reflecting: element)
+                if objMirror.subjectType == NSObject.self {
+                    result += "\(comma){}"
+                } else {
+                    result += "\(comma)\(element)"
+                }
             }
-          }
-           comma = ","
+            comma = ","
         }
         return result + "]"
     }
-
+    
     ///
     /// Initializes a new Database instance
     ///
@@ -100,7 +106,7 @@ public class Database {
         self.escapedName = HTTP.escapeUrl(name)
         self.connProperties = connProperties
     }
-
+    
     ///
     /// Retrieve a document from the database by ID
     ///
@@ -108,7 +114,7 @@ public class Database {
     /// - Parameter callback: callback function with the document's JSON
     ///
     public func retrieve(_ id: String, callback: (JSON?, NSError?) -> ()) {
-
+        
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(escapedName)/\(HTTP.escapeUrl(id))", hasBody: false)
         var document: JSON?
@@ -126,7 +132,7 @@ public class Database {
         }
         req.end()
     }
-
+    
     ///
     /// Update a document in the database
     ///
@@ -137,7 +143,7 @@ public class Database {
     ///
     public func update(_ id: String, rev: String, document: JSON,
                        callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
-
+        
         if let requestBody = document.rawString() {
             var doc: JSON?
             var revision: String?
@@ -162,7 +168,7 @@ public class Database {
                      error: CouchDBUtils.createError(Database.InvalidDocument, id: id, rev: rev))
         }
     }
-
+    
     ///
     /// Create a new document
     ///
@@ -194,7 +200,7 @@ public class Database {
             callback(id: nil, rev: nil, document: nil, error: CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
         }
     }
-
+    
     ///
     /// Deletes a document
     ///
@@ -204,7 +210,7 @@ public class Database {
     /// - Parameter callback: a function containing an error
     ///
     public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
-
+        
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escapeUrl(id))?rev=\(HTTP.escapeUrl(rev))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
@@ -220,11 +226,15 @@ public class Database {
         }
         req.end()
     }
-
+    
     public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: (JSON?, NSError?) -> ()) {
         var paramString = ""
-        var keys: [AnyObject]?
-
+        #if os(Linux)
+            var keys: [Any]?
+        #else
+            var keys: [AnyObject]?
+        #endif
+        
         for param in params {
             switch param {
             case .conflicts (let value):
@@ -233,19 +243,14 @@ public class Database {
                 paramString += "descending=\(value)&"
             case .endKey (let value):
                 if value.count == 1 {
-                  if let endKey = value[0] as? String {
-                    paramString += "endkey=\"\(HTTP.escapeUrl(endKey))\"&"
-                  } else {
-                    paramString += "endkey=\(value[0])&"
-                  }
+                    if let endKey = value[0] as? String {
+                        paramString += "endkey=\"\(HTTP.escapeUrl(endKey))\"&"
+                    } else {
+                        paramString += "endkey=\(value[0])&"
+                    }
                 } else {
-                  paramString += "endkey=" + Database.createQueryParamForArray(value) + "&"
+                    paramString += "endkey=" + Database.createQueryParamForArray(value) + "&"
                 }
-                // if let value = value as? String {
-                //     paramString += "endkey=\"\(HTTP.escapeUrl(value))\"&"
-                // } else if value is Array<AnyObject> {
-                //     paramString += "endkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
-                // }
             case .endKeyDocID (let value):
                 paramString += "endkey_docid=\"\(HTTP.escapeUrl(value))\"&"
             case .group (let value):
@@ -269,20 +274,15 @@ public class Database {
             case .stale (let value):
                 paramString += "stale=\"\(value)\"&"
             case .startKey (let value):
-              if value.count == 1 {
-                if let startKey = value[0] as? String {
-                  paramString += "startkey=\"\(HTTP.escapeUrl(startKey))\"&"
+                if value.count == 1 {
+                    if let startKey = value[0] as? String {
+                        paramString += "startkey=\"\(HTTP.escapeUrl(startKey))\"&"
+                    } else {
+                        paramString += "startkey=\(value[0])&"
+                    }
                 } else {
-                  paramString += "startkey=\(value[0])&"
+                    paramString += "startkey=" + Database.createQueryParamForArray(value) + "&"
                 }
-              } else {
-                paramString += "startkey=" + Database.createQueryParamForArray(value) + "&"
-              }
-                // if value is String {
-                //     paramString += "startkey=\"\(HTTP.escapeUrl(value as! String))\"&"
-                // } else if value is Array<AnyObject> {
-                //     paramString += "startkey=" + Database.createQueryParamForArray(value as! Array<AnyObject>) + "&"
-                // }
             case .startKeyDocID (let value):
                 paramString += "start_key_doc_id=\"\(HTTP.escapeUrl(value))\"&"
             case .updateSequence (let value):
@@ -291,19 +291,19 @@ public class Database {
                 if value.count == 1 {
                     if value[0] is String {
                         paramString += "key=\"\(HTTP.escapeUrl(value[0] as! String))\"&"
-                    } else if value[0] is Array<AnyObject> {
-                        paramString += "key=" + Database.createQueryParamForArray(value[0] as! Array<AnyObject>) + "&"
+                    } else if value[0] is [Any] {
+                        paramString += "key=" + Database.createQueryParamForArray(value[0] as! [KeyType]) + "&"
                     }
                 } else {
                     keys = value
                 }
             }
         }
-
+        
         if paramString.characters.count > 0 {
             paramString = "?" + String(paramString.characters.dropLast())
         }
-
+        
         var method = "GET"
         var hasBody = false
         var body: JSON?
@@ -312,7 +312,7 @@ public class Database {
             hasBody = true
             body = JSON(["keys": keys])
         }
-
+        
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: method, path: "/\(escapedName)/_design/\(HTTP.escapeUrl(design))/_view/\(HTTP.escapeUrl(view))\(paramString)", hasBody: hasBody)
         var document: JSON?
         let req = HTTP.request(requestOptions) { response in
@@ -327,14 +327,14 @@ public class Database {
             }
             callback(document, error)
         }
-
+        
         if let _ = body, let bodyAsString = body!.rawString() {
             req.end(bodyAsString)
         } else {
             req.end()
         }
     }
-
+    
     public func createDesign(_ designName: String, document: JSON, callback: (JSON?, NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var doc: JSON?
@@ -356,7 +356,7 @@ public class Database {
             callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: designName, rev: nil))
         }
     }
-
+    
     public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escapeUrl(designName))?rev=\(HTTP.escapeUrl(revision))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -373,7 +373,7 @@ public class Database {
         }
         req.end()
     }
-
+    
     public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: NSData, contentType: String, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
         var doc: JSON?
         var revision: String?
@@ -393,7 +393,7 @@ public class Database {
         }
         req.end(attachmentData)
     }
-
+    
     public func retrieveAttachment(_ docId: String, attachmentName: String, callback: (NSData?, NSError?, String?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escapeUrl(docId))/\(HTTP.escapeUrl(attachmentName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -413,7 +413,7 @@ public class Database {
         }
         req.end()
     }
-
+    
     public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escapeUrl(docId))/\(HTTP.escapeUrl(attachmentName))?rev=\(HTTP.escapeUrl(docRevison))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
