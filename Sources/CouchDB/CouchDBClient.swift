@@ -250,7 +250,7 @@ public class CouchDBClient {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
                 }
 
-                cookie = response.headers["Set-Cookie"]
+                cookie = response.headers["Set-Cookie"]?.first
             }
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
@@ -329,7 +329,7 @@ public class CouchDBClient {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
                 }
 
-                cookie = response.headers["Set-Cookie"]
+                cookie = response.headers["Set-Cookie"]?.first
             }
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)

@@ -402,7 +402,7 @@ public class Database {
             var contentType: String?
             if let response = response {
                 attachment = CouchDBUtils.getBodyAsNSData(response)
-                contentType = response.headers["Content-Type"]
+                contentType = response.headers["Content-Type"]?.first
                 if response.statusCode != HTTPStatusCode.OK {
                     error = CouchDBUtils.createError(response.statusCode, id: docId, rev: nil)
                 }
