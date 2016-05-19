@@ -22,8 +22,8 @@ class CouchDBUtils {
 
     static let couchDBDomain = "CouchDBDomain"
 
-    class func createError(_ code: HttpStatusCode, id: String?, rev: String?) -> NSError {
-        return createError(code.rawValue, desc: Http.statusCodes[code.rawValue], id: id, rev: rev)
+    class func createError(_ code: HTTPStatusCode, id: String?, rev: String?) -> NSError {
+        return createError(code.rawValue, desc: HTTP.statusCodes[code.rawValue], id: id, rev: rev)
     }
 
     class func createError(_ code: Int, id: String?, rev: String?) -> NSError {
@@ -48,7 +48,7 @@ class CouchDBUtils {
         return NSError(domain: couchDBDomain, code: code, userInfo: info)
     }
 
-    class func createError(_ code: HttpStatusCode, errorDesc: JSON?, id: String?, rev: String?) -> NSError {
+    class func createError(_ code: HTTPStatusCode, errorDesc: JSON?, id: String?, rev: String?) -> NSError {
         if let errorDesc = errorDesc, let err = errorDesc["error"].string, let reason = errorDesc["reason"].string {
             return createError(code.rawValue, desc: "Error: \(err), reason: \(reason)", id: id, rev: nil)
         }
@@ -59,23 +59,23 @@ class CouchDBUtils {
         var requestOptions = [ClientRequestOptions]()
 
         if let username = connProperties.username {
-            requestOptions.append(.Username(username))
+            requestOptions.append(.username(username))
         }
         if let password = connProperties.password {
-            requestOptions.append(.Password(password))
+            requestOptions.append(.password(password))
         }
 
-        requestOptions.append(.Schema("\(connProperties.HTTPProtocol)://"))
-        requestOptions.append(.Hostname(connProperties.host))
-        requestOptions.append(.Port(connProperties.port))
-        requestOptions.append(.Method(method))
-        requestOptions.append(.Path(path))
+        requestOptions.append(.schema("\(connProperties.HTTPProtocol)://"))
+        requestOptions.append(.hostname(connProperties.host))
+        requestOptions.append(.port(connProperties.port))
+        requestOptions.append(.method(method))
+        requestOptions.append(.path(path))
         var headers = [String:String]()
         headers["Accept"] = "application/json"
         if hasBody {
             headers["Content-Type"] = contentType
         }
-        requestOptions.append(.Headers(headers))
+        requestOptions.append(.headers(headers))
         return requestOptions
     }
 
