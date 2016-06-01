@@ -229,11 +229,7 @@ public class Database {
     
     public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: (JSON?, NSError?) -> ()) {
         var paramString = ""
-        #if os(Linux)
-            var keys: [Any]?
-        #else
-            var keys: [AnyObject]?
-        #endif
+        var keys: [KeyType]?
         
         for param in params {
             switch param {
@@ -291,7 +287,7 @@ public class Database {
                 if value.count == 1 {
                     if value[0] is String {
                         paramString += "key=\"\(HTTP.escapeUrl(value[0] as! String))\"&"
-                    } else if value[0] is [Any] {
+                    } else if value[0] is [KeyType] {
                         paramString += "key=" + Database.createQueryParamForArray(value[0] as! [KeyType]) + "&"
                     }
                 } else {
