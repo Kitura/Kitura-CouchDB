@@ -291,6 +291,8 @@ public class Database {
                 if value.count == 1 {
                     if value[0] is String {
                         paramString += "key=\"\(HTTP.escapeUrl(value[0] as! String))\"&"
+                    } else if value[0] is Int {
+                        paramString += "key=\(value[0])&"
                     } else if value[0] is [Any] {
                         paramString += "key=" + Database.createQueryParamForArray(value[0] as! [KeyType]) + "&"
                     }
