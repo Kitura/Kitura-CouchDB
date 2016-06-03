@@ -181,7 +181,11 @@ public class CouchDBClient {
             }
             callback(configError)
         }
+#if os(Linux)
         let body = JSON("\"\(value)\"")
+#else
+            let body = JSON("\"\(value)\"" as NSString)
+#endif
 
         if let body = body.rawString() {
             req.end(body)
@@ -210,7 +214,11 @@ public class CouchDBClient {
                 do {
                     let body = try response.readString()
                     if let body = body {
+#if os(Linux)
                         configJSON = JSON(body)
+#else
+                        configJSON = JSON(body as NSString)
+#endif
                     }
                 } catch {
                     configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)

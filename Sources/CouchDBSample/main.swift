@@ -73,7 +73,11 @@ Log.info("Hostname is: \(couchDBClient.connProperties.host)")
 let database = couchDBClient.database("kitura_test_db")
 
 // Document ID
+#if os(Linux)
 let documentId = "123456"
+#else
+let documentId = "123456" as NSString
+#endif
 
 #if os(Linux)
 typealias valuetype = Any
@@ -89,7 +93,11 @@ let jsonDict: [String: valuetype] = [
     "favorited": false,
     "value": "value1"
 ]
+#if os(Linux)
 let json = JSON(jsonDict)
+#else
+let json = JSON(jsonDict as AnyObject)
+#endif
 
 
 // MARK: Chainer
@@ -125,7 +133,7 @@ func createDocument() {
 // MARK: Read document
 
 func readDocument() {
-    database.retrieve(documentId, callback: { (document: JSON?, error: NSError?) in
+    database.retrieve(documentId as String, callback: { (document: JSON?, error: NSError?) in
         if let error = error {
             Log.error("Oops something went wrong; could not read document.")
             Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
@@ -143,7 +151,7 @@ func readDocument() {
 func updateDocument(revisionNumber: String) {
     //var json = JSON(data: jsonData!)
     //json["value"] = "value2"
-    database.update(documentId, rev: revisionNumber, document: json,
+    database.update(documentId as String, rev: revisionNumber, document: json,
         callback: { (rev: String?, document: JSON?, error: NSError?) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not update document.")
@@ -160,7 +168,7 @@ func updateDocument(revisionNumber: String) {
 // MARK: Delete document
 
 func deleteDocument(revisionNumber: String) {
-    database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
+    database.delete(documentId as String, rev: revisionNumber, failOnNotFound: false,
         callback: { (error: NSError?) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not delete document.")
