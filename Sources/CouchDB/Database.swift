@@ -310,7 +310,11 @@ public class Database {
         if let keys = keys {
             method = "POST"
             hasBody = true
+#if os(Linux)
             body = JSON(["keys": keys])
+#else
+            body = JSON(["keys": keys] as AnyObject)
+#endif
         }
         
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: method, path: "/\(escapedName)/_design/\(HTTP.escapeUrl(design))/_view/\(HTTP.escapeUrl(view))\(paramString)", hasBody: hasBody)

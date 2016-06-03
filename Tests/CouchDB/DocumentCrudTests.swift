@@ -29,7 +29,7 @@ import SwiftyJSON
 
 class DocumentCrudTests : XCTestCase {
 
-    static var allTests : [(String, DocumentCrudTests -> () throws -> Void)] {
+    static var allTests : [(String, (DocumentCrudTests) -> () throws -> Void)] {
         return [
             ("testCrudTest", testCrudTest)
         ]
