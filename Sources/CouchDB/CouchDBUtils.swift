@@ -55,8 +55,8 @@ class CouchDBUtils {
         return createError(code, id: id, rev: rev)
     }
 
-    class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequestOptions] {
-        var requestOptions = [ClientRequestOptions]()
+    class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequest.Options] {
+        var requestOptions: [ClientRequest.Options] = []
 
         if let username = connProperties.username {
             requestOptions.append(.username(username))
