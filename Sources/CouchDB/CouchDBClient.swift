@@ -73,7 +73,7 @@ public class CouchDBClient {
     ///
     public func createDB(_ dbName: String, callback: (Database?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
-                                                         path: "/\(HTTP.escapeUrl(dbName))", hasBody: false)
+                                                         path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var db: Database?
@@ -104,7 +104,7 @@ public class CouchDBClient {
     ///
     public func dbExists(_ dbName: String, callback: (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
-                                                         path: "/\(HTTP.escapeUrl(dbName))", hasBody: false)
+                                                         path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var exists = false
@@ -138,7 +138,7 @@ public class CouchDBClient {
     ///
     public func deleteDB(_ dbName: String, callback: (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
-                                                         path: "/\(HTTP.escapeUrl(dbName))", hasBody: false)
+                                                         path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
@@ -181,7 +181,11 @@ public class CouchDBClient {
             }
             callback(configError)
         }
+#if os(Linux)
         let body = JSON("\"\(value)\"")
+#else
+            let body = JSON("\"\(value)\"" as NSString)
+#endif
 
         if let body = body.rawString() {
             req.end(body)
@@ -210,7 +214,11 @@ public class CouchDBClient {
                 do {
                     let body = try response.readString()
                     if let body = body {
+#if os(Linux)
                         configJSON = JSON(body)
+#else
+                        configJSON = JSON(body as NSString)
+#endif
                     }
                 } catch {
                     configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
@@ -268,7 +276,7 @@ public class CouchDBClient {
     ///
     public func getSession(cookie: String, callback: SessionCallback) {
 
-        var requestOptions = [ClientRequestOptions]()
+        var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
         requestOptions.append(.port(connProperties.port))
         requestOptions.append(.method("GET"))
@@ -306,7 +314,7 @@ public class CouchDBClient {
     ///
     public func deleteSession(cookie: String, callback: SessionCallback) {
 
-        var requestOptions = [ClientRequestOptions]()
+        var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
         requestOptions.append(.port(connProperties.port))
         requestOptions.append(.method("DELETE"))

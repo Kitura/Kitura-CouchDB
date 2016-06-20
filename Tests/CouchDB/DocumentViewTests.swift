@@ -29,7 +29,7 @@ import SwiftyJSON
 
 class DocumentViewTests : XCTestCase {
     
-    static var allTests : [(String, DocumentViewTests -> () throws -> Void)] {
+    static var allTests : [(String, (DocumentViewTests) -> () throws -> Void)] {
         return [
                    ("testViewTest", testViewTest)
         ]
@@ -128,7 +128,11 @@ class DocumentViewTests : XCTestCase {
     
     //Read document
     func readDocument() {
+#if os(Linux)
         let key = "viewTest"
+#else
+        let key: NSString = "viewTest"
+ #endif
         database!.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (document: JSON?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in querying by view document \(error.code) \(error.domain) \(error.userInfo)")
@@ -139,7 +143,7 @@ class DocumentViewTests : XCTestCase {
                 }
                 
                 XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")
-                XCTAssertEqual(key, value, "Wrong value read from document")
+                XCTAssertEqual(key as String, value, "Wrong value read from document")
                 
                 print(">> Successfully read the following JSON document: ")
                 print(document!)
@@ -187,8 +191,8 @@ class DocumentViewTests : XCTestCase {
                     ]
             ]
         #else
-            let designDocument : [String:AnyObject] =
-                ["_id" : "_design/\(name)",
+            let designDocument : AnyObject =
+                ["_id" : "_design/\(name)" as NSString,
                  "views" : [
                                "matching" : [
                                                 "map" : "function(doc) { emit(doc.value, doc); }"

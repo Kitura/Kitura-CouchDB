@@ -79,7 +79,7 @@ public class Database {
         var comma = ""
         for element in array {
             if let item = element as? String {
-                result += "\(comma)\"\(HTTP.escapeUrl(item))\""
+                result += "\(comma)\"\(HTTP.escape(url: item))\""
             } else {
                 let objMirror = Mirror(reflecting: element)
                 if objMirror.subjectType == NSObject.self {
@@ -103,7 +103,7 @@ public class Database {
     ///
     public init (connProperties: ConnectionProperties, dbName: String) {
         self.name = dbName
-        self.escapedName = HTTP.escapeUrl(name)
+        self.escapedName = HTTP.escape(url: name)
         self.connProperties = connProperties
     }
     
@@ -116,7 +116,7 @@ public class Database {
     public func retrieve(_ id: String, callback: (JSON?, NSError?) -> ()) {
         
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
-                                                         path: "/\(escapedName)/\(HTTP.escapeUrl(id))", hasBody: false)
+                                                         path: "/\(escapedName)/\(HTTP.escape(url: id))", hasBody: false)
         var document: JSON?
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
@@ -148,7 +148,7 @@ public class Database {
             var doc: JSON?
             var revision: String?
             let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
-                                                             path: "/\(escapedName)/\(HTTP.escapeUrl(id))?rev=\(HTTP.escapeUrl(rev))", hasBody: true)
+                                                             path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: true)
             let req = HTTP.request(requestOptions) { response in
                 var error: NSError?
                 if let response = response {
@@ -211,7 +211,7 @@ public class Database {
     ///
     public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
         
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escapeUrl(id))?rev=\(HTTP.escapeUrl(rev))", hasBody: false)
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
@@ -244,7 +244,7 @@ public class Database {
             case .endKey (let value):
                 if value.count == 1 {
                     if let endKey = value[0] as? String {
-                        paramString += "endkey=\"\(HTTP.escapeUrl(endKey))\"&"
+                        paramString += "endkey=\"\(HTTP.escape(url: endKey))\"&"
                     } else {
                         paramString += "endkey=\(value[0])&"
                     }
@@ -252,7 +252,7 @@ public class Database {
                     paramString += "endkey=" + Database.createQueryParamForArray(value) + "&"
                 }
             case .endKeyDocID (let value):
-                paramString += "endkey_docid=\"\(HTTP.escapeUrl(value))\"&"
+                paramString += "endkey_docid=\"\(HTTP.escape(url: value))\"&"
             case .group (let value):
                 paramString += "group=\(value)&"
             case .groupLevel (let value):
@@ -276,7 +276,7 @@ public class Database {
             case .startKey (let value):
                 if value.count == 1 {
                     if let startKey = value[0] as? String {
-                        paramString += "startkey=\"\(HTTP.escapeUrl(startKey))\"&"
+                        paramString += "startkey=\"\(HTTP.escape(url: startKey))\"&"
                     } else {
                         paramString += "startkey=\(value[0])&"
                     }
@@ -284,13 +284,13 @@ public class Database {
                     paramString += "startkey=" + Database.createQueryParamForArray(value) + "&"
                 }
             case .startKeyDocID (let value):
-                paramString += "start_key_doc_id=\"\(HTTP.escapeUrl(value))\"&"
+                paramString += "start_key_doc_id=\"\(HTTP.escape(url: value))\"&"
             case .updateSequence (let value):
                 paramString += "update_seq=\(value)&"
             case .keys (let value):
                 if value.count == 1 {
                     if value[0] is String {
-                        paramString += "key=\"\(HTTP.escapeUrl(value[0] as! String))\"&"
+                        paramString += "key=\"\(HTTP.escape(url: value[0] as! String))\"&"
                     } else if value[0] is [Any] {
                         paramString += "key=" + Database.createQueryParamForArray(value[0] as! [KeyType]) + "&"
                     }
@@ -310,10 +310,14 @@ public class Database {
         if let keys = keys {
             method = "POST"
             hasBody = true
+#if os(Linux)
             body = JSON(["keys": keys])
+#else
+            body = JSON(["keys": keys] as AnyObject)
+#endif
         }
         
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: method, path: "/\(escapedName)/_design/\(HTTP.escapeUrl(design))/_view/\(HTTP.escapeUrl(view))\(paramString)", hasBody: hasBody)
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: method, path: "/\(escapedName)/_design/\(HTTP.escape(url: design))/_view/\(HTTP.escape(url: view))\(paramString)", hasBody: hasBody)
         var document: JSON?
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
@@ -338,7 +342,7 @@ public class Database {
     public func createDesign(_ designName: String, document: JSON, callback: (JSON?, NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var doc: JSON?
-            let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/_design/\(HTTP.escapeUrl(designName))", hasBody: true)
+            let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))", hasBody: true)
             let req = HTTP.request(requestOptions) { response in
                 var error: NSError?
                 if let response = response {
@@ -358,7 +362,7 @@ public class Database {
     }
     
     public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escapeUrl(designName))?rev=\(HTTP.escapeUrl(revision))", hasBody: false)
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))?rev=\(HTTP.escape(url: revision))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
@@ -377,7 +381,7 @@ public class Database {
     public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: NSData, contentType: String, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
         var doc: JSON?
         var revision: String?
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escapeUrl(docId))/\(HTTP.escapeUrl(attachmentName))?rev=\(HTTP.escapeUrl(docRevison))", hasBody: true, contentType: contentType)
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: true, contentType: contentType)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
@@ -395,7 +399,7 @@ public class Database {
     }
     
     public func retrieveAttachment(_ docId: String, attachmentName: String, callback: (NSData?, NSError?, String?) -> ())   {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escapeUrl(docId))/\(HTTP.escapeUrl(attachmentName))", hasBody: false)
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var attachment: NSData?
@@ -415,7 +419,7 @@ public class Database {
     }
     
     public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escapeUrl(docId))/\(HTTP.escapeUrl(attachmentName))?rev=\(HTTP.escapeUrl(docRevison))", hasBody: false)
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {

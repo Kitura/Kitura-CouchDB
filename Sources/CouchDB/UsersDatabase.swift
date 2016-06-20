@@ -79,7 +79,11 @@ public class UsersDatabase : Database {
             if let document = doc where error == nil {
                 json["user"] = document.object
             }
+#if os(Linux)
             callback(document: JSON(json), error: error)
+#else
+            callback(document: JSON(json as AnyObject), error: error)
+#endif
         })
     }
 }
