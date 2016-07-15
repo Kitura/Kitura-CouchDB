@@ -165,7 +165,11 @@ class DocumentViewTests : XCTestCase {
         "}"
         
         // Convert JSON string to NSData
-        let jsonData = jsonStr.data(using: NSUTF8StringEncoding)
+        #if os(Linux)
+            let jsonData = jsonStr.data(using: NSUTF8StringEncoding)
+        #else
+            let jsonData = jsonStr.data(using: String.Encoding.utf8)
+        #endif
         // Convert NSData to JSON object
         jsonDocument = JSON(data: jsonData!)
         database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
