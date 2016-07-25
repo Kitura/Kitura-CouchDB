@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=master)](https://travis-ci.org/IBM-Swift/Kitura-CouchDB)
 [![Build Status](https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=develop)](https://travis-ci.org/IBM-Swift/Kitura-CouchDB)
 
-
 ***CouchDB library for [Kitura](https://github.com/IBM-Swift/Kitura)***
 
 This library allows Kitura applications to interact with a CouchDB database.
