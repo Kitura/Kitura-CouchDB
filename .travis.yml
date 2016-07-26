@@ -6,6 +6,7 @@ branches:
   only:
     - master
     - develop
+    - travis_script
     - /^issue.*$/
 
 notifications:
@@ -28,7 +29,4 @@ before_install:
   - git clone -b master https://$GITHUB_USER:$GITHUB_PWD@github.com/IBM-Swift/Kitura-TestingCredentials.git
 
 script:
-  - echo ">> Let's build and test the '$TRAVIS_BRANCH' branch for Kitura-CouchDB."
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./Kitura-Build/run_kitura_ubuntu_container.sh $TRAVIS_BRANCH $TRAVIS_BUILD_DIR Kitura-CouchDB ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./Kitura-Build/build_kitura_package.sh ; fi
-  - echo ">> Build and tests completed. See above for status."
+  - ./Kitura-Build/script_travis.sh $TRAVIS_OS_NAME $TRAVIS_BRANCH $TRAVIS_BUILD_DIR Kitura-CouchDB 
