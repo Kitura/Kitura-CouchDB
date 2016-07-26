@@ -134,6 +134,37 @@ public class Database {
     }
     
     ///
+    /// Retrieve all documents from the database
+    ///
+    /// - Parameter includeDocuments: A boolean value that indicates whether to include the full content 
+    ///                               of the documents. Default is false.
+    /// - Parameter callback: callback function with the document's JSON
+    ///
+    public func retrieveAll(includeDocuments: Bool = false, callback: (JSON?, NSError?) -> ()) {
+        
+        var path = "/\(escapedName)/_all_docs"
+        if includeDocuments {
+            path += "?include_docs=true"
+        }
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
+                                                         path: path, hasBody: false)
+        var document: JSON?
+        let req = HTTP.request(requestOptions) { response in
+            var error: NSError?
+            if let response = response {
+                document = CouchDBUtils.getBodyAsJson(response)
+                if response.statusCode != HTTPStatusCode.OK {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                }
+            } else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(document, error)
+        }
+        req.end()
+    }
+    
+    ///
     /// Update a document in the database
     ///
     /// - Parameter id: String ID for the document
