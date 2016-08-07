@@ -81,8 +81,8 @@ class CouchDBUtils {
 
     class func getBodyAsJson (_ response: ClientResponse) -> JSON? {
         do {
-            let body = NSMutableData()
-            try response.readAllData(into: body)
+            var body = Data()
+            try response.readAllData(into: &body)
             let json = JSON(data: body)
             return json
         } catch {
@@ -91,10 +91,10 @@ class CouchDBUtils {
         return nil
     }
 
-    class func getBodyAsNSData (_ response: ClientResponse) -> NSData? {
+    class func getBodyAsData (_ response: ClientResponse) -> Data? {
         do {
-            let body = NSMutableData()
-            try response.readAllData(into: body)
+            var body = Data()
+            try response.readAllData(into: &body)
             return body
         } catch {
             //Log this exception
