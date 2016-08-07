@@ -205,8 +205,7 @@ class DocumentCrudTests : XCTestCase {
                 XCTFail("Error in retrieving all documents \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
                 guard let document = document as JSON!,
-                    let totalRows = document["total_rows"].number
-                    where totalRows == 2 else {
+                    let totalRows = document["total_rows"].number, totalRows == 2 else {
                         XCTFail("Error: Wrong number of documents")
                         exit(1)
                 }
@@ -236,11 +235,7 @@ class DocumentCrudTests : XCTestCase {
     //Create document closure
     func createDocument(fromJSONString jsonString: String) {
        // Convert JSON string to NSData
-        #if os(Linux)
-            let jsonData = jsonString.data(using: NSUTF8StringEncoding)
-        #else
-            let jsonData = jsonString.data(using: String.Encoding.utf8)
-        #endif
+        let jsonData = jsonString.data(using: .utf8)
         // Convert NSData to JSON object
         jsonDocument = JSON(data: jsonData!)
         database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
@@ -248,7 +243,7 @@ class DocumentCrudTests : XCTestCase {
                 XCTFail("Error in creating document \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
                 print(">> Successfully created the JSON document.")
-                if let documentId = id where documentId == self.documentId1 {
+                if let documentId = id, documentId == self.documentId1 {
                     self.createDocument(fromJSONString: self.jsonString2)
                 }
                 else {
