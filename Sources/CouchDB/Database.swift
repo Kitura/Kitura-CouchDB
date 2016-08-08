@@ -405,7 +405,7 @@ public class Database {
         req.end()
     }
     
-    public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: NSData, contentType: String, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
+    public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: Data, contentType: String, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
         var doc: JSON?
         var revision: String?
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: true, contentType: contentType)
@@ -425,14 +425,14 @@ public class Database {
         req.end(attachmentData)
     }
     
-    public func retrieveAttachment(_ docId: String, attachmentName: String, callback: (NSData?, NSError?, String?) -> ())   {
+    public func retrieveAttachment(_ docId: String, attachmentName: String, callback: (Data?, NSError?, String?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var attachment: NSData?
+            var attachment: Data?
             var contentType: String?
             if let response = response {
-                attachment = CouchDBUtils.getBodyAsNSData(response)
+                attachment = CouchDBUtils.getBodyAsData(response)
                 contentType = response.headers["Content-Type"]?.first
                 if response.statusCode != HTTPStatusCode.OK {
                     error = CouchDBUtils.createError(response.statusCode, id: docId, rev: nil)

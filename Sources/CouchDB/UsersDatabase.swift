@@ -36,7 +36,7 @@ public class UsersDatabase : Database {
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
     public func createUser(document: JSON, callback: (id: String?, document: JSON?, error: NSError?) -> ()) {
-        if let requestBody = document.rawString(), name = document["name"].string {
+        if let requestBody = document.rawString(), let name = document["name"].string {
             let id = "org.couchdb.user:\(name)"
             var doc: JSON?
             let requestOptions = CouchDBUtils.prepareRequest(connProperties,
@@ -76,7 +76,7 @@ public class UsersDatabase : Database {
         let id = "org.couchdb.user:\(name)"
         retrieve(id, callback: { (doc, error) in
             var json = JSONDictionary()
-            if let document = doc where error == nil {
+            if let document = doc, error == nil {
                 json["user"] = document.object
             }
 #if os(Linux)

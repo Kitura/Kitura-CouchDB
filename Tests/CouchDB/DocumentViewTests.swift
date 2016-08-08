@@ -132,12 +132,12 @@ class DocumentViewTests : XCTestCase {
         let key = "viewTest"
 #else
         let key: NSString = "viewTest"
- #endif
+#endif
         database!.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (document: JSON?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in querying by view document \(error.code) \(error.domain) \(error.userInfo)")
             } else {
-                guard let id = document!["rows"][0]["id"].string, value = document!["rows"][0]["value"]["value"].string where value == "viewTest" else {
+                guard let id = document!["rows"][0]["id"].string, let value = document!["rows"][0]["value"]["value"].string, value == "viewTest" else {
                     XCTFail("Error: Keys not found when reading document")
                     exit(1)
                 }
@@ -165,11 +165,7 @@ class DocumentViewTests : XCTestCase {
         "}"
         
         // Convert JSON string to NSData
-        #if os(Linux)
-            let jsonData = jsonStr.data(using: NSUTF8StringEncoding)
-        #else
-            let jsonData = jsonStr.data(using: String.Encoding.utf8)
-        #endif
+        let jsonData = jsonStr.data(using: .utf8)
         // Convert NSData to JSON object
         jsonDocument = JSON(data: jsonData!)
         database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in

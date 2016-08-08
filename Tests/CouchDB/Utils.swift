@@ -41,12 +41,17 @@ class Utils {
     }
 
     static func readCredentials() -> Credentials {
-        // Read in credentials an NSData
-        let credentialsData = NSData(contentsOfFile: "Tests/CouchDB/credentials.json")
-        XCTAssertNotNil(credentialsData, "Failed to read in the credentials.json file")
-
+        // Read in credentials an Data
+        let credentialsData: Data
+        do {
+            credentialsData = try Data(contentsOf: URL(fileURLWithPath: "Tests/CouchDB/credentials.json"))
+        }
+        catch {
+            XCTFail("Failed to read in the credentials.json file")
+            exit(1)
+        }
         // Convert NSData to JSON object
-        let credentialsJson = JSON(data: credentialsData!)
+        let credentialsJson = JSON(data: credentialsData)
 
         guard
           let hostName = credentialsJson["host"].string,
