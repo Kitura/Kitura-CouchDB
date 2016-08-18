@@ -88,10 +88,10 @@ typealias valuetype = AnyObject
 // JSON document in string format
 let jsonDict: [String: valuetype] = [
     "_id": documentId,
-    "truncated": false as AnyObject,
-    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as AnyObject,
-    "favorited": false as AnyObject,
-    "value": "value1" as AnyObject
+    "truncated": false as valuetype,
+    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as valuetype,
+    "favorited": false as valuetype,
+    "value": "value1" as valuetype
 ]
 #if os(Linux)
 let json = JSON(jsonDict)
