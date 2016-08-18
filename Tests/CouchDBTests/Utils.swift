@@ -52,7 +52,7 @@ class Utils {
         }
         // Convert NSData to JSON object
         let credentialsJson = JSON(data: credentialsData)
-        print("\(credentialsJson)")
+
         guard
           let hostName = credentialsJson["host"].string,
           let port = credentialsJson["port"].int16
