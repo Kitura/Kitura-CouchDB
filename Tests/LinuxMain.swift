@@ -16,7 +16,7 @@
 
 import XCTest
 
-@testable import CouchDBTestSuite
+@testable import CouchDBTests
 
 XCTMain([
     testCase(DocumentCrudTests.allTests),
