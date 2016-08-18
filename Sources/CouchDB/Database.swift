@@ -113,7 +113,7 @@ public class Database {
     /// - Parameter id: String ID for the document
     /// - Parameter callback: callback function with the document's JSON
     ///
-    public func retrieve(_ id: String, callback: (JSON?, NSError?) -> ()) {
+    public func retrieve(_ id: String, callback: @escaping (JSON?, NSError?) -> ()) {
         
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(escapedName)/\(HTTP.escape(url: id))", hasBody: false)
@@ -140,7 +140,7 @@ public class Database {
     ///                               of the documents. Default is false.
     /// - Parameter callback: callback function with the document's JSON
     ///
-    public func retrieveAll(includeDocuments: Bool = false, callback: (JSON?, NSError?) -> ()) {
+    public func retrieveAll(includeDocuments: Bool = false, callback: @escaping (JSON?, NSError?) -> ()) {
         
         var path = "/\(escapedName)/_all_docs"
         if includeDocuments {
@@ -173,7 +173,7 @@ public class Database {
     /// - Parameter callback: callback containing the new document
     ///
     public func update(_ id: String, rev: String, document: JSON,
-                       callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
+                       callback: @escaping (String?, JSON?, NSError?) -> ())   {
         
         if let requestBody = document.rawString() {
             var doc: JSON?
@@ -191,12 +191,12 @@ public class Database {
                 } else {
                     error = CouchDBUtils.createError(Database.InternalError, id: id, rev: rev)
                 }
-                callback(rev: revision, document: doc, error: error)
+                callback(revision, doc, error)
             }
             req.end(requestBody)
         } else {
-            callback(rev: nil, document: nil,
-                     error: CouchDBUtils.createError(Database.InvalidDocument, id: id, rev: rev))
+            callback(nil, nil,
+                     CouchDBUtils.createError(Database.InvalidDocument, id: id, rev: rev))
         }
     }
     
@@ -206,7 +206,7 @@ public class Database {
     /// - Parameter documennt: JSON data for the document
     /// - Parameter callback: callback function with the new document
     ///
-    public func create(_ document: JSON, callback: (id: String?, rev:String?, document: JSON?, error: NSError?) -> ())   {
+    public func create(_ document: JSON, callback: @escaping (String?, String?, JSON?, NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var id: String?
             var doc: JSON?
@@ -224,11 +224,11 @@ public class Database {
                 } else {
                     error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
                 }
-                callback(id: id, rev: revision, document: doc, error: error)
+                callback(id, revision, doc, error)
             }
             req.end(requestBody)
         } else {
-            callback(id: nil, rev: nil, document: nil, error: CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+            callback(nil, nil, nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
         }
     }
     
@@ -240,7 +240,7 @@ public class Database {
     /// - Parameter failOnNotFound: will throw an error if the document is not found
     /// - Parameter callback: a function containing an error
     ///
-    public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
+    public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ())   {
         
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -258,7 +258,7 @@ public class Database {
         req.end()
     }
     
-    public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: (JSON?, NSError?) -> ()) {
+    public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: @escaping (JSON?, NSError?) -> ()) {
         var paramString = ""
         var keys: [KeyType]?
         
@@ -366,7 +366,7 @@ public class Database {
         }
     }
     
-    public func createDesign(_ designName: String, document: JSON, callback: (JSON?, NSError?) -> ())   {
+    public func createDesign(_ designName: String, document: JSON, callback: @escaping (JSON?, NSError?) -> ())   {
         if let requestBody = document.rawString() {
             var doc: JSON?
             let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))", hasBody: true)
@@ -388,7 +388,7 @@ public class Database {
         }
     }
     
-    public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
+    public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))?rev=\(HTTP.escape(url: revision))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
@@ -405,7 +405,7 @@ public class Database {
         req.end()
     }
     
-    public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: Data, contentType: String, callback: (rev:String?, document: JSON?, error: NSError?) -> ())   {
+    public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: Data, contentType: String, callback: @escaping (String?, JSON?, NSError?) -> ())   {
         var doc: JSON?
         var revision: String?
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: true, contentType: contentType)
@@ -420,12 +420,12 @@ public class Database {
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: docId, rev: docRevison)
             }
-            callback(rev: revision, document: doc, error: error)
+            callback(revision, doc, error)
         }
         req.end(attachmentData)
     }
     
-    public func retrieveAttachment(_ docId: String, attachmentName: String, callback: (Data?, NSError?, String?) -> ())   {
+    public func retrieveAttachment(_ docId: String, attachmentName: String, callback: @escaping (Data?, NSError?, String?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
@@ -445,7 +445,7 @@ public class Database {
         req.end()
     }
     
-    public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: (NSError?) -> ())   {
+    public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ())   {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?

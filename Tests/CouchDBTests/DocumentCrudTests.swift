@@ -113,13 +113,13 @@ class DocumentCrudTests : XCTestCase {
         }
     }
 
-    func chainer(_ document: JSON?, next: (revisionNumber: String) -> Void) {
+    func chainer(_ document: JSON?, next: (String) -> Void) {
         if let revisionNumber = document?["rev"].string {
             print("revisionNumber is \(revisionNumber)")
-            next(revisionNumber: revisionNumber)
+            next(revisionNumber)
         } else if let revisionNumber = document?["_rev"].string {
             print("revisionNumber is \(revisionNumber)")
-            next(revisionNumber: revisionNumber)
+            next(revisionNumber)
         } else {
             XCTFail(">> Oops something went wrong... could not get revisionNumber!")
         }

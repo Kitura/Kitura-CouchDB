@@ -30,7 +30,7 @@ Log.logger = HeliumLogger()
 Log.info("Starting sample program...")
 
 // Parse runtime args...
-let args = Array(Process.arguments[1..<Process.arguments.count])
+let args = Array(CommandLine.arguments[1..<CommandLine.arguments.count])
 
 if args.count > 5 {
     print("Too many arguments!")
@@ -88,10 +88,10 @@ typealias valuetype = AnyObject
 // JSON document in string format
 let jsonDict: [String: valuetype] = [
     "_id": documentId,
-    "truncated": false,
-    "created_at": "Tue Aug 28 21:16:23 +0000 2012",
-    "favorited": false,
-    "value": "value1"
+    "truncated": false as AnyObject,
+    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as AnyObject,
+    "favorited": false as AnyObject,
+    "value": "value1" as AnyObject
 ]
 #if os(Linux)
 let json = JSON(jsonDict)
@@ -102,13 +102,13 @@ let json = JSON(jsonDict as AnyObject)
 
 // MARK: Chainer
 
-func chainer(_ document: JSON?, next: (revisionNumber: String) -> Void) {
+func chainer(_ document: JSON?, next: (String) -> Void) {
     if let revisionNumber = document?["rev"].string {
         Log.info("revisionNumber is \(revisionNumber)")
-        next(revisionNumber: revisionNumber)
+        next(revisionNumber)
     } else if let revisionNumber = document?["_rev"].string {
         Log.info("revisionNumber is \(revisionNumber)")
-        next(revisionNumber: revisionNumber)
+        next(revisionNumber)
     } else {
         Log.error(">> Oops something went wrong... could not get revisionNumber!")
     }
