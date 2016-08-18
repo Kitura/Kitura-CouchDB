@@ -76,7 +76,7 @@ public class UsersDatabase : Database {
                 json["user"] = document.object
             }
 #if os(Linux)
-            callback(document: JSON(json), error: error)
+            callback(JSON(json), error)
 #else
             callback(JSON(json as AnyObject), error)
 #endif
