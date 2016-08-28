@@ -237,7 +237,7 @@ public class CouchDBClient {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func createSession(name: String, password: String, callback: SessionCallback) {
+    public func createSession(name: String, password: String, callback: @escaping SessionCallback) {
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
@@ -274,7 +274,7 @@ public class CouchDBClient {
     /// - Parameter cookie: String of cookie
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func getSession(cookie: String, callback: SessionCallback) {
+    public func getSession(cookie: String, callback: @escaping SessionCallback) {
 
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
@@ -312,7 +312,7 @@ public class CouchDBClient {
     /// - Parameter cookie: String of cookie
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func deleteSession(cookie: String, callback: SessionCallback) {
+    public func deleteSession(cookie: String, callback: @escaping SessionCallback) {
 
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
