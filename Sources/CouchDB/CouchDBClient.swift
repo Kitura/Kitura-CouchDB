@@ -29,7 +29,7 @@ import KituraNet
 ///
 /// CouchDB _session callback
 ///
-public typealias SessionCallback = (cookie: String?, document: JSON?, error: NSError?) -> ()
+public typealias SessionCallback = (String?, JSON?, NSError?) -> ()
 
 public class CouchDBClient {
 
@@ -71,7 +71,7 @@ public class CouchDBClient {
     /// - Parameter dbName: String for the name of the database
     /// - Parameter callback: a function containing the Database instance
     ///
-    public func createDB(_ dbName: String, callback: (Database?, NSError?) -> ()) {
+    public func createDB(_ dbName: String, callback: @escaping (Database?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -102,7 +102,7 @@ public class CouchDBClient {
     /// - Parameter dbName: String for the name of the database
     /// - Parameter callback: a function containing a boolean that is true if the database exists
     ///
-    public func dbExists(_ dbName: String, callback: (Bool, NSError?) -> ()) {
+    public func dbExists(_ dbName: String, callback: @escaping (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -126,7 +126,7 @@ public class CouchDBClient {
     /// - Parameter db: instance of Database to delete
     /// - Parameter callback: a function that contains an NSerror? if a problem occurred
     ///
-    public func deleteDB(_ database: Database, callback: (NSError?) -> ()) {
+    public func deleteDB(_ database: Database, callback: @escaping (NSError?) -> ()) {
         deleteDB(database.name, callback: callback)
     }
 
@@ -136,7 +136,7 @@ public class CouchDBClient {
     /// - Parameter dbName: a String for the name of the database
     /// - Parameter callback: a function containing an NSError? if a problem occurred
     ///
-    public func deleteDB(_ dbName: String, callback: (NSError?) -> ()) {
+    public func deleteDB(_ dbName: String, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -166,7 +166,7 @@ public class CouchDBClient {
     /// - Parameter callback: Success of operation
     ///
 
-    public func setConfig(keyPath: String, value: CouchDBValue, callback: (NSError?) -> ()) {
+    public func setConfig(keyPath: String, value: CouchDBValue, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "PUT",
                                                          path: "/_config/\(keyPath)",
@@ -201,7 +201,7 @@ public class CouchDBClient {
     /// - Parameter callback: Response body of /_config/keyPath
     ///
 
-    public func getConfig(keyPath: String, callback: (JSON?, NSError?) -> ()) {
+    public func getConfig(keyPath: String, callback: @escaping (JSON?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
                                                          path: "/_config/\(keyPath)",
@@ -237,7 +237,7 @@ public class CouchDBClient {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func createSession(name: String, password: String, callback: SessionCallback) {
+    public func createSession(name: String, password: String, callback: @escaping SessionCallback) {
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
@@ -263,7 +263,7 @@ public class CouchDBClient {
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
             }
-            callback(cookie: cookie, document: document, error: error)
+            callback(cookie, document, error)
         }
         req.end(body)
     }
@@ -274,7 +274,7 @@ public class CouchDBClient {
     /// - Parameter cookie: String of cookie
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func getSession(cookie: String, callback: SessionCallback) {
+    public func getSession(cookie: String, callback: @escaping SessionCallback) {
 
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
@@ -301,7 +301,7 @@ public class CouchDBClient {
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             }
-            callback(cookie: cookie, document: document, error: error)
+            callback(cookie, document, error)
         }
         req.end()
     }
@@ -312,7 +312,7 @@ public class CouchDBClient {
     /// - Parameter cookie: String of cookie
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func deleteSession(cookie: String, callback: SessionCallback) {
+    public func deleteSession(cookie: String, callback: @escaping SessionCallback) {
 
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
@@ -342,7 +342,7 @@ public class CouchDBClient {
             else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             }
-            callback(cookie: cookie, document: document, error: error)
+            callback(cookie, document, error)
         }
         req.end()
     }

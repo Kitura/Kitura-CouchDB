@@ -22,11 +22,7 @@ import KituraNet
 
 public class UsersDatabase : Database {
 
-    #if os(Linux)
     typealias JSONDictionary = [String: Any]
-    #else
-    typealias JSONDictionary = [String: AnyObject]
-    #endif
 
     ///
     /// Create new user by name and password
@@ -35,7 +31,7 @@ public class UsersDatabase : Database {
     /// - Parameter password: String of password
     /// - Parameter callback: callback function with the cookie and document's JSON
     ///
-    public func createUser(document: JSON, callback: (id: String?, document: JSON?, error: NSError?) -> ()) {
+    public func createUser(document: JSON, callback: @escaping (String?, JSON?, NSError?) -> ()) {
         if let requestBody = document.rawString(), let name = document["name"].string {
             let id = "org.couchdb.user:\(name)"
             var doc: JSON?
@@ -55,14 +51,14 @@ public class UsersDatabase : Database {
                 else {
                     error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
                 }
-                callback(id: id, document: doc, error: error)
+                callback(id, doc, error)
             }
             req.end(requestBody)
         }
         else {
-            callback(id: nil,
-                     document: nil,
-                     error: CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+            callback(nil,
+                     nil,
+                     CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
         }
     }
 
@@ -72,7 +68,7 @@ public class UsersDatabase : Database {
     /// - Parameter name: String of username
     /// - Parameter callback: callback function with the user inside the document's JSON
     ///
-    public func getUser(name: String, callback: (document: JSON?, error: NSError?) -> ()) {
+    public func getUser(name: String, callback: @escaping (JSON?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
         retrieve(id, callback: { (doc, error) in
             var json = JSONDictionary()
@@ -80,9 +76,9 @@ public class UsersDatabase : Database {
                 json["user"] = document.object
             }
 #if os(Linux)
-            callback(document: JSON(json), error: error)
+            callback(JSON(json), error)
 #else
-            callback(document: JSON(json as AnyObject), error: error)
+            callback(JSON(json as AnyObject), error)
 #endif
         })
     }

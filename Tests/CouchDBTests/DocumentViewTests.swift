@@ -112,14 +112,14 @@ class DocumentViewTests : XCTestCase {
         }
     }
     
-    func chainer(_ document: JSON?, next: (revisionNumber: String) -> Void) {
+    func chainer(_ document: JSON?, next: (_ revisionNumber: String) -> Void) {
         if let revisionNumber = document?["rev"].string {
             print("revisionNumber is \(revisionNumber)")
-            next(revisionNumber: revisionNumber)
+            next(revisionNumber)
         }
         else if let revisionNumber = document?["_rev"].string {
             print("revisionNumber is \(revisionNumber)")
-            next(revisionNumber: revisionNumber)
+            next(revisionNumber)
         }
         else {
             XCTFail(">> Oops something went wrong... could not get revisionNumber!")
@@ -191,7 +191,7 @@ class DocumentViewTests : XCTestCase {
                     ]
             ]
         #else
-            let designDocument : AnyObject =
+            let designDocument : [String:Any] =
                 ["_id" : "_design/\(name)" as NSString,
                  "views" : [
                                "matching" : [

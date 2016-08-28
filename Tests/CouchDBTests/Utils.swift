@@ -44,7 +44,7 @@ class Utils {
         // Read in credentials an Data
         let credentialsData: Data
         do {
-            credentialsData = try Data(contentsOf: URL(fileURLWithPath: "Tests/CouchDB/credentials.json"))
+            credentialsData = try Data(contentsOf: URL(fileURLWithPath: "Tests/CouchDBTests/credentials.json"))
         }
         catch {
             XCTFail("Failed to read in the credentials.json file")

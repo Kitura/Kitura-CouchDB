@@ -29,8 +29,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0, minor: 14),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 26),
-        .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 11)
+        .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0, minor: 15),
+        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0, minor: 27),
+        .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 14)
     ]
 )
