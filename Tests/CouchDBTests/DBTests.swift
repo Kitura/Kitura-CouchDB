@@ -27,9 +27,9 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DBTests : XCTestCase {
+class DBTests: XCTestCase {
 
-  static var allTests : [(String, (DBTests) -> () throws -> Void)] {
+  static var allTests: [(String, (DBTests) -> () throws -> Void)] {
     return [
         ("testDB", testDB),
     ]

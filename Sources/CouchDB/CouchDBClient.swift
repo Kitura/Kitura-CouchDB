@@ -189,8 +189,7 @@ public class CouchDBClient {
 
         if let body = body.rawString() {
             req.end(body)
-        }
-        else {
+        } else {
             req.end()
         }
     }
@@ -259,8 +258,7 @@ public class CouchDBClient {
                 }
 
                 cookie = response.headers["Set-Cookie"]?.first
-            }
-            else {
+            } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
             }
             callback(cookie, document, error)
@@ -297,8 +295,7 @@ public class CouchDBClient {
                 if response.statusCode != HTTPStatusCode.OK {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
                 }
-            }
-            else {
+            } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             }
             callback(cookie, document, error)
@@ -338,8 +335,7 @@ public class CouchDBClient {
                 }
 
                 cookie = response.headers["Set-Cookie"]?.first
-            }
-            else {
+            } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             }
             callback(cookie, document, error)

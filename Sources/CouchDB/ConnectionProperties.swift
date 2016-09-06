@@ -74,7 +74,7 @@ public struct ConnectionProperties {
 // MARK: Extension for <CustomStringConvertible>
 
 extension ConnectionProperties: CustomStringConvertible {
-    public var description:String {
+    public var description: String {
         return  "\thost -> \(host)\n" +
             "\tport -> \(port)\n" +
             "\tsecured -> \(secured)\n" +

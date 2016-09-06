@@ -20,7 +20,7 @@ import KituraNet
 
 // MARK: Users Database
 
-public class UsersDatabase : Database {
+public class UsersDatabase: Database {
 
     typealias JSONDictionary = [String: Any]
 
@@ -47,15 +47,13 @@ public class UsersDatabase : Database {
                     if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
                         error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: id, rev: nil)
                     }
-                }
-                else {
+                } else {
                     error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
                 }
                 callback(id, doc, error)
             }
             req.end(requestBody)
-        }
-        else {
+        } else {
             callback(nil,
                      nil,
                      CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))

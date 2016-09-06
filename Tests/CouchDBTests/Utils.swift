@@ -28,11 +28,11 @@ import SwiftyJSON
 class Utils {
 
     struct Credentials {
-        let host:String
-        let port:Int16
-        let username:String?
-        let password:String?
-        init(host:String, port:Int16, username:String?, password:String?) {
+        let host: String
+        let port: Int16
+        let username: String?
+        let password: String?
+        init(host: String, port: Int16, username: String?, password: String?) {
             self.host = host
             self.port = port
             self.username = username
@@ -45,8 +45,7 @@ class Utils {
         let credentialsData: Data
         do {
             credentialsData = try Data(contentsOf: URL(fileURLWithPath: "Tests/CouchDBTests/credentials.json"))
-        }
-        catch {
+        } catch {
             XCTFail("Failed to read in the credentials.json file")
             exit(1)
         }

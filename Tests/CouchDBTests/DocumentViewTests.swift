@@ -27,14 +27,14 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DocumentViewTests : XCTestCase {
-    
-    static var allTests : [(String, (DocumentViewTests) -> () throws -> Void)] {
+class DocumentViewTests: XCTestCase {
+
+    static var allTests: [(String, (DocumentViewTests) -> () throws -> Void)] {
         return [
                    ("testViewTest", testViewTest)
         ]
     }
-    
+
     var database: Database?
     let documentId = "123456"
     var jsonDocument: JSON?
@@ -45,87 +45,81 @@ class DocumentViewTests : XCTestCase {
     let dbName = "kitura_db"
     #endif
     var couchDBClient: CouchDBClient?
-    
+
     func testViewTest() {
         let credentials = Utils.readCredentials()
-        
+
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
                                                   port: credentials.port, secured: false,
                                                   username: credentials.username,
                                                   password: credentials.password)
-        
+
         // Create couchDBClient instance using conn properties
         couchDBClient = CouchDBClient(connectionProperties: connProperties)
         guard let couchDBClient = couchDBClient  else {
             XCTFail("Failed to create CouchDB Client.")
             exit(1)
         }
-        
+
         print("Hostname is: \(couchDBClient.connProperties.host)")
-        
+
         // Check if DB exists
         couchDBClient.dbExists(dbName) {exists, error in
-            if  error != nil  {
+            if  error != nil {
                 XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
-            }
-            else {
-                if  exists  {
+            } else {
+                if  exists {
                     // Delete the old database and then re-create it to avoid state issues
                     let db = couchDBClient.database(self.dbName)
                     couchDBClient.deleteDB(db) {error in
                         if let error = error {
                             XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-                        }
-                        else {
+                        } else {
                             // Create database
                             self.createDatabase()
                         }
                     }
-                }
-                else {
+                } else {
                     // Create database
                     self.createDatabase()
                 }
             }
         }
     }
-    
+
     // Create Database closure
     func createDatabase() {
         guard let couchDBClient = couchDBClient  else {
             XCTFail("Failed to create CouchDB Client.")
             return
         }
-        
+
         couchDBClient.createDB(self.dbName) {db, error in
-            if  error != nil  {
+            if  error != nil {
                 XCTFail("Failed creating the database \(self.dbName). Error=\(error!.localizedDescription)")
                 exit(1)
-            }
-            else {
+            } else {
                 self.database = db
-                
+
                 // Start tests...
                 self.createDocument()
             }
         }
     }
-    
+
     func chainer(_ document: JSON?, next: (_ revisionNumber: String) -> Void) {
         if let revisionNumber = document?["rev"].string {
             print("revisionNumber is \(revisionNumber)")
             next(revisionNumber)
-        }
-        else if let revisionNumber = document?["_rev"].string {
+        } else if let revisionNumber = document?["_rev"].string {
             print("revisionNumber is \(revisionNumber)")
             next(revisionNumber)
-        }
-        else {
+        } else {
             XCTFail(">> Oops something went wrong... could not get revisionNumber!")
         }
     }
-    
+
     //Read document
     func readDocument() {
 #if os(Linux)
@@ -141,16 +135,16 @@ class DocumentViewTests : XCTestCase {
                     XCTFail("Error: Keys not found when reading document")
                     exit(1)
                 }
-                
+
                 XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")
                 XCTAssertEqual(key as String, value, "Wrong value read from document")
-                
+
                 print(">> Successfully read the following JSON document: ")
                 print(document!)
             }
         }
     }
-    
+
     //Create document closure
     func createDocument() {
         // JSON document in string format
@@ -163,7 +157,7 @@ class DocumentViewTests : XCTestCase {
                 "\"favorited\": false," +
                 "\"value\": \"viewTest\"" +
         "}"
-        
+
         // Convert JSON string to NSData
         let jsonData = jsonStr.data(using: .utf8)
         // Convert NSData to JSON object
@@ -171,18 +165,17 @@ class DocumentViewTests : XCTestCase {
         database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
-            }
-            else {
+            } else {
                 print(">> Successfully created the JSON document.")
                 self.createDesign()
             }
         })
     }
-    
+
     func createDesign() {
         let name = "test"
         #if os(Linux)
-            let designDocument : [String:Any] =
+            let designDocument: [String:Any] =
                 ["_id" : "_design/\(name)",
                  "views" : [
                                "matching" : [
@@ -191,7 +184,7 @@ class DocumentViewTests : XCTestCase {
                     ]
             ]
         #else
-            let designDocument : [String:Any] =
+            let designDocument: [String:Any] =
                 ["_id" : "_design/\(name)" as NSString,
                  "views" : [
                                "matching" : [
@@ -203,8 +196,7 @@ class DocumentViewTests : XCTestCase {
         database!.createDesign(name, document: JSON(designDocument)) { (document: JSON?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
-            }
-            else {
+            } else {
                 print(">> Successfully created the design.")
                 self.readDocument()
             }

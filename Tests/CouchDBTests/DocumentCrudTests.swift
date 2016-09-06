@@ -27,9 +27,9 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DocumentCrudTests : XCTestCase {
+class DocumentCrudTests: XCTestCase {
 
-    static var allTests : [(String, (DocumentCrudTests) -> () throws -> Void)] {
+    static var allTests: [(String, (DocumentCrudTests) -> () throws -> Void)] {
         return [
             ("testCrudTest", testCrudTest)
         ]
@@ -59,7 +59,7 @@ class DocumentCrudTests : XCTestCase {
             "\"value\": \"value2\"" +
     "}"
 
-    
+
 // To enable running Linux and OSX tests in parallel
 #if os(Linux)
     let dbName = "kitura_db_linux"
@@ -88,24 +88,21 @@ class DocumentCrudTests : XCTestCase {
 
         // Check if DB exists
         couchDBClient.dbExists(dbName) {exists, error in
-            if  error != nil  {
+            if  error != nil {
                 XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
-            }
-            else {
-                if  exists  {
+            } else {
+                if  exists {
                     // Delete the old database and then re-create it to avoid state issues
                     let db = couchDBClient.database(self.dbName)
                     couchDBClient.deleteDB(db) {error in
                         if let error = error {
                             XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-                        }
-                        else {
+                        } else {
                             // Create database
                             self.createDatabase()
                         }
                     }
-                }
-                else {
+                } else {
                     // Create database
                     self.createDatabase()
                 }
@@ -197,7 +194,7 @@ class DocumentCrudTests : XCTestCase {
             }
         })
     }
-    
+
     // Retrieve all documents
     func retrieveAll() {
         database!.retrieveAll(includeDocuments: true, callback: { (document: JSON?, error: NSError?) in
@@ -245,8 +242,7 @@ class DocumentCrudTests : XCTestCase {
                 print(">> Successfully created the JSON document.")
                 if let documentId = id, documentId == self.documentId1 {
                     self.createDocument(fromJSONString: self.jsonString2)
-                }
-                else {
+                } else {
                     self.readDocument()
                 }
             }
@@ -261,11 +257,10 @@ class DocumentCrudTests : XCTestCase {
         }
 
         couchDBClient.createDB(self.dbName) {db, error in
-            if  error != nil  {
+            if  error != nil {
                 XCTFail("Failed creating the database \(self.dbName). Error=\(error!.localizedDescription)")
                 exit(1)
-            }
-            else {
+            } else {
                 self.database = db
 
                 // Start tests...
