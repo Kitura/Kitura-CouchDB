@@ -23,7 +23,7 @@ class CouchDBUtils {
     static let couchDBDomain = "CouchDBDomain"
 
     class func createError(_ code: HTTPStatusCode, id: String?, rev: String?) -> NSError {
-        return createError(code.rawValue, desc: HTTP.statusCodes[code.rawValue], id: id, rev: rev)
+        return createError(code.rawValue, desc: HTTPURLResponse.localizedString(forStatusCode: code.rawValue), id: id, rev: rev)
     }
 
     class func createError(_ code: Int, id: String?, rev: String?) -> NSError {
