@@ -158,6 +158,59 @@ public class CouchDBClient {
         req.end()
     }
 
+    public func getUUIDs(count : UInt, callback : @escaping ([String]?, NSError?) -> Void) {
+
+        let url = "_uuids?count=\(count)"
+
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
+                                                         path: "/\(url)", hasBody: false)
+        let req = HTTP.request(requestOptions) { response in
+            var error: NSError?
+            var uuids: [String]?
+            if let response = response {
+                if response.statusCode == HTTPStatusCode.OK {
+
+                    var data = Data()
+                    do {
+                        try response.readAllData(into: &data)
+
+                        let responseJSON = JSON(data: data)
+
+                        let uuidsJSON = responseJSON["uuids"]
+
+                        uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
+                            return uuidJSON.string
+                        })
+
+                    } catch let caughtError as NSError {
+                        error = caughtError
+                    }
+                } else {
+                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                }
+            } else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(uuids, error)
+        }
+        req.end()
+    }
+
+    public func getUUID(callback : @escaping (String?, NSError?) -> Void) {
+
+        self.getUUIDs(count: 1) { (uuids, error) in
+
+            var uuid : String?
+            if let uuids = uuids,
+                uuids.count > 0 {
+                uuid = uuids.first
+            }
+
+            callback(uuid, error)
+        }
+    }
+
+
     ///
     /// Configure CouchDB
     ///
