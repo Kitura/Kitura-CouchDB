@@ -160,10 +160,10 @@ public class CouchDBClient {
 
     public func getUUIDs(count : UInt, callback : @escaping ([String]?, NSError?) -> Void) {
 
-        let url = "_uuids?count=\(count)"
+        let url = "/_uuids?count=\(count)"
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
-                                                         path: "/\(url)", hasBody: false)
+                                                         path: url, hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var uuids: [String]?
