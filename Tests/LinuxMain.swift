@@ -20,6 +20,7 @@ import XCTest
 
 XCTMain([
     testCase(DocumentCrudTests.allTests),
+    testCase(DocumentViewTests.allTests),
     testCase(DBTests.allTests),
-    testCase(DocumentViewTests.allTests)
+    testCase(UUIDTests.allTests)
 ])
