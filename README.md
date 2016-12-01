@@ -29,10 +29,10 @@ Depends on [Kitura-router](https://github.com/IBM-Swift/Kitura-router).
 	)
 	```
 
-5. Open a Terminal window to the `Kitura-CouchDB` folder and run `make`:
+5. Open a Terminal window to the `Kitura-CouchDB` folder and run `swift build`:
 
 	```bash
-	make
+	swift build
 	```
 
 6. Run the CouchDBSample executable:
