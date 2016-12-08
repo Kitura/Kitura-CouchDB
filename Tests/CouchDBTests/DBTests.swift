@@ -34,6 +34,13 @@ class DBTests: XCTestCase {
         ("testDB", testDB),
     ]
   }
+    
+  // To enable running Linux and OSX tests in parallel
+  #if os(Linux)
+    let dbName = "test_db_linux"
+  #else
+    let dbName = "test_db_db"
+  #endif
 
   func testDB() {
     let credentials = Utils.readCredentials()
@@ -48,7 +55,7 @@ class DBTests: XCTestCase {
     let couchDBClient = CouchDBClient(connectionProperties: connProperties)
     print("Hostname is: \(couchDBClient.connProperties.host)")
 
-    couchDBClient.createDB("test_db") {(db: Database?, error: NSError?) in
+    couchDBClient.createDB(dbName) {(db: Database?, error: NSError?) in
         if let error = error {
             XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
         }
