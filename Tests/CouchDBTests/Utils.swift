@@ -43,8 +43,17 @@ class Utils {
     static func readCredentials() -> Credentials {
         // Read in credentials an Data
         let credentialsData: Data
+        let sourceFileName = NSString(string: #file)
+        let resourceFilePrefixRange: NSRange
+        let lastSlash = sourceFileName.range(of: "/", options: .backwards)
+        if  lastSlash.location != NSNotFound {
+            resourceFilePrefixRange = NSMakeRange(0, lastSlash.location+1)
+        } else {
+            resourceFilePrefixRange = NSMakeRange(0, sourceFileName.length)
+        }
+        let fileNamePrefix = sourceFileName.substring(with: resourceFilePrefixRange)
         do {
-            credentialsData = try Data(contentsOf: URL(fileURLWithPath: "Tests/CouchDBTests/credentials.json"))
+            credentialsData = try Data(contentsOf: URL(fileURLWithPath: "\(fileNamePrefix)credentials.json"))
         } catch {
             XCTFail("Failed to read in the credentials.json file")
             exit(1)

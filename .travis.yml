@@ -22,7 +22,7 @@ matrix:
       sudo: required
 
 before_install:
-  - git clone https://github.com/shmuelk/Package-Builder.git
+  - git clone https://github.com/IBM-Swift/Package-Builder.git
   - git clone -b master "https://$GITHUB_USER:$GITHUB_PWD@github.com/IBM-Swift/Kitura-TestingCredentials.git"
 
 script:
