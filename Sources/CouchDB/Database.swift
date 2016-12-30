@@ -461,4 +461,63 @@ public class Database {
         }
         req.end()
     }
+  
+    ///
+    /// Set the security document for the database
+    /// see http://docs.couchdb.org/en/2.0.0/api/database/security.html
+    ///
+    /// - Parameter security: JSON formatted security document
+    /// - Parameter callback: callback function with error
+    ///
+    public func setSecurity(_ document: JSON, callback: @escaping (NSError?) -> ()) {
+        if let requestBody = document.rawString() {
+            let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                             method: "PUT",
+                                                             path: "/\(escapedName)/_security",
+                                                             hasBody: true)
+            
+            let req = HTTP.request(requestOptions) { response in
+                var error: NSError?
+                var document: JSON?
+                if let response = response {
+                    document = CouchDBUtils.getBodyAsJson(response)
+                    if response.statusCode != HTTPStatusCode.OK {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                    }
+                } else {
+                    error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                }
+                callback(error)
+            }
+            req.end(requestBody)
+        } else {
+            callback(CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+        }
+    }
+    
+    ///
+    /// Get the security document for the database
+    /// see http://docs.couchdb.org/en/2.0.0/api/database/security.html
+    ///
+    /// - Parameter callback: callback function with the document's JSON
+    ///
+    public func getSecurity(callback: @escaping (JSON?, NSError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
+                                                         path: "/\(escapedName)/_security", hasBody: false)
+        var document: JSON?
+        let req = HTTP.request(requestOptions) { response in
+            var error: NSError?
+            if let response = response {
+                document = CouchDBUtils.getBodyAsJson(response)
+                if response.statusCode != HTTPStatusCode.OK {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                }
+            } else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(document, error)
+        }
+        req.end()
+    }
+  
 }
