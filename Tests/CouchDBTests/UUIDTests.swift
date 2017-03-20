@@ -54,7 +54,7 @@ class UUIDTests : XCTestCase {
         couchDBClient.getUUIDs(count: expectedCount) { (uuids, error) in
 
             if error != nil {
-                XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(error)")
+                XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(String(describing: error))")
             } else {
                 if let uuids = uuids {
 
@@ -84,7 +84,7 @@ class UUIDTests : XCTestCase {
         couchDBClient.getUUID() { (uuid, error) in
 
             if error != nil {
-                XCTFail("Failed to retrieve a UUID: \(error)")
+                XCTFail("Failed to retrieve a UUID: \(String(describing: error))")
             } else {
                 if uuid != nil {
 

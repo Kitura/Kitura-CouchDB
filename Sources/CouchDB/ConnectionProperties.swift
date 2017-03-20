@@ -78,8 +78,8 @@ extension ConnectionProperties: CustomStringConvertible {
         return  "\thost -> \(host)\n" +
             "\tport -> \(port)\n" +
             "\tsecured -> \(secured)\n" +
-            "\tusername -> \(username)\n" +
-            "\tpassword -> \(password)\n" +
+            "\tusername -> \(String(describing: username))\n" +
+            "\tpassword -> \(String(describing: password))\n" +
             "\tURL -> \(URL)"
     }
 }
