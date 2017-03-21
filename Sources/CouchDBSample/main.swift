@@ -123,7 +123,7 @@ func createDocument() {
             Log.error(">> Oops something went wrong; could not persist document.")
             Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
         } else {
-            Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
+            Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
             readDocument()
         }
     })
@@ -139,7 +139,7 @@ func readDocument() {
             Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
         } else {
             Log.info(">> Successfully read the following JSON document with ID " +
-                "\(documentId) from CouchDB:\n\t\(document)")
+                "\(documentId) from CouchDB:\n\t\(String(describing: document))")
             chainer(document, next: updateDocument)
         }
     })
@@ -158,7 +158,7 @@ func updateDocument(revisionNumber: String) {
                 Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
             } else {
                 Log.info(">> Successfully updated the JSON document with ID" +
-                    "\(documentId) in CouchDB:\n\t\(document)")
+                    "\(documentId) in CouchDB:\n\t\(String(describing: document))")
                 chainer(document, next: deleteDocument)
             }
     })
