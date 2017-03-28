@@ -171,6 +171,22 @@ public class CouchDBClient {
                 if response.statusCode == HTTPStatusCode.OK {
 
                     var data = Data()
+#if os(Linux) && swift(>=3.1)
+                    do {
+                        try response.readAllData(into: &data)
+
+                        let responseJSON = JSON(data: data)
+
+                        let uuidsJSON = responseJSON["uuids"]
+
+                        uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
+                            return uuidJSON.string
+                        })
+
+                    } catch let caughtError {
+                        error = caughtError as? NSError ?? NSError(domain: caughtError.localizedDescription, code: -1)
+                    }
+#else
                     do {
                         try response.readAllData(into: &data)
 
@@ -185,6 +201,7 @@ public class CouchDBClient {
                     } catch let caughtError as NSError {
                         error = caughtError
                     }
+#endif
                 } else {
                     error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
