@@ -7,7 +7,7 @@
 
 This library allows Kitura applications to interact with a CouchDB database.
 
-Depends on [Kitura-router](https://github.com/IBM-Swift/Kitura-router).
+Depends on [Kitura-net](https://github.com/IBM-Swift/Kitura-net).
 
 ## Build CouchDBSample:
 
