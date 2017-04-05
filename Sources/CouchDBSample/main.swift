@@ -48,11 +48,43 @@ if args.count == 1  &&  args[0] == "--help" {
     exit(0)
 }
 
-let host = args.count > 0 ? args[0] : "127.0.0.1" /* localhost */
-let port = args.count > 1 ? Int16(args[1]) ?? 5984 : 5984
-let secured = args.count > 2 ? (args[2].lowercased() == "secure") : false
-let username: String? = args.count == 5 ? args[3] : nil
-let password: String? = args.count == 5 ? args[4] : nil
+// The following assignments for now can't be collapsed to simple statements with a tertiary (?:)
+// operator due to the bug in XCode 8.3 code coverage reported here https://bugs.swift.org/browse/SR-4453
+
+let host: String
+if args.count > 0 {
+    host = args[0]
+}
+else {
+    host = "127.0.0.1" /* localhost */
+}
+
+let port: Int16
+if args.count > 1 {
+    port = Int16(args[1]) ?? 5984
+}
+else {
+    port = 5984
+}
+
+let secured: Bool
+if args.count > 2 {
+    secured = (args[2].lowercased() == "secure")
+}
+else {
+    secured = false
+}
+
+let username: String?
+let password: String? 
+if args.count == 5 {
+    username = args[3]
+    password = args[4]
+}
+else {
+    username = nil
+    password = nil
+}
 
 // Connection properties for testing Cloudant or CouchDB instance
 let connProperties = ConnectionProperties(
