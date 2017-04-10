@@ -171,7 +171,6 @@ public class CouchDBClient {
                 if response.statusCode == HTTPStatusCode.OK {
 
                     var data = Data()
-#if os(Linux)
                     do {
                         try response.readAllData(into: &data)
 
@@ -182,26 +181,13 @@ public class CouchDBClient {
                         uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
                             return uuidJSON.string
                         })
-
                     } catch let caughtError {
+                        #if os(Linux)
                         error = NSError(domain: caughtError.localizedDescription, code: -1)
+                        #else
+                        error = caughtError as NSError
+                        #endif
                     }
-#else
-                    do {
-                        try response.readAllData(into: &data)
-
-                        let responseJSON = JSON(data: data)
-
-                        let uuidsJSON = responseJSON["uuids"]
-
-                        uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
-                            return uuidJSON.string
-                        })
-
-                    } catch let caughtError as NSError {
-                        error = caughtError
-                    }
-#endif
                 } else {
                     error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
