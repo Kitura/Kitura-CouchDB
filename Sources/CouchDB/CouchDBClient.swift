@@ -171,7 +171,7 @@ public class CouchDBClient {
                 if response.statusCode == HTTPStatusCode.OK {
 
                     var data = Data()
-#if os(Linux) && swift(>=3.1)
+#if os(Linux)
                     do {
                         try response.readAllData(into: &data)
 
@@ -184,7 +184,7 @@ public class CouchDBClient {
                         })
 
                     } catch let caughtError {
-                        error = caughtError as? NSError ?? NSError(domain: caughtError.localizedDescription, code: -1)
+                        error = NSError(domain: caughtError.localizedDescription, code: -1)
                     }
 #else
                     do {
