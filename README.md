@@ -1,7 +1,10 @@
 # Kitura-CouchDB
 
 [![Build Status](https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=master)](https://travis-ci.org/IBM-Swift/Kitura-CouchDB)
-[![Build Status](https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=develop)](https://travis-ci.org/IBM-Swift/Kitura-CouchDB)
+![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
+![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
+![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
+[![codecov](https://codecov.io/gh/IBM-Swift/Kitura-CouchDB/branch/master/graph/badge.svg)](https://codecov.io/gh/IBM-Swift/Kitura-CouchDB)
 
 ***CouchDB library for [Kitura](https://github.com/IBM-Swift/Kitura)***
 
@@ -98,3 +101,6 @@ userDatabase.getSessionCookie(name, password: password, callback: { (cookie, doc
 	next()
 })
 ```
+
+## License
+Apache 2.0

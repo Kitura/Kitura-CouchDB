@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a title="  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html"> Docs</a> (100% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html"> Reference</a>
+        <img id="carat" src="img/carat.png" />
+          Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/Log.html">Log</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/LoggerMessageType.html">LoggerMessageType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/Logger.html">Logger</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <h1 id='kitura-couchdb' class='heading'>Kitura-CouchDB</h1>
+
+<p><a href="https://travis-ci.org/IBM-Swift/Kitura-CouchDB"><img src="https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=master" alt="Build Status"></a>
+<img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
+<img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
+<img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2">
+<a href="https://codecov.io/gh/IBM-Swift/Kitura-CouchDB"><img src="https://codecov.io/gh/IBM-Swift/Kitura-CouchDB/branch/master/graph/badge.svg" alt="codecov"></a></p>
+
+<p><strong><em>CouchDB library for <a href="https://github.com/IBM-Swift/Kitura">Kitura</a></em></strong></p>
+
+<p>This library allows Kitura applications to interact with a CouchDB database.</p>
+
+<p>Depends on <a href="https://github.com/IBM-Swift/Kitura-net">Kitura-net</a>.</p>
+<h2 id='build-couchdbsample' class='heading'>Build CouchDBSample:</h2>
+
+<ol>
+<li><p><a href="http://couchdb.apache.org/#download">Download CouchDB</a> and install.</p></li>
+<li><p>Set up an admin username and password in CouchDB.</p></li>
+<li><p>Create a database with the name <code>kitura_test_db</code>.</p></li>
+<li><p>Update the following code in <code>main.swift</code> with your admin username and password:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">connProperties</span> <span class="o">=</span> <span class="kt">ConnectionProperties</span><span class="p">(</span>
+    <span class="nv">host</span><span class="p">:</span> <span class="s">"127.0.0.1"</span><span class="p">,</span>  <span class="c1">// httpd address</span>
+    <span class="nv">port</span><span class="p">:</span> <span class="mi">5984</span><span class="p">,</span>         <span class="c1">// httpd port</span>
+    <span class="nv">secured</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>     <span class="c1">// https or http</span>
+    <span class="nv">username</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span>      <span class="c1">// admin username</span>
+    <span class="nv">password</span><span class="p">:</span> <span class="kc">nil</span>       <span class="c1">// admin password</span>
+<span class="p">)</span>
+</code></pre></li>
+<li><p>Open a Terminal window to the <code>Kitura-CouchDB</code> folder and run <code>swift build</code>:</p>
+<pre class="highlight shell"><code>swift build
+</code></pre></li>
+<li><p>Run the CouchDBSample executable:</p>
+<pre class="highlight shell"><code>.build/debug/CouchDBSample
+</code></pre></li>
+</ol>
+<h2 id='usage' class='heading'>Usage:</h2>
+
+<p>(Todo)</p>
+<h4 id='get-the-q-_users-q-database-from-the-client' class='heading'>Get the <q>_users</q> database from the client</h4>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">userDatabase</span> <span class="o">=</span> <span class="n">databaseClient</span><span class="o">.</span><span class="nf">usersDatabase</span><span class="p">()</span>
+</code></pre>
+<h4 id='add-user-to-the-q-_users-q-database' class='heading'>Add user to the <q>_users</q> database:</h4>
+<pre class="highlight swift"><code><span class="k">var</span> <span class="nv">user</span> <span class="o">=</span> <span class="kt">JSONDictionary</span><span class="p">()</span>
+
+<span class="n">user</span><span class="p">[</span><span class="s">"type"</span><span class="p">]</span>            <span class="o">=</span> <span class="s">"user"</span>
+<span class="n">user</span><span class="p">[</span><span class="s">"roles"</span><span class="p">]</span>           <span class="o">=</span> <span class="p">[]</span>
+<span class="n">user</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span>            <span class="o">=</span> <span class="n">name</span>
+<span class="n">user</span><span class="p">[</span><span class="s">"password"</span><span class="p">]</span>        <span class="o">=</span> <span class="n">password</span>
+<span class="n">user</span><span class="p">[</span><span class="s">"email"</span><span class="p">]</span>       <span class="o">=</span> <span class="n">email</span>
+
+<span class="k">let</span> <span class="nv">document</span> <span class="o">=</span> <span class="kt">JSON</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+<span class="n">userDatabase</span><span class="o">.</span><span class="nf">signupUser</span><span class="p">(</span><span class="n">document</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">document</span> <span class="o">=</span> <span class="n">doc</span><span class="p">,</span> <span class="k">let</span> <span class="nv">id</span> <span class="o">=</span> <span class="n">id</span> <span class="k">where</span> <span class="n">error</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="n">response</span><span class="o">.</span><span class="nf">status</span><span class="p">(</span><span class="kt">HttpStatusCode</span><span class="o">.</span><span class="kt">OK</span><span class="p">)</span><span class="o">.</span><span class="nf">sendJson</span><span class="p">(</span><span class="n">document</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="k">let</span> <span class="nv">error</span> <span class="o">=</span> <span class="n">error</span> <span class="p">{</span>
+            <span class="n">response</span><span class="o">.</span><span class="nf">status</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="nf">sendJson</span><span class="p">(</span><span class="kt">JSON</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">userInfo</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="n">response</span><span class="o">.</span><span class="nf">status</span><span class="p">(</span><span class="kt">HttpStatusCode</span><span class="o">.</span><span class="kt">BAD_REQUEST</span><span class="p">)</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="s">"Signup failed"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nf">next</span><span class="p">()</span>
+<span class="p">})</span>
+</code></pre>
+<h4 id='get-a-session-cookie-for-the-user' class='heading'>Get a session cookie for the user:</h4>
+<pre class="highlight swift"><code><span class="n">userDatabase</span><span class="o">.</span><span class="nf">getSessionCookie</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nv">password</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="p">{</span> <span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">error</span> <span class="o">=</span> <span class="n">error</span> <span class="p">{</span>
+        <span class="n">response</span><span class="o">.</span><span class="nf">status</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="nf">sendJson</span><span class="p">(</span><span class="kt">JSON</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">userInfo</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">document</span> <span class="o">=</span> <span class="kt">JSONDictionary</span><span class="p">()</span>
+
+        <span class="n">document</span><span class="p">[</span><span class="s">"ok"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span>
+        <span class="n">document</span><span class="p">[</span><span class="s">"cookie"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cookie</span>
+
+        <span class="k">let</span> <span class="nv">json</span> <span class="o">=</span> <span class="kt">JSON</span><span class="p">(</span><span class="n">document</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="nf">status</span><span class="p">(</span><span class="kt">HttpStatusCode</span><span class="o">.</span><span class="kt">OK</span><span class="p">)</span><span class="o">.</span><span class="nf">sendJson</span><span class="p">(</span><span class="n">json</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nf">next</span><span class="p">()</span>
+<span class="p">})</span>
+</code></pre>
+<h2 id='license' class='heading'>License</h2>
+
+<p>Apache 2.0</p>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2017-07-10)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
