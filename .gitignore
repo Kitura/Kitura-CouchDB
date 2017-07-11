@@ -1,4 +1,5 @@
 .build/
+build
 Packages/
 Kitura-CouchDB.xcodeproj
 *.DS_Store
