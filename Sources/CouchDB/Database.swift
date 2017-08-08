@@ -202,7 +202,70 @@ public class Database {
         req.end()
     }
 
-    /// Update a document in the database.
+	///
+	/// Bulk update or insert documents into the database
+	///
+	/// - Note:
+	///   - CouchDB will return the results in the same order as supplied in the array. The `id` and revision will be
+	///     added for every document passed as content to a bulk insert, even for those that were just deleted.
+	///   - If you omit the per-document `_id` specification, CouchDB will generate unique IDs for you, as it does for
+	///     regular `create(_:callback:)` function.
+	///   - Updating existing documents requires setting the `_rev` member to the revision being updated. To delete a
+	///     document set the `_deleted` member to `true`.
+	///     ````
+	///     [
+	///       {"_id": "0", "_rev": "1-62657917", "_deleted": true},
+	///       {"_id": "1", "_rev": "1-2089673485", "integer": 2, "string": "2"},
+	///       {"_id": "2", "_rev": "1-2063452834", "integer": 3, "string": "3"}
+	///     ]
+	///     ````
+	///   - If the `_rev` does not match the current version of the document, then that particular document will not be
+	///     saved and will be reported as a conflict, but this does not prevent other documents in the batch from being
+	///     saved.
+	///     ````
+	///     [
+	///       {"id": "0", "error": "conflict", "reason": "Document update conflict."},
+	///       {"id": "1", "rev": "2-1579510027"},
+	///       {"id": "2", "rev": "2-3978456339"}
+	///     ]
+	///     ````
+	///
+	/// - Parameter documents: An array containing JSON documents to be updated or inserted
+	/// - Parameter newEdits: Boolean value to mark documents as new edits. A value of `false` prevents the database
+	///                       from assigning new revision IDs to the documents. Default is `true`.
+	/// - Parameter callback: callback containing the bulk update/insert result
+	///
+	public func bulk(documents: [JSON], newEdits: Bool = true, callback: @escaping (JSON?, NSError?) -> ()) {
+
+		// Prepare request options
+		let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)/_bulk_docs", hasBody: true)
+
+		// Create request body and check if it was generated successfully
+		guard let requestBody = JSON(["docs": JSON(documents), "new_edits": JSON(newEdits)]).rawString() else {
+			callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+			return
+		}
+
+		// Create bulk update request and send it
+		let req = HTTP.request(requestOptions) { response in
+			var error: NSError?
+			var documentsUpdateResult: JSON?
+
+			if let response = response {
+				documentsUpdateResult = CouchDBUtils.getBodyAsJson(response)
+				if response.statusCode != HTTPStatusCode.created {
+					error = CouchDBUtils.createError(response.statusCode, errorDesc: documentsUpdateResult, id: nil, rev: nil)
+				}
+			} else {
+				error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+			}
+			callback(documentsUpdateResult, error)
+		}
+		req.end(requestBody)
+	}
+
+
+	/// Update a document in the database.
     ///
     /// - parameters:
     ///     - id: String ID for the document.
