@@ -15,33 +15,38 @@
  **/
 
 import Foundation
-
 import LoggerAPI
 
 // MARK: ConnectionProperties
 
+/// The connection properties of a `CouchDBClient` instance
 public struct ConnectionProperties {
 
-    // Hostname or IP address to the CouchDB server
+    /// Hostname or IP address to the CouchDB server
     public let host: String
 
-    // Port number where CouchDB server is listening for incoming connections
+    /// Port number where CouchDB server is listening for incoming connections
     public let port: Int16
 
-    // Whether or not to use a secured connection
+    /// Whether or not to use a secured connection
     public let secured: Bool
-
-
 
     // MARK: Authentication credentials to access CouchDB
 
-    // CouchDB admin username
+    /// CouchDB admin username
     let username: String?
 
-    // CouchDB admin password
+    /// CouchDB admin password
     let password: String?
 
-
+    /// Initializes a `ConnectionProperties` instance.
+    ///
+    /// - parameters:
+    ///     - host: Hostname or IP address to the CouchDB server.
+    ///     - port: Port number where CouchDB server is listening for incoming connections.
+    ///     - secured: Whether or not to use a secured connection.
+    ///     - username: CouchDB admin username. Defaults to `nil`.
+    ///     - password: CouchDB admin password. Defaults to `nil`.
     public init(host: String, port: Int16, secured: Bool, username: String?=nil, password: String?=nil) {
         self.host = host
         self.port = port
@@ -53,15 +58,14 @@ public struct ConnectionProperties {
         }
     }
 
-
     // MARK: Computed properties
 
-    // Use https or http
+    /// Use https or http.
     var HTTPProtocol: String {
         return secured ? "https" : "http"
     }
 
-    // CouchDB URL
+    /// CouchDB URL.
     var URL: String {
         if let username = username, let password = password {
             return "\(HTTPProtocol)://\(username):\(password)@\(host):\(port)"
@@ -74,6 +78,7 @@ public struct ConnectionProperties {
 // MARK: Extension for <CustomStringConvertible>
 
 extension ConnectionProperties: CustomStringConvertible {
+    /// String description for a `ConnectionProperties`.
     public var description: String {
         return  "\thost -> \(host)\n" +
             "\tport -> \(port)\n" +
