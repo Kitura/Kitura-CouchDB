@@ -19,7 +19,6 @@ import KituraNet
 import SwiftyJSON
 
 class CouchDBUtils {
-
     static let couchDBDomain = "CouchDBDomain"
 
     class func createError(_ code: HTTPStatusCode, id: String?, rev: String?) -> NSError {
@@ -101,5 +100,4 @@ class CouchDBUtils {
         }
         return nil
     }
-
 }

@@ -21,6 +21,7 @@ import KituraNet
 // MARK: CouchDBClient
 
 #if os(OSX)
+    /// Represents a CouchDB configuration value.
     public typealias CouchDBValue = AnyObject
 #else
     public typealias CouchDBValue = Any
@@ -58,7 +59,7 @@ public class CouchDBClient {
     /// Create a new `Database`.
     ///
     /// - parameters:
-    ///     - dbName: String for the name of the database
+    ///     - dbName: String name of the database
     ///     - callback: Callback containing the newly created `Database`, or an NSError on failure.
     public func createDB(_ dbName: String, callback: @escaping (Database?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
@@ -111,7 +112,7 @@ public class CouchDBClient {
     /// Delete a `Database` given a local instance of it.
     ///
     /// - parameters:
-    ///     - db: An instance of the `Database` to delete.
+    ///     - database: An instance of the `Database` to delete.
     ///     - callback: Callback containing an NSError if one occurred.
     public func deleteDB(_ database: Database, callback: @escaping (NSError?) -> ()) {
         deleteDB(database.name, callback: callback)
@@ -120,7 +121,7 @@ public class CouchDBClient {
     /// Delete a `Database` given its name.
     ///
     /// - parameters:
-    ///     - dbName: The String name of the `Database` to delete.
+    ///     - dbName: String name of the `Database` to delete.
     ///     - callback: Callback containing an NSError if one occurred.
     public func deleteDB(_ dbName: String, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
@@ -207,7 +208,7 @@ public class CouchDBClient {
     /// Set a CouchDB configuration parameter to a new value.
     ///
     /// - parameters:
-    ///     - keyPath: The String configuration parameter to update.
+    ///     - keyPath: The configuration parameter String to update.
     ///     - value: The `CouchDBValue` to set the configuration parameter to.
     ///     - callback: Callback containing an NSError if one occurred.
     public func setConfig(keyPath: String, value: CouchDBValue, callback: @escaping (NSError?) -> ()) {
@@ -241,7 +242,7 @@ public class CouchDBClient {
     /// Get the value for a CouchDB configuration parameter.
     ///
     /// - parameters:
-    ///     - keyPath: The String configuration parameter to get the value for.
+    ///     - keyPath: The configuration parameter String to get the value for.
     ///     - callback: Callback containing the JSON return value for the configuration parameter,
     ///                 or an NSError if one occurred.
     public func getConfig(keyPath: String, callback: @escaping (JSON?, NSError?) -> ()) {
@@ -276,8 +277,8 @@ public class CouchDBClient {
     /// Create a new session for the given user credentials.
     ///
     /// - parameters:
-    ///     - name: String username.
-    ///     - password: String password.
+    ///     - name: Username String.
+    ///     - password: Password String.
     ///     - callback: `SessionCallback` containing the session cookie and JSON response,
     ///                 or an NSError if one occurred.
     public func createSession(name: String, password: String, callback: @escaping SessionCallback) {
@@ -312,7 +313,7 @@ public class CouchDBClient {
     /// Verify a session cookie.
     ///
     /// - parameters:
-    ///     - cookie: String cookie.
+    ///     - cookie: String session cookie.
     ///     - callback: `SessionCallback` containing the cookie, JSON response,
     ///                 and an NSError if the user is not authenticated or an error occurred.
     public func getSession(cookie: String, callback: @escaping SessionCallback) {
@@ -348,7 +349,7 @@ public class CouchDBClient {
     /// Logout a session.
     ///
     /// - parameters:
-    ///     - cookie: String cookie.
+    ///     - cookie: String session cookie.
     ///     - callback: `SessionCallback` containing the cookie, JSON response,
     ///                 and NSError if one occurred.
     public func deleteSession(cookie: String, callback: @escaping SessionCallback) {
