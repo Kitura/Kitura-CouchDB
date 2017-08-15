@@ -213,10 +213,10 @@ public class CouchDBClient {
     ///     - callback: Callback containing an NSError if one occurred.
     public func setConfig(keyPath: String, value: CouchDBValue, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
-                                                         method: "PUT",
-                                                         path: "/_config/\(keyPath)",
-            hasBody: true,
-            contentType: "application/json")
+                                            method: "PUT",
+                                            path: "/_config/\(keyPath)",
+                                            hasBody: true,
+                                            contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
             var configError: NSError?
             if let response = response {
