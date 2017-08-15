@@ -39,8 +39,8 @@ public class UsersDatabase: Database {
             let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                              method: "PUT",
                                                              path: "/_users/\(id)",
-                hasBody: true,
-                contentType: "application/json")
+                                                             hasBody: true,
+                                                             contentType: "application/json")
             let req = HTTP.request(requestOptions) { response in
                 var error: NSError?
                 if let response = response {

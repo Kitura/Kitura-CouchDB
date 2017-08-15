@@ -249,8 +249,8 @@ public class CouchDBClient {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
                                                          path: "/_config/\(keyPath)",
-            hasBody: false,
-            contentType: "application/json")
+                                                         hasBody: false,
+                                                         contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
             var configError: NSError?
             var configJSON: JSON?
