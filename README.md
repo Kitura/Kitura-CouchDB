@@ -6,7 +6,7 @@
 ![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
 [![codecov](https://codecov.io/gh/IBM-Swift/Kitura-CouchDB/branch/master/graph/badge.svg)](https://codecov.io/gh/IBM-Swift/Kitura-CouchDB)
 
-***CouchDB library for [Kitura](https://github.com/IBM-Swift/Kitura)***
+***CouchDB library for [Kitura](https://github.com/IBM-Swift/Kitura)*** - [[documentation](https://ibm-swift.github.io/Kitura-CouchDB/)]
 
 This library allows Kitura applications to interact with a CouchDB database.
 
