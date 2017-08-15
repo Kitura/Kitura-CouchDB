@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           CouchDB Docs
         </a>
-         (34% documented)
+         (100% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -82,7 +82,10 @@
             <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:7CouchDB15SessionCallback">SessionCallback</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:7CouchDB0A7DBValuea">CouchDBValue</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:7CouchDB15SessionCallbacka">SessionCallback</a>
               </li>
             </ul>
           </li>
@@ -93,7 +96,13 @@
         <section class="section">
           <div class="section-content">
             <h1>UsersDatabase</h1>
-            <p>Undocumented</p>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">UsersDatabase</span><span class="p">:</span> <span class="kt"><a href="../Classes/Database.html">Database</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>Represents a CouchDB database of users.</p>
 
           </div>
         </section>
@@ -105,9 +114,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FC7CouchDB13UsersDatabase10createUserFT8documentV10SwiftyJSON4JSON8callbackFTGSqSS_GSqS2__GSqCSo7NSError__T__T_"></a>
+                    <a name="/s:7CouchDB13UsersDatabaseC10createUsery10SwiftyJSON0H0V8document_ySSSg_AGSgSo7NSErrorCSgtc8callbacktF"></a>
                     <a name="//apple_ref/swift/Method/createUser(document:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC7CouchDB13UsersDatabase10createUserFT8documentV10SwiftyJSON4JSON8callbackFTGSqSS_GSqS2__GSqCSo7NSError__T__T_">createUser(document:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB13UsersDatabaseC10createUsery10SwiftyJSON0H0V8document_ySSSg_AGSgSo7NSErrorCSgtc8callbacktF">createUser(document:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -115,7 +124,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Create new user by name and password</p>
+                        <p>Create new user by name and password.</p>
 
                       </div>
                       <div class="declaration">
@@ -138,7 +147,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>String of username</p>
+                                  <p>Username String.</p>
                                 </div>
                               </td>
                             </tr>
@@ -150,7 +159,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>String of password</p>
+                                  <p>Password String.</p>
                                 </div>
                               </td>
                             </tr>
@@ -162,7 +171,8 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>callback function with the cookie and document&rsquo;s JSON</p>
+                                  <p>Callback containing the username, JSON response,
+        and an NSError if one occurred.</p>
                                 </div>
                               </td>
                             </tr>
@@ -175,9 +185,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FC7CouchDB13UsersDatabase7getUserFT4nameSS8callbackFTGSqV10SwiftyJSON4JSON_GSqCSo7NSError__T__T_"></a>
+                    <a name="/s:7CouchDB13UsersDatabaseC7getUserySS4name_y10SwiftyJSON0I0VSg_So7NSErrorCSgtc8callbacktF"></a>
                     <a name="//apple_ref/swift/Method/getUser(name:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC7CouchDB13UsersDatabase7getUserFT4nameSS8callbackFTGSqV10SwiftyJSON4JSON_GSqCSo7NSError__T__T_">getUser(name:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB13UsersDatabaseC7getUserySS4name_y10SwiftyJSON0I0VSg_So7NSErrorCSgtc8callbacktF">getUser(name:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -185,7 +195,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Fetch a user by name</p>
+                        <p>Get a user by name.</p>
 
                       </div>
                       <div class="declaration">
@@ -208,7 +218,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>String of username</p>
+                                  <p>Name String of the desired user.</p>
                                 </div>
                               </td>
                             </tr>
@@ -220,7 +230,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>callback function with the user inside the document&rsquo;s JSON</p>
+                                  <p>Callback containing the user JSON, or an NSError if one occurred.</p>
                                 </div>
                               </td>
                             </tr>
@@ -238,8 +248,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-11)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

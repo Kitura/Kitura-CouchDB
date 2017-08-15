@@ -23,7 +23,7 @@
         <a class="header-link" href="../../index.html">
           CouchDB Docs
         </a>
-         (34% documented)
+         (100% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -82,7 +82,10 @@
             <a class="nav-group-name-link" href="../../Typealiases.html">Typealiases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Typealiases.html#/s:7CouchDB15SessionCallback">SessionCallback</a>
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:7CouchDB0A7DBValuea">CouchDBValue</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:7CouchDB15SessionCallbacka">SessionCallback</a>
               </li>
             </ul>
           </li>
@@ -93,7 +96,13 @@
         <section class="section">
           <div class="section-content">
             <h1>QueryParameters</h1>
-            <p>Undocumented</p>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">QueryParameters</span></code></pre>
+
+                </div>
+              </div>
+            <p>Query parameters for view functions from design documents.</p>
 
           </div>
         </section>
@@ -105,9 +114,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters9conflictsFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO9conflictsAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/conflicts" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters9conflictsFMS1_FSbS1_">conflicts</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO9conflictsAESbcAEmF">conflicts</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -115,8 +124,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Includes conflicts information in response. Ignored if include_docs isn’t true. Default is false.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">conflicts</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -128,9 +145,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters10descendingFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO10descendingAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/descending" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters10descendingFMS1_FSbS1_">descending</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO10descendingAESbcAEmF">descending</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -138,8 +155,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Return the documents in descending by key order. Default is false.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">descending</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -151,9 +176,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters6endKeyFMS1_FGSaPs9AnyObject__S1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO6endKeyAESayyXlGcAEmF"></a>
                     <a name="//apple_ref/swift/Element/endKey" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters6endKeyFMS1_FGSaPs9AnyObject__S1_">endKey</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO6endKeyAESayyXlGcAEmF">endKey</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -161,8 +186,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Stop returning records when the specified key is reached.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">endKey</span> <span class="p">([</span><span class="kt"><a href="../../Classes/Database.html#/s:7CouchDB8DatabaseC7KeyTypea">KeyType</a></span><span class="p">])</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -174,9 +207,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters11endKeyDocIDFMS1_FSSS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO11endKeyDocIDAESScAEmF"></a>
                     <a name="//apple_ref/swift/Element/endKeyDocID" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters11endKeyDocIDFMS1_FSSS1_">endKeyDocID</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO11endKeyDocIDAESScAEmF">endKeyDocID</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -184,8 +217,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Stop returning records when the specified document ID is reached. Requires endkey to be specified for this to have any effect.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">endKeyDocID</span> <span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -197,9 +238,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters5groupFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO5groupAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/group" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters5groupFMS1_FSbS1_">group</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO5groupAESbcAEmF">group</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -207,8 +248,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Group the results using the reduce function to a group or single row. Default is false</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">group</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -220,9 +269,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters10groupLevelFMS1_FSiS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO10groupLevelAESicAEmF"></a>
                     <a name="//apple_ref/swift/Element/groupLevel" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters10groupLevelFMS1_FSiS1_">groupLevel</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO10groupLevelAESicAEmF">groupLevel</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -230,8 +279,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Specify the group level to be used.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">groupLevel</span> <span class="p">(</span><span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -243,9 +300,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters11includeDocsFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO11includeDocsAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/includeDocs" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters11includeDocsFMS1_FSbS1_">includeDocs</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO11includeDocsAESbcAEmF">includeDocs</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -253,8 +310,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Include the associated document with each row. Default is false.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">includeDocs</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -266,9 +331,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters11attachmentsFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO11attachmentsAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/attachments" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters11attachmentsFMS1_FSbS1_">attachments</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO11attachmentsAESbcAEmF">attachments</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -276,8 +341,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Include the Base64-encoded content of attachments in the documents that are included if include_docs is true. Ignored if include_docs isn’t true. Default is false.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">attachments</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -289,9 +362,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters22attachmentEncodingInfoFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO22attachmentEncodingInfoAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/attachmentEncodingInfo" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters22attachmentEncodingInfoFMS1_FSbS1_">attachmentEncodingInfo</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO22attachmentEncodingInfoAESbcAEmF">attachmentEncodingInfo</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -299,8 +372,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Include encoding information in attachment stubs if include_docs is true and the particular attachment is compressed. Ignored if include_docs isn’t true. Default is false.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">attachmentEncodingInfo</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -312,9 +393,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters12inclusiveEndFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO12inclusiveEndAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/inclusiveEnd" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters12inclusiveEndFMS1_FSbS1_">inclusiveEnd</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO12inclusiveEndAESbcAEmF">inclusiveEnd</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -322,8 +403,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Specifies whether the specified end key should be included in the result. Default is true.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">inclusiveEnd</span><span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -335,9 +424,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters5limitFMS1_FSiS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO5limitAESicAEmF"></a>
                     <a name="//apple_ref/swift/Element/limit" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters5limitFMS1_FSiS1_">limit</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO5limitAESicAEmF">limit</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -345,8 +434,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Limit the number of the returned documents to the specified number.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">limit</span> <span class="p">(</span><span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -358,9 +455,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters6reduceFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO6reduceAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/reduce" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters6reduceFMS1_FSbS1_">reduce</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO6reduceAESbcAEmF">reduce</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -368,8 +465,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Use the reduction function. Default is true.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">reduce</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -381,9 +486,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters4skipFMS1_FSiS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO4skipAESicAEmF"></a>
                     <a name="//apple_ref/swift/Element/skip" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters4skipFMS1_FSiS1_">skip</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO4skipAESicAEmF">skip</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -391,8 +496,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Skip this number of records before starting to return the results. Default is 0.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">skip</span> <span class="p">(</span><span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -404,9 +517,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters5staleFMS1_FOS0_12StaleOptionsS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO5staleAeC12StaleOptionsOcAEmF"></a>
                     <a name="//apple_ref/swift/Element/stale" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters5staleFMS1_FOS0_12StaleOptionsS1_">stale</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO5staleAeC12StaleOptionsOcAEmF">stale</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -414,8 +527,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Allow the results from a stale view to be used.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">stale</span> <span class="p">(</span><span class="kt"><a href="../../Classes/Database/StaleOptions.html">StaleOptions</a></span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -427,9 +548,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters8startKeyFMS1_FGSaPs9AnyObject__S1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO8startKeyAESayyXlGcAEmF"></a>
                     <a name="//apple_ref/swift/Element/startKey" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters8startKeyFMS1_FGSaPs9AnyObject__S1_">startKey</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO8startKeyAESayyXlGcAEmF">startKey</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -437,8 +558,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Return records starting with the specified key.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">startKey</span> <span class="p">([</span><span class="kt"><a href="../../Classes/Database.html#/s:7CouchDB8DatabaseC7KeyTypea">KeyType</a></span><span class="p">])</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -450,9 +579,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters13startKeyDocIDFMS1_FSSS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO13startKeyDocIDAESScAEmF"></a>
                     <a name="//apple_ref/swift/Element/startKeyDocID" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters13startKeyDocIDFMS1_FSSS1_">startKeyDocID</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO13startKeyDocIDAESScAEmF">startKeyDocID</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -460,8 +589,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Return records starting with the specified document ID. Requires startkey to be specified for this to have any effect.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">startKeyDocID</span> <span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -473,9 +610,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters14updateSequenceFMS1_FSbS1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO14updateSequenceAESbcAEmF"></a>
                     <a name="//apple_ref/swift/Element/updateSequence" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters14updateSequenceFMS1_FSbS1_">updateSequence</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO14updateSequenceAESbcAEmF">updateSequence</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -483,8 +620,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Response includes an update_seq value indicating which sequence id of the database the view reflects. Default is false.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">updateSequence</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -496,9 +641,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FOC7CouchDB8Database15QueryParameters4keysFMS1_FGSaPs9AnyObject__S1_"></a>
+                    <a name="/s:7CouchDB8DatabaseC15QueryParametersO4keysAESayyXlGcAEmF"></a>
                     <a name="//apple_ref/swift/Element/keys" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FOC7CouchDB8Database15QueryParameters4keysFMS1_FGSaPs9AnyObject__S1_">keys</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC15QueryParametersO4keysAESayyXlGcAEmF">keys</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -506,8 +651,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Return only documents where the key matches one of the keys specified in the array.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">keys</span> <span class="p">([</span><span class="kt"><a href="../../Classes/Database.html#/s:7CouchDB8DatabaseC7KeyTypea">KeyType</a></span><span class="p">])</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -520,8 +673,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-11)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

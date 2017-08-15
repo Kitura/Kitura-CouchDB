@@ -20,58 +20,103 @@ import KituraNet
 
 // MARK: Database
 
+/// Represents a CouchDB database.
 public class Database {
-
-    ///
-    /// Options handling when to update
-    ///
-    /// - OK: CouchDB will not refresh the view even if it is stale
-    /// - UpdateAfter: CouchDB will update the view after the stale result is returned
-    ///
+    /// Indicates when to update.
     public enum StaleOptions {
+        /// CouchDB will not refresh the view even if it is stale.
         case OK
+        /// CouchDB will update the view after the stale result is returned.
         case updateAfter
     }
 
     #if os(Linux)
     public typealias KeyType = Any
     #else
+    /// Typealias used for building query parameters in view functions.
     public typealias KeyType = AnyObject
     #endif
 
+    /// Query parameters for view functions from design documents.
     public enum QueryParameters {
+        /// Includes conflicts information in response. Ignored if include_docs isn’t true. Default is false.
         case conflicts (Bool)
+
+        /// Return the documents in descending by key order. Default is false.
         case descending (Bool)
+
+        /// Stop returning records when the specified key is reached.
         case endKey ([KeyType])
+
+        /// Stop returning records when the specified document ID is reached. Requires endkey to be specified for this to have any effect.
         case endKeyDocID (String)
+
+        /// Group the results using the reduce function to a group or single row. Default is false
         case group (Bool)
+
+        /// Specify the group level to be used.
         case groupLevel (Int)
+
+        ///Include the associated document with each row. Default is false.
         case includeDocs (Bool)
+
+        /// Include the Base64-encoded content of attachments in the documents that are included if include_docs is true. Ignored if include_docs isn’t true. Default is false.
         case attachments (Bool)
+
+        /// Include encoding information in attachment stubs if include_docs is true and the particular attachment is compressed. Ignored if include_docs isn’t true. Default is false.
         case attachmentEncodingInfo (Bool)
+
+        /// Specifies whether the specified end key should be included in the result. Default is true.
         case inclusiveEnd(Bool)
+
+        /// Limit the number of the returned documents to the specified number.
         case limit (Int)
+
+        /// Use the reduction function. Default is true.
         case reduce (Bool)
+
+        /// Skip this number of records before starting to return the results. Default is 0.
         case skip (Int)
+
+        ///  Allow the results from a stale view to be used.
         case stale (StaleOptions)
+
+        /// Return records starting with the specified key.
         case startKey ([KeyType])
+
+        ///  Return records starting with the specified document ID. Requires startkey to be specified for this to have any effect.
         case startKeyDocID (String)
+
+        /// Response includes an update_seq value indicating which sequence id of the database the view reflects. Default is false.
         case updateSequence (Bool)
+
+        /// Return only documents where the key matches one of the keys specified in the array.
         case keys ([KeyType])
     }
 
+    /// Dictionary of Error cases.
     public static let Error = [
-                                  InternalError: "Internal Error",
-                                  InvalidDocument: "Invalid Document Body",
-                                  InvalidAttachment: "Invalid attachment"
+        InternalError: "Internal Error",
+        InvalidDocument: "Invalid Document Body",
+        InvalidAttachment: "Invalid attachment"
     ]
 
+    /// Internal error.
     public static let InternalError = 0
+
+    /// Invalid document.
     public static let InvalidDocument = 1
+
+    /// Invalid attachment.
     public static let InvalidAttachment = 2
 
+    /// Name for the Database.
     public let name: String
+
+    /// Escaped name for the Database.
     public let escapedName: String
+
+    /// `ConnectionProperties` the Database will use for its actions.
     public let connProperties: ConnectionProperties
 
     private static func createQueryParamForArray(_ array: [KeyType]) -> String {
@@ -93,28 +138,23 @@ public class Database {
         return result + "]"
     }
 
+    /// Initialize a new Database instance.
     ///
-    /// Initializes a new Database instance
-    ///
-    /// - Parameter connProperties: ConnectionProperty to use
-    /// - Parameter dbName: the String representing the database name
-    ///
-    /// - Returns: a new Database instance
-    ///
+    /// - parameters:
+    ///     - connProperties: `ConnectionProperties` the Database will use for its actions.
+    ///     - dbName: String name for the Database.
     public init (connProperties: ConnectionProperties, dbName: String) {
         self.name = dbName
         self.escapedName = HTTP.escape(url: name)
         self.connProperties = connProperties
     }
 
+    /// Retrieve a document from the database by ID.
     ///
-    /// Retrieve a document from the database by ID
-    ///
-    /// - Parameter id: String ID for the document
-    /// - Parameter callback: callback function with the document's JSON
-    ///
+    /// - parameters:
+    ///     - id: String ID for the document.
+    ///     - callback: Callback containing the document JSON or an NSError if one occurred.
     public func retrieve(_ id: String, callback: @escaping (JSON?, NSError?) -> ()) {
-
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(escapedName)/\(HTTP.escape(url: id))", hasBody: false)
         var document: JSON?
@@ -133,15 +173,13 @@ public class Database {
         req.end()
     }
 
-    ///
     /// Retrieve all documents from the database
     ///
-    /// - Parameter includeDocuments: A boolean value that indicates whether to include the full content
-    ///                               of the documents. Default is false.
-    /// - Parameter callback: callback function with the document's JSON
-    ///
+    /// - parameters:
+    ///     - includeDocuments: Bool indicating whether to return the full contents of the documents.
+    ///                         Defaults to `false`.
+    ///     - callback: Callback containing the documents JSON or an NSError if one occurred.
     public func retrieveAll(includeDocuments: Bool = false, callback: @escaping (JSON?, NSError?) -> ()) {
-
         var path = "/\(escapedName)/_all_docs"
         if includeDocuments {
             path += "?include_docs=true"
@@ -164,17 +202,15 @@ public class Database {
         req.end()
     }
 
+    /// Update a document in the database.
     ///
-    /// Update a document in the database
-    ///
-    /// - Parameter id: String ID for the document
-    /// - Parameter rev: revision number
-    /// - Parameter document: JSON data for the document
-    /// - Parameter callback: callback containing the new document
-    ///
-    public func update(_ id: String, rev: String, document: JSON,
-                       callback: @escaping (String?, JSON?, NSError?) -> ()) {
-
+    /// - parameters:
+    ///     - id: String ID for the document.
+    ///     - rev: The current revision number for the document.
+    ///     - document: JSON data of the updated document.
+    ///     - callback: Callback containing the new revision number, the JSON response,
+    ///                 and NSError if one occurred.
+    public func update(_ id: String, rev: String, document: JSON, callback: @escaping (String?, JSON?, NSError?) -> ()) {
         if let requestBody = document.rawString() {
             var doc: JSON?
             var revision: String?
@@ -200,12 +236,12 @@ public class Database {
         }
     }
 
+    /// Create a new document.
     ///
-    /// Create a new document
-    ///
-    /// - Parameter documennt: JSON data for the document
-    /// - Parameter callback: callback function with the new document
-    ///
+    /// - parameters:
+    ///     - document: JSON data for the document.
+    ///     - callback: Callback containing the ID of the newly created document, revision number,
+    ///                 JSON response, and NSError if one occurred.
     public func create(_ document: JSON, callback: @escaping (String?, String?, JSON?, NSError?) -> ()) {
         if let requestBody = document.rawString() {
             var id: String?
@@ -232,22 +268,20 @@ public class Database {
         }
     }
 
+    /// Delete a document.
     ///
-    /// Deletes a document
-    ///
-    /// - Parameter id: String ID for the document
-    /// - Parameter rev: revision ID
-    /// - Parameter failOnNotFound: will throw an error if the document is not found
-    /// - Parameter callback: a function containing an error
-    ///
+    /// - parameters:
+    ///     - id: String ID for the document.
+    ///     - rev: Latest revision String for the document.
+    ///     - failOnNotFound: Bool indicating whether to return an error if the document is not found.
+    ///     - callback: Callback containing an NSError if one occurred.
     public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ()) {
-
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .accepted)
-                    || (response.statusCode == .notFound && failOnNotFound) {
+                if (response.statusCode != .OK && response.statusCode != .accepted) ||
+                    (response.statusCode == .notFound && failOnNotFound) {
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsJson(response), id: id, rev: rev)
                 }
             } else {
@@ -258,6 +292,14 @@ public class Database {
         req.end()
     }
 
+    /// Executes the specified view function from the specified design document.
+    ///
+    /// - parameters:
+    ///     - view: View function name String.
+    ///     - design: Design document name.
+    ///     - params: Query parameters for the function.
+    ///     - callback: Callback containing the JSON response or NSError if one occurred.
+    ///                 Refer to http://docs.couchdb.org/en/2.1.0/api/ddoc/views.html for info on JSON contents.
     public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: @escaping (JSON?, NSError?) -> ()) {
         var paramString = ""
         var keys: [KeyType]?
@@ -337,11 +379,11 @@ public class Database {
         if let keys = keys {
             method = "POST"
             hasBody = true
-#if os(Linux)
-            body = JSON(["keys": keys])
-#else
-            body = JSON(["keys": keys] as AnyObject)
-#endif
+            #if os(Linux)
+                body = JSON(["keys": keys])
+            #else
+                body = JSON(["keys": keys] as AnyObject)
+            #endif
         }
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: method, path: "/\(escapedName)/_design/\(HTTP.escape(url: design))/_view/\(HTTP.escape(url: view))\(paramString)", hasBody: hasBody)
@@ -366,6 +408,12 @@ public class Database {
         }
     }
 
+    /// Create a design document.
+    ///
+    /// - parameters:
+    ///     - designName: Name String for the design document.
+    ///     - document: The JSON data of the new design document.
+    ///     - callback: Callback containing the JSON response or an NSError if one occurred.
     public func createDesign(_ designName: String, document: JSON, callback: @escaping (JSON?, NSError?) -> ()) {
         if let requestBody = document.rawString() {
             var doc: JSON?
@@ -388,6 +436,13 @@ public class Database {
         }
     }
 
+    /// Delete a design document.
+    ///
+    /// - parameters:
+    ///     - designName: Name String of the design document to delete.
+    ///     - revision: The latest revision String of the design document to delete.
+    ///     - failOnNotFound: Bool indicating whether to return an error if the design document was not found.
+    ///     - callback: Callback containing an NSError if one occurred.
     public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))?rev=\(HTTP.escape(url: revision))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -405,6 +460,16 @@ public class Database {
         req.end()
     }
 
+    /// Create an attachment.
+    ///
+    /// - parameters:
+    ///     - docId: Document ID String that the attachment is associated with.
+    ///     - docRevision: Document revision String.
+    ///     - attachmentName: Attachment name String.
+    ///     - attachmentData: The attachment Data.
+    ///     - contentType: Attachment MIME type String.
+    ///     - callback: Callback containing the new revision String, the JSON response,
+    ///                 and an NSError if one occurred.
     public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: Data, contentType: String, callback: @escaping (String?, JSON?, NSError?) -> ()) {
         var doc: JSON?
         var revision: String?
@@ -425,6 +490,13 @@ public class Database {
         req.end(attachmentData)
     }
 
+    /// Get an attachment associated with a specified document.
+    ///
+    /// - parameters:
+    ///     - docId: Document ID String that the attachment is associated with.
+    ///     - attachmentName: Name String for the desired attachment.
+    ///     - callback: Callback containing the retrieved attachment data, an NSError if one occurred,
+    ///                 and the content type of the attachment.
     public func retrieveAttachment(_ docId: String, attachmentName: String, callback: @escaping (Data?, NSError?, String?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
@@ -445,6 +517,14 @@ public class Database {
         req.end()
     }
 
+    /// Delete an attachment associated with a specified document.
+    ///
+    /// - parameters:
+    ///     - docId: Document ID String that the attachment is associated with.
+    ///     - docRevision: Latest revision String of the document.
+    ///     - attachmentName: Name String of the attachment to be deleted.
+    ///     - failOnNotFound: Bool indicating whether to return an NSError if the attachment could not be found.
+    ///     - callback: Callback containing an NSError if one occurred.
     public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in

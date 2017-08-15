@@ -21,56 +21,46 @@ import KituraNet
 // MARK: CouchDBClient
 
 #if os(OSX)
+    /// Represents a CouchDB configuration value.
     public typealias CouchDBValue = AnyObject
 #else
     public typealias CouchDBValue = Any
 #endif
 
-///
-/// CouchDB _session callback
-///
+/// Callback for _session requests, containing the session cookie, the JSON response,
+/// and NSError if one occurred.
 public typealias SessionCallback = (String?, JSON?, NSError?) -> ()
 
+/// Represents a CouchDB connection.
 public class CouchDBClient {
 
-    ///
-    /// Connection properties
-    ///
+    /// Connection properties for the `CouchDBClient`.
     public let connProperties: ConnectionProperties
 
+    /// Initialize a `CouchDBClient`.
     ///
-    /// Initializes a CouchDB connection
-    ///
-    /// - Returns: a new CouchDBClient instance
+    /// - parameter connectionProperties: The connection properties for the CouchDB connection.
     public init(connectionProperties: ConnectionProperties) {
         self.connProperties = connectionProperties
     }
 
+    /// Returns a `Database` instance by name.
     ///
-    /// Returns a Database instance by name
-    ///
-    /// - Parameter dbName: String for the database name
-    /// - Returns: a database instance matching the name
-    ///
+    /// - parameter dbName: String name of the desired `Database`.
     public func database(_ dbName: String) -> Database {
         return Database(connProperties: self.connProperties, dbName: dbName)
     }
 
-    ///
-    /// Returns a UsersDatabase instance
-    ///
-    /// - Returns: a database instance matching the name
-    ///
+    /// Returns a `UsersDatabase` instance.
     public func usersDatabase() -> UsersDatabase {
         return UsersDatabase(connProperties: self.connProperties, dbName: "_users")
     }
 
+    /// Create a new `Database`.
     ///
-    /// Create a new database
-    ///
-    /// - Parameter dbName: String for the name of the database
-    /// - Parameter callback: a function containing the Database instance
-    ///
+    /// - parameters:
+    ///     - dbName: String name of the database
+    ///     - callback: Callback containing the newly created `Database`, or an NSError on failure.
     public func createDB(_ dbName: String, callback: @escaping (Database?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
@@ -96,12 +86,11 @@ public class CouchDBClient {
         req.end()
     }
 
+    /// Returns a Bool indicating whether a `Database` with the given name exists.
     ///
-    /// Checks if a database with a name exists already
-    ///
-    /// - Parameter dbName: String for the name of the database
-    /// - Parameter callback: a function containing a boolean that is true if the database exists
-    ///
+    /// - parameters:
+    ///     - dbName: String name of the `Database` to look up.
+    ///     - callback: Callback containing the result of the lookup or an NSError if one occurred.
     public func dbExists(_ dbName: String, callback: @escaping (Bool, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
@@ -120,22 +109,20 @@ public class CouchDBClient {
         req.end()
     }
 
+    /// Delete a `Database` given a local instance of it.
     ///
-    /// Delete a database by instance
-    ///
-    /// - Parameter db: instance of Database to delete
-    /// - Parameter callback: a function that contains an NSerror? if a problem occurred
-    ///
+    /// - parameters:
+    ///     - database: An instance of the `Database` to delete.
+    ///     - callback: Callback containing an NSError if one occurred.
     public func deleteDB(_ database: Database, callback: @escaping (NSError?) -> ()) {
         deleteDB(database.name, callback: callback)
     }
 
+    /// Delete a `Database` given its name.
     ///
-    /// Delete a database by name
-    ///
-    /// - Parameter dbName: a String for the name of the database
-    /// - Parameter callback: a function containing an NSError? if a problem occurred
-    ///
+    /// - parameters:
+    ///     - dbName: String name of the `Database` to delete.
+    ///     - callback: Callback containing an NSError if one occurred.
     public func deleteDB(_ dbName: String, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
@@ -158,6 +145,11 @@ public class CouchDBClient {
         req.end()
     }
 
+    /// Returns some UUIDs created by CouchDB.
+    ///
+    /// - parameters:
+    ///     - count: The number of UUIDs to get.
+    ///     - callback: Callback containing an array of UUIDs or an NSError if one occured.
     public func getUUIDs(count : UInt, callback : @escaping ([String]?, NSError?) -> Void) {
 
         let url = "/_uuids?count=\(count)"
@@ -183,9 +175,9 @@ public class CouchDBClient {
                         })
                     } catch let caughtError {
                         #if os(Linux)
-                        error = NSError(domain: caughtError.localizedDescription, code: -1)
+                            error = NSError(domain: caughtError.localizedDescription, code: -1)
                         #else
-                        error = caughtError as NSError
+                            error = caughtError as NSError
                         #endif
                     }
                 } else {
@@ -199,29 +191,26 @@ public class CouchDBClient {
         req.end()
     }
 
+    /// Returns a UUID created by CouchDB.
+    ///
+    /// - parameter callback: Callback containing the UUID or an NSError if one occurred.
     public func getUUID(callback : @escaping (String?, NSError?) -> Void) {
-
-        self.getUUIDs(count: 1) { (uuids, error) in
-
+        getUUIDs(count: 1) { (uuids, error) in
             var uuid : String?
             if let uuids = uuids,
                 uuids.count > 0 {
                 uuid = uuids.first
             }
-
             callback(uuid, error)
         }
     }
 
-
+    /// Set a CouchDB configuration parameter to a new value.
     ///
-    /// Configure CouchDB
-    ///
-    /// - Parameter keyPath: String key path to the parameter
-    /// - Parameter value: Value to set
-    /// - Parameter callback: Success of operation
-    ///
-
+    /// - parameters:
+    ///     - keyPath: The configuration parameter String to update.
+    ///     - value: The `CouchDBValue` to set the configuration parameter to.
+    ///     - callback: Callback containing an NSError if one occurred.
     public func setConfig(keyPath: String, value: CouchDBValue, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "PUT",
@@ -237,11 +226,11 @@ public class CouchDBClient {
             }
             callback(configError)
         }
-#if os(Linux)
-        let body = JSON("\"\(value)\"")
-#else
+        #if os(Linux)
+            let body = JSON("\"\(value)\"")
+        #else
             let body = JSON("\"\(value)\"" as NSString)
-#endif
+        #endif
 
         if let body = body.rawString() {
             req.end(body)
@@ -250,12 +239,12 @@ public class CouchDBClient {
         }
     }
 
+    /// Get the value for a CouchDB configuration parameter.
     ///
-    /// Get CouchDB Configuration
-    ///
-    /// - Parameter callback: Response body of /_config/keyPath
-    ///
-
+    /// - parameters:
+    ///     - keyPath: The configuration parameter String to get the value for.
+    ///     - callback: Callback containing the JSON return value for the configuration parameter,
+    ///                 or an NSError if one occurred.
     public func getConfig(keyPath: String, callback: @escaping (JSON?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
@@ -269,11 +258,11 @@ public class CouchDBClient {
                 do {
                     let body = try response.readString()
                     if let body = body {
-#if os(Linux)
-                        configJSON = JSON(body)
-#else
-                        configJSON = JSON(body as NSString)
-#endif
+                        #if os(Linux)
+                            configJSON = JSON(body)
+                        #else
+                            configJSON = JSON(body as NSString)
+                        #endif
                     }
                 } catch {
                     configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
@@ -285,15 +274,14 @@ public class CouchDBClient {
         req.end()
     }
 
+    /// Create a new session for the given user credentials.
     ///
-    /// Retrieve a session cookie from the database by name and password
-    ///
-    /// - Parameter name: String of username
-    /// - Parameter password: String of password
-    /// - Parameter callback: callback function with the cookie and document's JSON
-    ///
+    /// - parameters:
+    ///     - name: Username String.
+    ///     - password: Password String.
+    ///     - callback: `SessionCallback` containing the session cookie and JSON response,
+    ///                 or an NSError if one occurred.
     public func createSession(name: String, password: String, callback: @escaping SessionCallback) {
-
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
                                                          path: "/_session",
@@ -322,14 +310,13 @@ public class CouchDBClient {
         req.end(body)
     }
 
+    /// Verify a session cookie.
     ///
-    /// Verify a session cookie
-    ///
-    /// - Parameter cookie: String of cookie
-    /// - Parameter callback: callback function with the cookie and document's JSON
-    ///
+    /// - parameters:
+    ///     - cookie: String session cookie.
+    ///     - callback: `SessionCallback` containing the cookie, JSON response,
+    ///                 and an NSError if the user is not authenticated or an error occurred.
     public func getSession(cookie: String, callback: @escaping SessionCallback) {
-
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
         requestOptions.append(.port(connProperties.port))
@@ -359,14 +346,13 @@ public class CouchDBClient {
         req.end()
     }
 
+    /// Logout a session.
     ///
-    /// Logout a session
-    ///
-    /// - Parameter cookie: String of cookie
-    /// - Parameter callback: callback function with the cookie and document's JSON
-    ///
+    /// - parameters:
+    ///     - cookie: String session cookie.
+    ///     - callback: `SessionCallback` containing the cookie, JSON response,
+    ///                 and NSError if one occurred.
     public func deleteSession(cookie: String, callback: @escaping SessionCallback) {
-
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
         requestOptions.append(.port(connProperties.port))
