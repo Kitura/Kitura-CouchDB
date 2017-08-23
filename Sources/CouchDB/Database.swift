@@ -202,7 +202,7 @@ public class Database {
         req.end()
     }
 
-	/// Bulk update or insert documents into the database
+	/// Bulk update or insert documents into the database.
 	///
 	/// - Note:
 	///   - CouchDB will return the results in the same order as supplied in the array. The `id` and revision will be
@@ -229,10 +229,10 @@ public class Database {
 	///     ]
 	///     ````
 	///
-	/// - Parameter documents: An array containing JSON documents to be updated or inserted
+	/// - Parameter documents: An array containing JSON documents to be updated or inserted.
 	/// - Parameter newEdits: Boolean value to mark documents as new edits. A value of `false` prevents the database
 	///                       from assigning new revision IDs to the documents. Default is `true`.
-	/// - Parameter callback: callback containing the bulk update/insert result
+	/// - Parameter callback: callback containing the bulk update/insert result.
 	///
 	public func bulk(documents: [JSON], newEdits: Bool = true, callback: @escaping (JSON?, NSError?) -> ()) {
 
