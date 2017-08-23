@@ -202,7 +202,6 @@ public class Database {
         req.end()
     }
 
-	///
 	/// Bulk update or insert documents into the database
 	///
 	/// - Note:
@@ -263,7 +262,6 @@ public class Database {
 		}
 		req.end(requestBody)
 	}
-
 
 	/// Update a document in the database.
     ///
