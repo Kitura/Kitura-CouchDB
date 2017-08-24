@@ -233,8 +233,11 @@ public class Database {
 	/// - Parameter newEdits: Boolean value to mark documents as new edits. A value of `false` prevents the database
 	///                       from assigning new revision IDs to the documents. Default is `true`.
 	/// - Parameter callback: callback containing the bulk update/insert result.
+	/// - Parameter json: JSON response containing a list of `_id`, `_rev`, `error` and `reason` for every document. The
+	///                   results are returned in the same order as the supplied documents array.
+	/// - Parameter error: Request error if one occurred.
 	///
-	public func bulk(documents: [JSON], newEdits: Bool = true, callback: @escaping (JSON?, NSError?) -> ()) {
+	public func bulk(documents: [JSON], newEdits: Bool = true, callback: @escaping (_ json: JSON?, _ error: NSError?) -> ()) {
 
 		// Prepare request options
 		let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)/_bulk_docs", hasBody: true)
