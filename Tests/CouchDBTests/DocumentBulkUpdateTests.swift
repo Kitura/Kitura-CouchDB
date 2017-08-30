@@ -47,7 +47,7 @@ class DocumentBulkUpdateTests: XCTestCase {
 
 	// MARK: - Database connection properties
 
-	static let dbSecuredConnection = true
+	static let dbSecuredConnection = false
 
 	let couchDBClient: CouchDBClient! = {
 		let credentials = Utils.readCredentials()
