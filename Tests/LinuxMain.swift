@@ -21,6 +21,7 @@ import XCTest
 XCTMain([
     testCase(DocumentCrudTests.allTests),
     testCase(DocumentViewTests.allTests),
+    testCase(DocumentBulkUpdateTests.allTests),
     testCase(DBTests.allTests),
     testCase(UUIDTests.allTests)
 ])
