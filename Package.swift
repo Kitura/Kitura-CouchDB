@@ -1,3 +1,6 @@
+// swift-tools-version:4.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 /**
  * Copyright IBM Corporation 2016, 2017
  *
@@ -18,19 +21,30 @@ import PackageDescription
 
 let package = Package(
     name: "Kitura-CouchDB",
-    targets: [
-        Target(
+    products: [
+        // Products define the executables and libraries produced by a package, and make them visible to other packages.
+        .library(
             name: "CouchDB",
-            dependencies: []
-        ),
-        Target(
-            name: "CouchDBSample",
-            dependencies: [.Target(name: "CouchDB")]
-        ),
-    ],
+            targets: ["CouchDB"]),
+        ],
     dependencies: [
-        .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 1, minor: 7),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 1, minor: 7),
-        .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 17)
-    ]
+        // Dependencies declare other packages that this package depends on.
+        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-net.git", .upToNextMinor(from: "2.0.0")),
+        .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMinor(from: "17.0.0")),
+    ],
+    targets: [
+        // Targets are the basic building blocks of a package. A target defines a module or a test suite.
+        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+        .target(
+            name: "CouchDB",
+            dependencies: ["HeliumLogger", "KituraNet", "SwiftyJSON"]),
+        .target(
+            name: "CouchDBSample",
+            dependencies: ["CouchDB"]),
+        .testTarget(
+            name: "CouchDBTests",
+            dependencies: ["CouchDB"]),
+        ]
 )

@@ -433,8 +433,8 @@ public class Database {
             }
         }
 
-        if paramString.characters.count > 0 {
-            paramString = "?" + String(paramString.characters.dropLast())
+        if paramString.count > 0 {
+            paramString = "?" + String(paramString.dropLast())
         }
 
         var method = "GET"
