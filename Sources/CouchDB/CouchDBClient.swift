@@ -170,9 +170,15 @@ public class CouchDBClient {
 
                         let uuidsJSON = responseJSON["uuids"]
 
+                        #if swift(>=4.1)
+                        uuids = uuidsJSON.array?.compactMap({ (uuidJSON) -> String? in
+                            return uuidJSON.string
+                        })
+                        #else
                         uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
                             return uuidJSON.string
                         })
+                        #endif
                     } catch let caughtError {
                         #if os(Linux)
                             error = NSError(domain: caughtError.localizedDescription, code: -1)
