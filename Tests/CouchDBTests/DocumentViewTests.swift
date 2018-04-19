@@ -38,12 +38,11 @@ class DocumentViewTests: XCTestCase {
     var database: Database?
     let documentId = "123456"
     var jsonDocument: JSON?
-    // To enable running Linux and OSX tests in parallel
-    #if os(Linux)
-    let dbName = "kitura_db_linux"
-    #else
-    let dbName = "kitura_db"
-    #endif
+
+    // The database name should be defined in an environment variable TESTDB_NAME
+    // in Travis, to allow each Travis build to use a separate database.
+    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
+
     var couchDBClient: CouchDBClient?
 
     func testViewTest() {
