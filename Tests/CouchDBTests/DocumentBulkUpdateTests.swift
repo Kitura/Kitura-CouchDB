@@ -103,6 +103,31 @@ class DocumentBulkUpdateTests: XCTestCase {
 
 	override func setUp() {
 
+          // Check if DB exists
+          couchDBClient.dbExists(dbName) {exists, error in
+            if  error != nil {
+                XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
+            } else {
+                if  exists {
+                    // Delete the old database and then re-create it to avoid state issues
+                    let db = couchDBClient.database(self.dbName)
+                    couchDBClient.deleteDB(db) {error in
+                        if let error = error {
+                            XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+                        } else {
+                            // Create database
+                            self.createDatabase()
+                        }
+                    }
+                } else {
+                    // Create database
+                    self.createDatabase()
+                }
+            }
+          }
+        }
+
+        private func createDatabase() {
 		// Create test database
 		couchDBClient.createDB(dbName) { database, error in
 			if let error = error {
