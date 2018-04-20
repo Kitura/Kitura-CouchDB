@@ -110,8 +110,8 @@ class DocumentBulkUpdateTests: XCTestCase {
             } else {
                 if  exists {
                     // Delete the old database and then re-create it to avoid state issues
-                    let db = couchDBClient.database(self.dbName)
-                    couchDBClient.deleteDB(db) {error in
+                    let db = self.couchDBClient.database(self.dbName)
+                    self.couchDBClient.deleteDB(db) {error in
                         if let error = error {
                             XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
                         } else {
