@@ -38,12 +38,9 @@ class DocumentBulkUpdateTests: XCTestCase {
 		]
 	}
 
-	// To enable running Linux and OSX tests in parallel
-#if os(Linux)
-	let dbName = "test_db_linux"
-#else
-	let dbName = "test_db_db"
-#endif
+        // The database name should be defined in an environment variable TESTDB_NAME
+        // in Travis, to allow each Travis build to use a separate database.
+        let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
 
 	// MARK: - Database connection properties
 

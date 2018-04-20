@@ -59,13 +59,10 @@ class DocumentCrudTests: XCTestCase {
             "\"value\": \"value2\"" +
     "}"
 
+    // The database name should be defined in an environment variable TESTDB_NAME
+    // in Travis, to allow each Travis build to use a separate database.
+    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
 
-// To enable running Linux and OSX tests in parallel
-#if os(Linux)
-    let dbName = "kitura_db_linux"
-#else
-    let dbName = "kitura_db"
-#endif
     var couchDBClient: CouchDBClient?
 
     func testCrudTest() {
