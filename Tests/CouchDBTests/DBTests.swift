@@ -40,6 +40,10 @@ class DBTests: XCTestCase {
   let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
 
   func testDB() {
+      delay(delayedTestDB)
+  }
+
+  func delayedTestDB() {
     let credentials = Utils.readCredentials()
 
     // Connection properties for testing Cloudant or CouchDB instance

@@ -46,6 +46,10 @@ class DocumentViewTests: XCTestCase {
     var couchDBClient: CouchDBClient?
 
     func testViewTest() {
+        delay(delayedTestViewTest)
+    }
+
+    func delayedTestViewTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance

@@ -37,6 +37,10 @@ class UUIDTests : XCTestCase {
     }
 
     func testUUIDsTest() {
+        delay(delayedTestUUIDsTest)
+    }
+
+    func delayedTestUUIDsTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
@@ -68,6 +72,10 @@ class UUIDTests : XCTestCase {
     }
 
     func testUUIDTest() {
+        delay(delayedTestUUIDTest)
+    }
+
+    func delayedTestUUIDTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance

@@ -162,7 +162,11 @@ class DocumentBulkUpdateTests: XCTestCase {
 
 	// MARK: - Xcode tests
 
-	func testBulkInsert() {
+        func testBulkInsert() {
+                delay(delayedTestBulkInsert)
+        }
+
+	func delayedTestBulkInsert() {
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return
@@ -201,7 +205,11 @@ class DocumentBulkUpdateTests: XCTestCase {
 		}
 	}
 
-	func testBulkUpdate() {
+        func testBulkUpdate() {
+            delay(delayedTestBulkUpdate)
+        }
+
+	func delayedTestBulkUpdate() {
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return
@@ -293,6 +301,10 @@ class DocumentBulkUpdateTests: XCTestCase {
 	}
 
 	func testBulkDelete() {
+            delay(delayedTestBulkDelete)
+        }
+
+        func delayedTestBulkDelete() {
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return

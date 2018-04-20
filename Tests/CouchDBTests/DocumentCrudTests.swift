@@ -66,6 +66,10 @@ class DocumentCrudTests: XCTestCase {
     var couchDBClient: CouchDBClient?
 
     func testCrudTest() {
+        delay(delayedTestCrudTest)
+    }
+
+    func delayedTestCrudTest() {
         let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
@@ -96,12 +100,12 @@ class DocumentCrudTests: XCTestCase {
                             XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
                         } else {
                             // Create database
-                            self.createDatabase()
+                            self.delay(self.createDatabase)
                         }
                     }
                 } else {
                     // Create database
-                    self.createDatabase()
+                    self.delay(self.createDatabase)
                 }
             }
         }
@@ -146,7 +150,9 @@ class DocumentCrudTests: XCTestCase {
                 XCTAssertEqual(self.documentId1, id, "Wrong documentId read from updated document")
                 XCTAssertEqual("value2", value, "Wrong value read from updated document")
                 print(">> Successfully confirmed update in the JSON document")
-                self.chainer(document, next: self.deleteDocument)
+                self.delay {
+                    self.chainer(document, next: self.deleteDocument)
+                }
             }
         })
     }
@@ -166,7 +172,7 @@ class DocumentCrudTests: XCTestCase {
                 }
                 XCTAssertEqual(self.documentId1, id, "Wrong documentId read from updated document")
                 print(">> Successfully updated the JSON document.")
-                self.confirmUpdate()
+                self.delay(self.confirmUpdate)
             }
         })
     }
@@ -187,7 +193,7 @@ class DocumentCrudTests: XCTestCase {
                 XCTAssertEqual("value1", value, "Wrong value read from document")
                 print(">> Successfully read the following JSON document: ")
                 print(document)
-                self.retrieveAll()
+                self.delay(self.retrieveAll)
             }
         })
     }
@@ -221,7 +227,9 @@ class DocumentCrudTests: XCTestCase {
                 XCTAssertEqual(self.documentId2, id2, "Wrong documentId read from document")
                 XCTAssertEqual("value2", value2, "Wrong value read from document")
                 print(">> Successfully retrieved all documents")
-                self.chainer(document1, next: self.updateDocument)
+                self.delay {
+                    self.chainer(document1, next: self.updateDocument)
+                }
             }
         })
     }
@@ -238,9 +246,11 @@ class DocumentCrudTests: XCTestCase {
             } else {
                 print(">> Successfully created the JSON document.")
                 if let documentId = id, documentId == self.documentId1 {
-                    self.createDocument(fromJSONString: self.jsonString2)
+                    self.delay {
+                        self.createDocument(fromJSONString: self.jsonString2)
+                    }
                 } else {
-                    self.readDocument()
+                    self.delay(self.readDocument)
                 }
             }
         })
@@ -261,7 +271,9 @@ class DocumentCrudTests: XCTestCase {
                 self.database = db
 
                 // Start tests...
-                self.createDocument(fromJSONString: self.jsonString1)
+                self.delay {
+                    self.createDocument(fromJSONString: self.jsonString1)
+                }
             }
         }
     }
