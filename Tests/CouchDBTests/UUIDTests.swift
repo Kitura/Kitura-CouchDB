@@ -41,7 +41,7 @@ class UUIDTests : XCTestCase {
 
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port, secured: false,
+                                                  port: credentials.port, secured: true,
                                                   username: credentials.username,
                                                   password: credentials.password)
 
@@ -72,7 +72,7 @@ class UUIDTests : XCTestCase {
 
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port, secured: false,
+                                                  port: credentials.port, secured: true,
                                                   username: credentials.username,
                                                   password: credentials.password)
 
