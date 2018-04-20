@@ -44,15 +44,13 @@ class DocumentBulkUpdateTests: XCTestCase {
 
 	// MARK: - Database connection properties
 
-	static let dbSecuredConnection = false
-
 	let couchDBClient: CouchDBClient! = {
 		let credentials = Utils.readCredentials()
 
 		// Connection properties for testing Cloudant or CouchDB instance
 		let connProperties = ConnectionProperties(host: credentials.host,
 		                                          port: credentials.port,
-		                                          secured: dbSecuredConnection,
+		                                          secured: true,
 		                                          username: credentials.username,
 		                                          password: credentials.password)
 
