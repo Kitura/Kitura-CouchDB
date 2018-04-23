@@ -36,10 +36,6 @@ class DBTests: CouchDBTest {
     
     /// Test that the database can be created and deleted.
     func testDB() {
-        delay(delayedTestDB)
-    }
-  
-    private func delayedTestDB() {
         couchDBClient.createDB(dbName) {(db: Database?, error: NSError?) in
             if let error = error {
                 XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")

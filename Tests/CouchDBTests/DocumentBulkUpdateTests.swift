@@ -27,7 +27,7 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DocumentBulkUpdateTests: XCTestCase {
+class DocumentBulkUpdateTests: CouchDBTest {
 
 	// Add an additional class variable holding all tests for Linux compatibility
 	static var allTests: [(String, (DocumentBulkUpdateTests) -> () throws -> Void)] {
@@ -37,32 +37,6 @@ class DocumentBulkUpdateTests: XCTestCase {
 			("testBulkDelete", testBulkDelete)
 		]
 	}
-
-        // The database name should be defined in an environment variable TESTDB_NAME
-        // in Travis, to allow each Travis build to use a separate database.
-        let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
-
-	// MARK: - Database connection properties
-
-	let couchDBClient: CouchDBClient! = {
-		let credentials = Utils.readCredentials()
-
-		// Connection properties for testing Cloudant or CouchDB instance
-		let connProperties = ConnectionProperties(host: credentials.host,
-		                                          port: credentials.port,
-		                                          secured: true,
-		                                          username: credentials.username,
-		                                          password: credentials.password)
-
-		// Create couchDBClient instance using connection properties
-		let client = CouchDBClient(connectionProperties: connProperties)
-
-		print("Hostname is: \(client.connProperties.host)")
-
-		return client
-	}()
-
-	var database: Database?
 
 	// MARK: - Database test objects
 
@@ -99,74 +73,10 @@ class DocumentBulkUpdateTests: XCTestCase {
 	                  "userId": "8901234",
 	                  "addressId": "2345678"])
 
-	// MARK: - Initializers and test set-up and tear-down
-
-	override func setUp() {
-
-          // Check if DB exists
-          couchDBClient.dbExists(dbName) {exists, error in
-            if  error != nil {
-                XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
-            } else {
-                if  exists {
-                    // Delete the old database and then re-create it to avoid state issues
-                    let db = self.couchDBClient.database(self.dbName)
-                    self.couchDBClient.deleteDB(db) {error in
-                        if let error = error {
-                            XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-                        } else {
-                            // Create database
-                            self.createDatabase()
-                        }
-                    }
-                } else {
-                    // Create database
-                    self.createDatabase()
-                }
-            }
-          }
-        }
-
-        private func createDatabase() {
-		// Create test database
-		couchDBClient.createDB(dbName) { database, error in
-			if let error = error {
-				XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
-				return
-			}
-
-			if database == nil {
-				XCTFail("Created database is nil")
-				return
-			}
-
-			print("Database \"\(self.dbName)\" successfully created")
-
-			// Assign data base
-			self.database = database
-		}
-	}
-
-	override func tearDown() {
-
-		// Retrieve and delete test database
-		couchDBClient.deleteDB(dbName) { error in
-			if let error = error {
-				XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-				return
-			}
-
-			print("Database \"\(self.dbName)\" successfully deleted")
-		}
-	}
-
 	// MARK: - Xcode tests
 
         func testBulkInsert() {
-                delay(delayedTestBulkInsert)
-        }
-
-	func delayedTestBulkInsert() {
+            createDatabase()
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return
@@ -206,10 +116,7 @@ class DocumentBulkUpdateTests: XCTestCase {
 	}
 
         func testBulkUpdate() {
-            delay(delayedTestBulkUpdate)
-        }
-
-	func delayedTestBulkUpdate() {
+            createDatabase()
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return
@@ -301,10 +208,7 @@ class DocumentBulkUpdateTests: XCTestCase {
 	}
 
 	func testBulkDelete() {
-            delay(delayedTestBulkDelete)
-        }
-
-        func delayedTestBulkDelete() {
+            createDatabase()
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return

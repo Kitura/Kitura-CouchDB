@@ -27,7 +27,7 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DocumentViewTests: XCTestCase {
+class DocumentViewTests: CouchDBTest {
 
     static var allTests: [(String, (DocumentViewTests) -> () throws -> Void)] {
         return [
@@ -35,80 +35,12 @@ class DocumentViewTests: XCTestCase {
         ]
     }
 
-    var database: Database?
     let documentId = "123456"
     var jsonDocument: JSON?
 
-    // The database name should be defined in an environment variable TESTDB_NAME
-    // in Travis, to allow each Travis build to use a separate database.
-    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
-
-    var couchDBClient: CouchDBClient?
-
     func testViewTest() {
-        delay(delayedTestViewTest)
-    }
-
-    func delayedTestViewTest() {
-        let credentials = Utils.readCredentials()
-
-        // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port, secured: true,
-                                                  username: credentials.username,
-                                                  password: credentials.password)
-
-        // Create couchDBClient instance using conn properties
-        couchDBClient = CouchDBClient(connectionProperties: connProperties)
-        guard let couchDBClient = couchDBClient  else {
-            XCTFail("Failed to create CouchDB Client.")
-            exit(1)
-        }
-
-        print("Hostname is: \(couchDBClient.connProperties.host)")
-
-        // Check if DB exists
-        couchDBClient.dbExists(dbName) {exists, error in
-            if  error != nil {
-                XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
-            } else {
-                if  exists {
-                    // Delete the old database and then re-create it to avoid state issues
-                    let db = couchDBClient.database(self.dbName)
-                    couchDBClient.deleteDB(db) {error in
-                        if let error = error {
-                            XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-                        } else {
-                            // Create database
-                            self.createDatabase()
-                        }
-                    }
-                } else {
-                    // Create database
-                    self.createDatabase()
-                }
-            }
-        }
-    }
-
-    // Create Database closure
-    func createDatabase() {
-        guard let couchDBClient = couchDBClient  else {
-            XCTFail("Failed to create CouchDB Client.")
-            return
-        }
-
-        couchDBClient.createDB(self.dbName) {db, error in
-            if  error != nil {
-                XCTFail("Failed creating the database \(self.dbName). Error=\(error!.localizedDescription)")
-                exit(1)
-            } else {
-                self.database = db
-
-                // Start tests...
-                self.createDocument()
-            }
-        }
+        createDatabase()
+        createDocument()
     }
 
     func chainer(_ document: JSON?, next: (_ revisionNumber: String) -> Void) {
