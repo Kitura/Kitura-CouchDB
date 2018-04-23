@@ -27,7 +27,7 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DocumentBulkUpdateTests: XCTestCase {
+class DocumentBulkUpdateTests: CouchDBTest {
 
 	// Add an additional class variable holding all tests for Linux compatibility
 	static var allTests: [(String, (DocumentBulkUpdateTests) -> () throws -> Void)] {
@@ -37,37 +37,6 @@ class DocumentBulkUpdateTests: XCTestCase {
 			("testBulkDelete", testBulkDelete)
 		]
 	}
-
-	// To enable running Linux and OSX tests in parallel
-#if os(Linux)
-	let dbName = "test_db_linux"
-#else
-	let dbName = "test_db_db"
-#endif
-
-	// MARK: - Database connection properties
-
-	static let dbSecuredConnection = false
-
-	let couchDBClient: CouchDBClient! = {
-		let credentials = Utils.readCredentials()
-
-		// Connection properties for testing Cloudant or CouchDB instance
-		let connProperties = ConnectionProperties(host: credentials.host,
-		                                          port: credentials.port,
-		                                          secured: dbSecuredConnection,
-		                                          username: credentials.username,
-		                                          password: credentials.password)
-
-		// Create couchDBClient instance using connection properties
-		let client = CouchDBClient(connectionProperties: connProperties)
-
-		print("Hostname is: \(client.connProperties.host)")
-
-		return client
-	}()
-
-	var database: Database?
 
 	// MARK: - Database test objects
 
@@ -104,45 +73,10 @@ class DocumentBulkUpdateTests: XCTestCase {
 	                  "userId": "8901234",
 	                  "addressId": "2345678"])
 
-	// MARK: - Initializers and test set-up and tear-down
-
-	override func setUp() {
-
-		// Create test database
-		couchDBClient.createDB(dbName) { database, error in
-			if let error = error {
-				XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
-				return
-			}
-
-			if database == nil {
-				XCTFail("Created database is nil")
-				return
-			}
-
-			print("Database \"\(self.dbName)\" successfully created")
-
-			// Assign data base
-			self.database = database
-		}
-	}
-
-	override func tearDown() {
-
-		// Retrieve and delete test database
-		couchDBClient.deleteDB(dbName) { error in
-			if let error = error {
-				XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-				return
-			}
-
-			print("Database \"\(self.dbName)\" successfully deleted")
-		}
-	}
-
 	// MARK: - Xcode tests
 
-	func testBulkInsert() {
+        func testBulkInsert() {
+            createDatabase()
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return
@@ -181,7 +115,8 @@ class DocumentBulkUpdateTests: XCTestCase {
 		}
 	}
 
-	func testBulkUpdate() {
+        func testBulkUpdate() {
+            createDatabase()
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return
@@ -273,6 +208,7 @@ class DocumentBulkUpdateTests: XCTestCase {
 	}
 
 	func testBulkDelete() {
+            createDatabase()
 		guard let database = database else {
 			XCTFail("Failed to retrieve database")
 			return

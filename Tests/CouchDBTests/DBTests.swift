@@ -23,56 +23,38 @@ import XCTest
 #endif
 
 import Foundation
-import SwiftyJSON
 
 @testable import CouchDB
 
-class DBTests: XCTestCase {
+class DBTests: CouchDBTest {
 
-  static var allTests: [(String, (DBTests) -> () throws -> Void)] {
-    return [
-        ("testDB", testDB),
-    ]
-  }
+    static var allTests: [(String, (DBTests) -> () throws -> Void)] {
+        return [
+            ("testDB", testDB),
+        ]
+    }
     
-  // To enable running Linux and OSX tests in parallel
-  #if os(Linux)
-    let dbName = "test_db_linux"
-  #else
-    let dbName = "test_db_db"
-  #endif
-
-  func testDB() {
-    let credentials = Utils.readCredentials()
-
-    // Connection properties for testing Cloudant or CouchDB instance
-    let connProperties = ConnectionProperties(host: credentials.host,
-      port: credentials.port, secured: false,
-      username: credentials.username,
-      password: credentials.password)
-
-    // Create couchDBClient instance using conn properties
-    let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-    print("Hostname is: \(couchDBClient.connProperties.host)")
-
-    couchDBClient.createDB(dbName) {(db: Database?, error: NSError?) in
-        if let error = error {
-            XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
-        }
-
-        guard let db = db else {
-            XCTFail("Created database is nil")
-            return
-        }
-
-        print(">> Database successfully created")
-        couchDBClient.deleteDB(db) {(error: NSError?) in
+    /// Test that the database can be created and deleted.
+    func testDB() {
+        couchDBClient.createDB(dbName) {(db: Database?, error: NSError?) in
             if let error = error {
-                XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+                XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
             }
-            print(">> Database successfully deleted")
+
+            guard let db = db else {
+                XCTFail("Created database is nil")
+                return
+            }
+
+            print(">> Database successfully created")
+            
+            self.couchDBClient.deleteDB(db) {(error: NSError?) in
+                if let error = error {
+                    XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+                }
+                print(">> Database successfully deleted")
+            }
         }
     }
-  }
 
- }
+}

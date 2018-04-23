@@ -27,7 +27,7 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class DocumentCrudTests: XCTestCase {
+class DocumentCrudTests: CouchDBTest {
 
     static var allTests: [(String, (DocumentCrudTests) -> () throws -> Void)] {
         return [
@@ -35,7 +35,6 @@ class DocumentCrudTests: XCTestCase {
         ]
     }
 
-    var database: Database?
     let documentId1 = "123456"
     let documentId2 = "654321"
     var jsonDocument: JSON?
@@ -59,55 +58,11 @@ class DocumentCrudTests: XCTestCase {
             "\"value\": \"value2\"" +
     "}"
 
-
-// To enable running Linux and OSX tests in parallel
-#if os(Linux)
-    let dbName = "kitura_db_linux"
-#else
-    let dbName = "kitura_db"
-#endif
-    var couchDBClient: CouchDBClient?
-
+    // Test CRUD actions in sequence. Each action calls a following action
+    // in sequence, starting with document creation.
     func testCrudTest() {
-        let credentials = Utils.readCredentials()
-
-        // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(host: credentials.host,
-            port: credentials.port, secured: false,
-            username: credentials.username,
-            password: credentials.password)
-
-        // Create couchDBClient instance using conn properties
-        couchDBClient = CouchDBClient(connectionProperties: connProperties)
-        guard let couchDBClient = couchDBClient  else {
-            XCTFail("Failed to create CouchDB Client.")
-            exit(1)
-        }
-
-        print("Hostname is: \(couchDBClient.connProperties.host)")
-
-        // Check if DB exists
-        couchDBClient.dbExists(dbName) {exists, error in
-            if  error != nil {
-                XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
-            } else {
-                if  exists {
-                    // Delete the old database and then re-create it to avoid state issues
-                    let db = couchDBClient.database(self.dbName)
-                    couchDBClient.deleteDB(db) {error in
-                        if let error = error {
-                            XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-                        } else {
-                            // Create database
-                            self.createDatabase()
-                        }
-                    }
-                } else {
-                    // Create database
-                    self.createDatabase()
-                }
-            }
-        }
+        createDatabase()
+        self.createDocument(fromJSONString: self.jsonString1)
     }
 
     func chainer(_ document: JSON?, next: (String) -> Void) {
@@ -140,7 +95,7 @@ class DocumentCrudTests: XCTestCase {
             if error != nil {
                 XCTFail("Error in rereading document \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
-                guard let document = document as JSON!,
+                guard let document = document,
                     let id = document["_id"].string,
                     let value = document["value"].string else {
                         XCTFail("Error: Keys not found when rereading document")
@@ -149,7 +104,9 @@ class DocumentCrudTests: XCTestCase {
                 XCTAssertEqual(self.documentId1, id, "Wrong documentId read from updated document")
                 XCTAssertEqual("value2", value, "Wrong value read from updated document")
                 print(">> Successfully confirmed update in the JSON document")
-                self.chainer(document, next: self.deleteDocument)
+                self.delay {
+                    self.chainer(document, next: self.deleteDocument)
+                }
             }
         })
     }
@@ -162,14 +119,14 @@ class DocumentCrudTests: XCTestCase {
             if (error != nil) {
                 XCTFail("Error in updating document \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
-                guard let document = document as JSON!,
+                guard let document = document,
                     let id = document["id"].string else {
                         XCTFail("Error: Keys not found when reading updated document")
                         exit(1)
                 }
                 XCTAssertEqual(self.documentId1, id, "Wrong documentId read from updated document")
                 print(">> Successfully updated the JSON document.")
-                self.confirmUpdate()
+                self.delay(self.confirmUpdate)
             }
         })
     }
@@ -180,7 +137,7 @@ class DocumentCrudTests: XCTestCase {
             if error != nil {
                XCTFail("Error in reading document \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
-                guard let document = document as JSON!,
+                guard let document = document,
                     let id = document["_id"].string,
                     let value = document["value"].string else {
                         XCTFail("Error: Keys not found when reading document")
@@ -190,7 +147,7 @@ class DocumentCrudTests: XCTestCase {
                 XCTAssertEqual("value1", value, "Wrong value read from document")
                 print(">> Successfully read the following JSON document: ")
                 print(document)
-                self.retrieveAll()
+                self.delay(self.retrieveAll)
             }
         })
     }
@@ -201,7 +158,7 @@ class DocumentCrudTests: XCTestCase {
             if error != nil {
                 XCTFail("Error in retrieving all documents \(error!.code) \(error!.domain) \(error!.userInfo)")
             } else {
-                guard let document = document as JSON!,
+                guard let document = document,
                     let totalRows = document["total_rows"].number, totalRows == 2 else {
                         XCTFail("Error: Wrong number of documents")
                         exit(1)
@@ -224,7 +181,9 @@ class DocumentCrudTests: XCTestCase {
                 XCTAssertEqual(self.documentId2, id2, "Wrong documentId read from document")
                 XCTAssertEqual("value2", value2, "Wrong value read from document")
                 print(">> Successfully retrieved all documents")
-                self.chainer(document1, next: self.updateDocument)
+                self.delay {
+                    self.chainer(document1, next: self.updateDocument)
+                }
             }
         })
     }
@@ -241,31 +200,14 @@ class DocumentCrudTests: XCTestCase {
             } else {
                 print(">> Successfully created the JSON document.")
                 if let documentId = id, documentId == self.documentId1 {
-                    self.createDocument(fromJSONString: self.jsonString2)
+                    self.delay {
+                        self.createDocument(fromJSONString: self.jsonString2)
+                    }
                 } else {
-                    self.readDocument()
+                    self.delay(self.readDocument)
                 }
             }
         })
     }
 
-    // Create Database closure
-    func createDatabase() {
-        guard let couchDBClient = couchDBClient  else {
-            XCTFail("Failed to create CouchDB Client.")
-            return
-        }
-
-        couchDBClient.createDB(self.dbName) {db, error in
-            if  error != nil {
-                XCTFail("Failed creating the database \(self.dbName). Error=\(error!.localizedDescription)")
-                exit(1)
-            } else {
-                self.database = db
-
-                // Start tests...
-                self.createDocument(fromJSONString: self.jsonString1)
-            }
-        }
-    }
 }

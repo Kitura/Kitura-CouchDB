@@ -27,7 +27,7 @@ import SwiftyJSON
 
 @testable import CouchDB
 
-class UUIDTests : XCTestCase {
+class UUIDTests : CouchDBTest {
 
     static var allTests: [(String, (UUIDTests) -> () throws -> Void)] {
         return [
@@ -37,19 +37,6 @@ class UUIDTests : XCTestCase {
     }
 
     func testUUIDsTest() {
-        let credentials = Utils.readCredentials()
-
-        // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port, secured: false,
-                                                  username: credentials.username,
-                                                  password: credentials.password)
-
-        // Create couchDBClient instance using conn properties
-        let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-
-        print("Hostname is: \(couchDBClient.connProperties.host)")
-
         let expectedCount : UInt = 10
         couchDBClient.getUUIDs(count: expectedCount) { (uuids, error) in
 
@@ -68,19 +55,6 @@ class UUIDTests : XCTestCase {
     }
 
     func testUUIDTest() {
-        let credentials = Utils.readCredentials()
-
-        // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port, secured: false,
-                                                  username: credentials.username,
-                                                  password: credentials.password)
-
-        // Create couchDBClient instance using conn properties
-        let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-
-        print("Hostname is: \(couchDBClient.connProperties.host)")
-
         couchDBClient.getUUID() { (uuid, error) in
 
             if error != nil {
