@@ -61,8 +61,9 @@ class DocumentCrudTests: CouchDBTest {
     // Test CRUD actions in sequence. Each action calls a following action
     // in sequence, starting with document creation.
     func testCrudTest() {
-        createDatabase()
-        self.createDocument(fromJSONString: self.jsonString1)
+        setUpDatabase {
+            self.createDocument(fromJSONString: self.jsonString1)
+        }
     }
 
     func chainer(_ document: JSON?, next: (String) -> Void) {
