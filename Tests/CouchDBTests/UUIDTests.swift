@@ -38,36 +38,42 @@ class UUIDTests : CouchDBTest {
 
     func testUUIDsTest() {
         let expectedCount : UInt = 10
-        couchDBClient.getUUIDs(count: expectedCount) { (uuids, error) in
+        setUpDatabase {
+            self.couchDBClient.getUUIDs(count: expectedCount) { (uuids, error) in
 
-            if error != nil {
-                XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(String(describing: error))")
-            } else {
-                if let uuids = uuids {
-
-                    XCTAssertEqual(uuids.count, Int(expectedCount), "Expected count of UUIDs to be \(expectedCount), instead it is \(uuids.count)")
-                    print(">> Successfully retrieved \(expectedCount) UUIDs")
+                if error != nil {
+                    XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(String(describing: error))")
                 } else {
-                    XCTFail("Failed to retrieve \(expectedCount) UUIDs, nil retrieved")
+                    if let uuids = uuids {
+
+                        XCTAssertEqual(uuids.count, Int(expectedCount), "Expected count of UUIDs to be \(expectedCount), instead it is \(uuids.count)")
+                        print(">> Successfully retrieved \(expectedCount) UUIDs")
+                    } else {
+                        XCTFail("Failed to retrieve \(expectedCount) UUIDs, nil retrieved")
+                    }
                 }
             }
         }
+
     }
 
     func testUUIDTest() {
-        couchDBClient.getUUID() { (uuid, error) in
+        setUpDatabase {
+            self.couchDBClient.getUUID() { (uuid, error) in
 
-            if error != nil {
-                XCTFail("Failed to retrieve a UUID: \(String(describing: error))")
-            } else {
-                if uuid != nil {
-
-                    print(">> Successfully retrieved a UUID")
+                if error != nil {
+                    XCTFail("Failed to retrieve a UUID: \(String(describing: error))")
                 } else {
-                    XCTFail("Failed to retrieve a UUID, nil retrieved")
+                    if uuid != nil {
+
+                        print(">> Successfully retrieved a UUID")
+                    } else {
+                        XCTFail("Failed to retrieve a UUID, nil retrieved")
+                    }
                 }
             }
         }
+
     }
 
 }
