@@ -16,15 +16,25 @@ matrix:
       dist: trusty
       sudo: required
       env: TESTDB_NAME=testdb_2
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: SWIFT_SNAPSHOT=swift-4.2-DEVELOPMENT-SNAPSHOT-2018-06-19-a
+      env: TESTDB_NAME=testdb_3
     - os: osx
       osx_image: xcode9.2
       sudo: required
       env: SWIFT_SNAPSHOT=4.0.3
-      env: TESTDB_NAME=testdb_3
-    - os: osx
-      osx_image: xcode9.3
-      sudo: required
       env: TESTDB_NAME=testdb_4
+    - os: osx
+      osx_image: xcode9.4
+      sudo: required
+      env: TESTDB_NAME=testdb_5
+    - os: osx
+      osx_image: xcode9.4
+      sudo: required
+      env: SWIFT_SNAPSHOT=swift-4.2-DEVELOPMENT-SNAPSHOT-2018-06-04-a
+      env: TESTDB_NAME=testdb_6
 
 before_install:
   - git clone https://github.com/IBM-Swift/Package-Builder.git
