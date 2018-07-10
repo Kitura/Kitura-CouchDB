@@ -1,18 +1,54 @@
+<p align="center">
+    <a href="http://kitura.io/">
+        <img src="https://raw.githubusercontent.com/IBM-Swift/Kitura/master/Sources/Kitura/resources/kitura-bird.svg?sanitize=true" height="100" alt="Kitura">
+    </a>
+</p>
+
+
+<p align="center">
+    <a href="https://ibm-swift.github.io/Kitura-CouchDB/index.html">
+    <img src="https://img.shields.io/badge/apidoc-KituraCouchDB-1FBCE4.svg?style=flat" alt="APIDoc">
+    </a>
+    <a href="https://travis-ci.org/IBM-Swift/Kitura-CouchDB">
+    <img src="https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=master" alt="Build Status - Master">
+    </a>
+    <img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
+    <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
+    <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2">
+    <a href="http://swift-at-ibm-slack.mybluemix.net/">
+    <img src="http://swift-at-ibm-slack.mybluemix.net/badge.svg" alt="Slack Status">
+    </a>
+</p>
+
 # Kitura-CouchDB
 
-[![Build Status](https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=master)](https://travis-ci.org/IBM-Swift/Kitura-CouchDB)
-![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
-![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
-![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
-[![codecov](https://codecov.io/gh/IBM-Swift/Kitura-CouchDB/branch/master/graph/badge.svg)](https://codecov.io/gh/IBM-Swift/Kitura-CouchDB)
+Kitura-CouchDB is a pure Swift client which allows Kitura applications to interact with a CouchDB database.
 
-***CouchDB library for [Kitura](https://github.com/IBM-Swift/Kitura)*** - [[documentation](https://ibm-swift.github.io/Kitura-CouchDB/)]
+## Usage
 
-This library allows Kitura applications to interact with a CouchDB database.
+#### Add dependencies
 
-Depends on [Kitura-net](https://github.com/IBM-Swift/Kitura-net).
+Add the `Kitura-CouchDB` package to the dependencies within your application’s `Package.swift` file. Substitute `"x.x.x"` with the latest `Kitura-CouchDB` [release](https://github.com/IBM-Swift/Kitura-CouchDB/releases).
 
-## Build CouchDBSample:
+```swift
+.package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", from: "x.x.x")
+```
+
+Add `CouchDB` to your target's dependencies:
+
+```swift
+.target(name: "example", dependencies: ["CouchDB"]),
+```
+
+#### Import package
+
+```swift
+import CouchDB
+```
+
+## Use Kitura-CouchDB locally
+
+The CouchDBSample executable demonstrates how to create, read, update and delete documents within a CouchDB database in Swift.
 
 1. [Download CouchDB](http://couchdb.apache.org/#download) and install.
 
@@ -20,87 +56,47 @@ Depends on [Kitura-net](https://github.com/IBM-Swift/Kitura-net).
 
 3. Create a database with the name `kitura_test_db`.
 
-4. Update the following code in `main.swift` with your admin username and password:
+4. Clone this repository:
 
-	```swift
-	let connProperties = ConnectionProperties(
-    	host: "127.0.0.1",  // httpd address
-    	port: 5984,         // httpd port
-    	secured: false,     // https or http
-    	username: nil,      // admin username
-    	password: nil       // admin password
-	)
-	```
+    ```bash
+    git clone https://github.com/IBM-Swift/Kitura-CouchDB.git
+    ```
 
-5. Open a Terminal window to the `Kitura-CouchDB` folder and run `swift build`:
+5. Update the following code in `Sources\CouchDBSample\main.swift` with your admin username and password (the host will default to 127.0.0.1 and the port will default to 5984):
 
-	```bash
-	swift build
-	```
+    ```swift
+    let connProperties = ConnectionProperties(
+        host: host,         // httpd address
+        port: port,         // httpd port
+        secured: secured,   // https or http
+        username: nil,      // admin username
+        password: nil       // admin password
+    )
+    ```
 
-6. Run the CouchDBSample executable:
+6. Open a Terminal window, change into the `Kitura-CouchDB` folder and run `swift build`:
 
-	```bash
-	.build/debug/CouchDBSample
-	```
+    ```bash
+    swift build
+    ```
 
-## Usage:
+7. Run the CouchDBSample executable:
 
-(Todo)
-#### Get the "_users" database from the client
+    ```bash
+    .build/debug/CouchDBSample
+    ```
 
-```swift
-let userDatabase = databaseClient.usersDatabase()
-```
+    You will see informational messages such as "Successfully created the following JSON document in CouchDB:" for each of the operations (create, read, update and delete) performed on the `kitura_test_db` database.
 
-#### Add user to the "_users" database:
+## Example
 
-```swift
-var user = JSONDictionary()
+For a more comprehensive example, you can follow the Kitura tutorial [Getting Started with Server-side Swift on raywenderlich.com](https://www.raywenderlich.com/180721/kitura-tutorial-getting-started-with-server-side-swift) that shows you how to create a backend API and then link this to a CouchDB instance running on your local machine.
 
-user["type"]        	= "user"
-user["roles"]       	= []
-user["name"]        	= name
-user["password"]    	= password
-user["email"]   	= email
+## API Documentation
+For more information visit our [API reference](https://ibm-swift.github.io/Kitura-CouchDB/index.html).
 
-let document = JSON(user)
-
-userDatabase.signupUser(document) { (id, doc, error) in
-	if let document = doc, let id = id where error == nil {
-		response.status(HttpStatusCode.OK).sendJson(document)
-	}
-	else {
-		if let error = error {
-			response.status(error.code).sendJson(JSON(error.userInfo))
-		}
-		else {
-			response.status(HttpStatusCode.BAD_REQUEST).send("Signup failed")
-		}
-	}
-	next()
-})
-```
-
-#### Get a session cookie for the user:
-
-```swift
-userDatabase.getSessionCookie(name, password: password, callback: { (cookie, document, error) in
-	if let error = error {
-		response.status(error.code).sendJson(JSON(error.userInfo))
-	}
-	else {
-		var document = JSONDictionary()
-
-		document["ok"] = true
-		document["cookie"] = cookie
-
-		let json = JSON(document)
-		response.status(HttpStatusCode.OK).sendJson(json)
-	}
-	next()
-})
-```
+## Community
+We love to talk server-side Swift, and Kitura. Join our [Slack](http://swift-at-ibm-slack.mybluemix.net/) to meet the team!
 
 ## License
-Apache 2.0
+This library is licensed under Apache 2.0. Full license text is available in [LICENSE](https://github.com/IBM-Swift/Kitura-CouchDB/blob/master/LICENSE.txt).
