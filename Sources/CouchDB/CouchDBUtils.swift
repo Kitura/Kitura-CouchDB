@@ -63,7 +63,6 @@ class CouchDBUtils {
         if let password = connProperties.password {
             requestOptions.append(.password(password))
         }
-
         requestOptions.append(.schema("\(connProperties.HTTPProtocol)://"))
         requestOptions.append(.hostname(connProperties.host))
         requestOptions.append(.port(connProperties.port))
