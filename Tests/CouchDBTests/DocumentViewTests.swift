@@ -39,8 +39,9 @@ class DocumentViewTests: CouchDBTest {
     var jsonDocument: JSON?
 
     func testViewTest() {
-        createDatabase()
-        createDocument()
+        setUpDatabase() {
+            self.createDocument()
+            }
     }
 
     func chainer(_ document: JSON?, next: (_ revisionNumber: String) -> Void) {
