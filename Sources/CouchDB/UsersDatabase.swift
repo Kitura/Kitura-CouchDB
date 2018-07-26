@@ -16,7 +16,7 @@
 
 import Foundation
 import SwiftyJSON
-import KituraNet
+import KituraNIO
 
 // MARK: Users Database
 

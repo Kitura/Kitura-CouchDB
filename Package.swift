@@ -31,7 +31,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", from: "1.7.0"),
-        .package(url: "https://github.com/IBM-Swift/Kitura-net.git", from: "2.1.0"),
+        .package(url: "https://github.com/IBM-Swift/Kitura-NIO.git", from: "0.0.0"),
         .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", from: "17.0.0"),
     ],
     targets: [
@@ -39,7 +39,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "CouchDB",
-            dependencies: ["HeliumLogger", "KituraNet", "SwiftyJSON"]),
+            dependencies: ["HeliumLogger", "KituraNIO", "SwiftyJSON"]),
         .target(
             name: "CouchDBSample",
             dependencies: ["CouchDB"]),
