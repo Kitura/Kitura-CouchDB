@@ -18,6 +18,15 @@
  **/
 
 import PackageDescription
+import Foundation
+
+var kituraNetPackage: Package.Dependency
+
+if ProcessInfo.processInfo.environment["KITURA_NIO"] != nil {
+    kituraNetPackage = .package(url: "https://github.com/IBM-Swift/Kitura-NIO.git", from: "1.0.0")
+} else {
+    kituraNetPackage = .package(url: "https://github.com/IBM-Swift/Kitura-net.git", from: "2.1.0")
+}
 
 let package = Package(
     name: "Kitura-CouchDB",
@@ -31,7 +40,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", from: "1.7.0"),
-        .package(url: "https://github.com/IBM-Swift/Kitura-net.git", from: "2.1.0"),
+        kituraNetPackage,
         .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", from: "17.0.0"),
     ],
     targets: [
