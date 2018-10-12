@@ -21,6 +21,7 @@ import XCTest
     import Darwin
 #endif
 import Foundation
+import Dispatch
 
 @testable import CouchDB
 
