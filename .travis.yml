@@ -14,15 +14,15 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      env: TESTDB_NAME=testdb_2
+      env: SWIFT_SNAPSHOT=4.1 TESTDB_NAME=testdb_2
     - os: linux
       dist: trusty
       sudo: required
-      env: SWIFT_SNAPSHOT=4.2 TESTDB_NAME=testdb_3
+      env: TESTDB_NAME=testdb_3
     - os: linux
       dist: trusty
       sudo: required
-      env: SWIFT_SNAPSHOT=4.2 KITURA_NIO=1 TESTDB_NAME=testdb_4
+      env: KITURA_NIO=1 TESTDB_NAME=testdb_4
     - os: osx
       osx_image: xcode9.2
       sudo: required
@@ -30,7 +30,7 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       sudo: required
-      env: TESTDB_NAME=testdb_6
+      env: SWIFT_SNAPSHOT=4.1.2 TESTDB_NAME=testdb_6
     - os: osx
       osx_image: xcode10
       sudo: required
