@@ -33,15 +33,15 @@ class CouchDBTest: XCTestCase {
     // in Travis, to allow each Travis build to use a separate database.
     let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "kitura_test_db"
 
-    let couchDBClient: CouchDBClient! = {
-        let credentials = Utils.readCredentials()
+    let couchDBClient: CouchDBClient = {
+        //let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(host: credentials.host,
-                                                  port: credentials.port,
-                                                  secured: true,
-                                                  username: credentials.username,
-                                                  password: credentials.password)
+        let connProperties = ConnectionProperties(host: "127.0.0.1",
+                                                  port: 5984,
+                                                  secured: false,
+                                                  username: "andrew",
+                                                  password: "password")
 
         // Create couchDBClient instance using connection properties
         let client = CouchDBClient(connectionProperties: connProperties)
