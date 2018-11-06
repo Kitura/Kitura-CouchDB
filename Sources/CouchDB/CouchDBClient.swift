@@ -15,7 +15,6 @@
  **/
 
 import Foundation
-import SwiftyJSON
 import KituraNet
 
 // MARK: CouchDBClient
@@ -29,7 +28,7 @@ import KituraNet
 
 /// Callback for _session requests, containing the session cookie, the JSON response,
 /// and NSError if one occurred.
-public typealias SessionCallback = (String?, JSON?, NSError?) -> ()
+public typealias SessionCallback = (String?, SessionResponse?, NSError?) -> ()
 
 /// Represents a CouchDB connection.
 public class CouchDBClient {
@@ -71,9 +70,8 @@ public class CouchDBClient {
                 if response.statusCode == .created {
                     db = Database(connProperties: self.connProperties, dbName: dbName)
                 } else {
-                    if let descOpt = try? response.readString(), let desc = descOpt {
-                        error = CouchDBUtils.createError(response.statusCode,
-                                                         errorDesc: JSON.parse(string: desc), id: nil, rev: nil)
+                    if let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response) {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
                     } else {
                         error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                     }
@@ -130,9 +128,8 @@ public class CouchDBClient {
             var error: NSError?
             if let response = response {
                 if response.statusCode != HTTPStatusCode.OK {
-                    if let descOpt = try? response.readString(), let desc = descOpt {
-                        error = CouchDBUtils.createError(response.statusCode,
-                                                         errorDesc: JSON.parse(string: desc), id: nil, rev: nil)
+                    if let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response) {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
                     } else {
                         error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                     }
@@ -160,32 +157,11 @@ public class CouchDBClient {
             var error: NSError?
             var uuids: [String]?
             if let response = response {
-                if response.statusCode == HTTPStatusCode.OK {
-
-                    var data = Data()
-                    do {
-                        try response.readAllData(into: &data)
-
-                        let responseJSON = JSON(data: data)
-
-                        let uuidsJSON = responseJSON["uuids"]
-
-                        #if swift(>=4.1)
-                        uuids = uuidsJSON.array?.compactMap({ (uuidJSON) -> String? in
-                            return uuidJSON.string
-                        })
-                        #else
-                        uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
-                            return uuidJSON.string
-                        })
-                        #endif
-                    } catch let caughtError {
-                        #if os(Linux)
-                            error = NSError(domain: caughtError.localizedDescription, code: -1)
-                        #else
-                            error = caughtError as NSError
-                        #endif
-                    }
+                if response.statusCode == HTTPStatusCode.OK,
+                    let responseBody = CouchDBUtils.getBodyAsData(response),
+                    let responseJSON = (try? JSONSerialization.jsonObject(with: responseBody, options: [])) as? [String: [String]]
+                {
+                    uuids = responseJSON["uuids"]
                 } else {
                     error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
@@ -232,13 +208,7 @@ public class CouchDBClient {
             }
             callback(configError)
         }
-        #if os(Linux)
-            let body = JSON("\"\(value)\"")
-        #else
-            let body = JSON("\"\(value)\"" as NSString)
-        #endif
-
-        if let body = body.rawString() {
+        if let body = try? JSONSerialization.data(withJSONObject: value, options: []) {
             req.end(body)
         } else {
             req.end()
@@ -251,7 +221,7 @@ public class CouchDBClient {
     ///     - keyPath: The configuration parameter String to get the value for.
     ///     - callback: Callback containing the JSON return value for the configuration parameter,
     ///                 or an NSError if one occurred.
-    public func getConfig(keyPath: String, callback: @escaping (JSON?, NSError?) -> ()) {
+    public func getConfig<O: Codable>(keyPath: String, callback: @escaping (O?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
                                                          path: "/_config/\(keyPath)",
@@ -259,20 +229,15 @@ public class CouchDBClient {
                                                          contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
             var configError: NSError?
-            var configJSON: JSON?
+            var configJSON: O?
             if let response = response {
-                do {
-                    let body = try response.readString()
-                    if let body = body {
-                        #if os(Linux)
-                            configJSON = JSON(body)
-                        #else
-                            configJSON = JSON(body as NSString)
-                        #endif
-                    }
-                } catch {
+                configJSON = CouchDBUtils.getBodyAsCodable(response)
+                guard configJSON != nil else {
                     configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                    return callback(nil, configError)
                 }
+            } else {
+                configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             }
             callback(configJSON, configError)
         }
@@ -298,13 +263,16 @@ public class CouchDBClient {
 
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var document: JSON?
+            var document: SessionResponse?
             var cookie: String?
             if let response = response {
-                document = CouchDBUtils.getBodyAsJson(response)
-
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
+                document = CouchDBUtils.getBodyAsCodable(response)
+                if response.statusCode != HTTPStatusCode.OK,
+                    let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
+                {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
+                } else {
+                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
 
                 cookie = response.headers["Set-Cookie"]?.first
@@ -337,12 +305,15 @@ public class CouchDBClient {
 
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var document: JSON?
+            var document: SessionResponse?
             if let response = response {
-                document = CouchDBUtils.getBodyAsJson(response)
-
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                document = CouchDBUtils.getBodyAsCodable(response)
+                if response.statusCode != HTTPStatusCode.OK,
+                    let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
+                {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
+                } else {
+                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
@@ -373,15 +344,17 @@ public class CouchDBClient {
 
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var document: JSON?
+            var document: SessionResponse?
             var cookie: String?
             if let response = response {
-                document = CouchDBUtils.getBodyAsJson(response)
-
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
+                document = CouchDBUtils.getBodyAsCodable(response)
+                if response.statusCode != HTTPStatusCode.OK,
+                    let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
+                {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
+                } else {
+                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
-
                 cookie = response.headers["Set-Cookie"]?.first
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)

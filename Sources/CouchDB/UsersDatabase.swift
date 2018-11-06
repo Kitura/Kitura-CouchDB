@@ -15,7 +15,6 @@
  **/
 
 import Foundation
-import SwiftyJSON
 import KituraNet
 
 // MARK: Users Database
@@ -32,10 +31,10 @@ public class UsersDatabase: Database {
     ///     - password: Password String.
     ///     - callback: Callback containing the username, JSON response,
     ///                 and an NSError if one occurred.
-    public func createUser(document: JSON, callback: @escaping (String?, JSON?, NSError?) -> ()) {
-        if let requestBody = document.rawString(), let name = document["name"].string {
-            let id = "org.couchdb.user:\(name)"
-            var doc: JSON?
+    public func createUser(document: CouchUser, callback: @escaping (CouchResponse?, NSError?) -> ()) {
+        if let requestBody = try? JSONEncoder().encode(document) {
+            let id = "org.couchdb.user:\(document.name)"
+            var doc: CouchResponse?
             let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                              method: "PUT",
                                                              path: "/_users/\(id)",
@@ -44,20 +43,20 @@ public class UsersDatabase: Database {
             let req = HTTP.request(requestOptions) { response in
                 var error: NSError?
                 if let response = response {
-                    doc = CouchDBUtils.getBodyAsJson(response)
-                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
-                        error = CouchDBUtils.createError(response.statusCode, errorDesc: doc, id: id, rev: nil)
-                    }
+                    doc = CouchDBUtils.getBodyAsCodable(response)
+                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted,
+                        let errorDesc: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
+                    {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: id, rev: nil)
+                    } 
                 } else {
                     error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
                 }
-                callback(id, doc, error)
+                callback(doc, error)
             }
             req.end(requestBody)
         } else {
-            callback(nil,
-                     nil,
-                     CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+            callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
         }
     }
 
@@ -66,18 +65,12 @@ public class UsersDatabase: Database {
     /// - parameters:
     ///     - name: Name String of the desired user.
     ///     - callback: Callback containing the user JSON, or an NSError if one occurred.
-    public func getUser(name: String, callback: @escaping (JSON?, NSError?) -> ()) {
+    public func getUser(name: String, callback: @escaping (UserContextObject?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
         retrieve(id, callback: { (doc, error) in
-            var json = JSONDictionary()
-            if let document = doc, error == nil {
-                json["user"] = document.object
-            }
-            #if os(Linux)
-                callback(JSON(json), error)
-            #else
-                callback(JSON(json as AnyObject), error)
-            #endif
+            callback(doc, error)
         })
     }
 }
+
+

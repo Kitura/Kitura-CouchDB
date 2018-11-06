@@ -16,7 +16,6 @@
 
 import Foundation
 import KituraNet
-import SwiftyJSON
 
 class CouchDBUtils {
     static let couchDBDomain = "CouchDBDomain"
@@ -47,9 +46,9 @@ class CouchDBUtils {
         return NSError(domain: couchDBDomain, code: code, userInfo: info)
     }
 
-    class func createError(_ code: HTTPStatusCode, errorDesc: JSON?, id: String?, rev: String?) -> NSError {
-        if let errorDesc = errorDesc, let err = errorDesc["error"].string, let reason = errorDesc["reason"].string {
-            return createError(code.rawValue, desc: "Error: \(err), reason: \(reason)", id: id, rev: nil)
+    class func createError(_ code: HTTPStatusCode, errorDesc: CouchErrorResponse?, id: String?, rev: String?) -> NSError {
+        if let errorDesc = errorDesc {
+            return createError(code.rawValue, desc: "Error: \(errorDesc.error), reason: \(errorDesc.reason)", id: id, rev: nil)
         }
         return createError(code, id: id, rev: rev)
     }
@@ -77,12 +76,12 @@ class CouchDBUtils {
         return requestOptions
     }
 
-    class func getBodyAsJson (_ response: ClientResponse) -> JSON? {
+    class func getBodyAsCodable<O: Codable> (_ response: ClientResponse) -> O? {
         do {
             var body = Data()
             try response.readAllData(into: &body)
-            let json = JSON(data: body)
-            return json
+            let codable = try JSONDecoder().decode(O.self, from: body)
+            return codable
         } catch {
             //Log this exception
         }
@@ -99,4 +98,29 @@ class CouchDBUtils {
         }
         return nil
     }
+    
+    class func makeRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (CouchResponse?, NSError?) -> ()) {
+        if let requestBody = try? JSONEncoder().encode(document) {
+            var doc: CouchResponse?
+            let req = HTTP.request(options) { response in
+                var error: NSError?
+                if let response = response {
+                    doc = CouchDBUtils.getBodyAsCodable(response)
+                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted,
+                        let errorDesc: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
+                    {
+                        error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: document._id, rev: nil)
+                    }
+                } else {
+                    error = CouchDBUtils.createError(Database.InternalError, id: document._id, rev: nil)
+                }
+                callback(doc, error)
+            }
+            req.end(requestBody)
+        } else {
+            callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: document._id, rev: document._rev))
+        }
+    }
 }
+
+

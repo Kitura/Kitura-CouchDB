@@ -21,7 +21,6 @@
 #endif
 
 import Foundation
-import SwiftyJSON
 import CouchDB
 import LoggerAPI
 import HeliumLogger
@@ -91,8 +90,8 @@ let connProperties = ConnectionProperties(
     host: host,         // httpd address
     port: port,         // httpd port
     secured: secured,   // https or http
-    username: username, // username
-    password: password  // password
+    username: "andrew",      // admin username
+    password: "password"       // admin password
 )
 
 Log.info("Connection Properties:\n\(connProperties)")
@@ -104,41 +103,47 @@ Log.info("Hostname is: \(couchDBClient.connProperties.host)")
 // Create database instance to perform any document operations
 let database = couchDBClient.database("kitura_test_db")
 
-// Document ID
-#if os(Linux)
+//// Document ID
+//#if os(Linux)
 let documentId = "123456"
-#else
-let documentId = "123456" as NSString
-#endif
+//#else
+//let documentId = "123456" as NSString
+//#endif
+//
+//#if os(Linux)
+//typealias valuetype = Any
+//#else
+//typealias valuetype = AnyObject
+//#endif
+//
+//// JSON document in string format
+//let jsonDict: [String: valuetype] = [
+//    "_id": documentId,
+//    "truncated": false as valuetype,
+//    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as valuetype,
+//    "favorited": false as valuetype,
+//    "value": "value1" as valuetype
+//]
+//let jsonData = try JSONSerialization.data(withJSONObject: jsonDict, options: [])
 
-#if os(Linux)
-typealias valuetype = Any
-#else
-typealias valuetype = AnyObject
-#endif
-
-// JSON document in string format
-let jsonDict: [String: valuetype] = [
-    "_id": documentId,
-    "truncated": false as valuetype,
-    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as valuetype,
-    "favorited": false as valuetype,
-    "value": "value1" as valuetype
-]
-#if os(Linux)
-let json = JSON(jsonDict)
-#else
-let json = JSON(jsonDict as AnyObject)
-#endif
-
-
+struct MyDocument: Document {
+    let _id: String?
+    var _rev: String?
+    let truncated: Bool
+    let created_at: String
+    let favorited: Bool
+    let value: String
+}
+var myDocument = MyDocument(_id: documentId,
+                                _rev: nil,
+                                truncated: false,
+                                created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                favorited: false,
+                                value: "value1")
 // MARK: Chainer
 
-func chainer(_ document: JSON?, next: (String) -> Void) {
-    if let revisionNumber = document?["rev"].string {
-        Log.info("revisionNumber is \(revisionNumber)")
-        next(revisionNumber)
-    } else if let revisionNumber = document?["_rev"].string {
+func chainer(_ document: MyDocument?, next: (String) -> Void) {
+    if let revisionNumber = document?._rev {
         Log.info("revisionNumber is \(revisionNumber)")
         next(revisionNumber)
     } else {
@@ -150,7 +155,7 @@ func chainer(_ document: JSON?, next: (String) -> Void) {
 // MARK: Create document
 
 func createDocument() {
-    database.create(json, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+    database.create(myDocument, callback: { (document, error) in
         if let error = error {
             Log.error(">> Oops something went wrong; could not persist document.")
             Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
@@ -165,7 +170,7 @@ func createDocument() {
 // MARK: Read document
 
 func readDocument() {
-    database.retrieve(documentId as String, callback: { (document: JSON?, error: NSError?) in
+    database.retrieve(documentId, callback: { (document: MyDocument?, error: NSError?) in
         if let error = error {
             Log.error("Oops something went wrong; could not read document.")
             Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
@@ -183,15 +188,16 @@ func readDocument() {
 func updateDocument(revisionNumber: String) {
     //var json = JSON(data: jsonData!)
     //json["value"] = "value2"
-    database.update(documentId as String, rev: revisionNumber, document: json,
-        callback: { (rev: String?, document: JSON?, error: NSError?) in
+    database.update(documentId, rev: revisionNumber, document: myDocument,
+        callback: { (response: CouchResponse?, error: NSError?) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not update document.")
                 Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
             } else {
+                myDocument._rev = response?.rev
                 Log.info(">> Successfully updated the JSON document with ID" +
-                    "\(documentId) in CouchDB:\n\t\(String(describing: document))")
-                chainer(document, next: deleteDocument)
+                    "\(documentId) in CouchDB:\n\t\(String(describing: response))")
+                chainer(myDocument, next: deleteDocument)
             }
     })
 }
@@ -200,7 +206,7 @@ func updateDocument(revisionNumber: String) {
 // MARK: Delete document
 
 func deleteDocument(revisionNumber: String) {
-    database.delete(documentId as String, rev: revisionNumber, failOnNotFound: false,
+    database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
         callback: { (error: NSError?) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not delete document.")
