@@ -23,11 +23,11 @@ import XCTest
 #endif
 
 import Foundation
-import SwiftyJSON
+import CouchDB
 
 class Utils {
-
-    struct Credentials {
+    
+    struct Credentials: Codable {
         let host: String
         let port: Int16
         let username: String?
@@ -58,20 +58,20 @@ class Utils {
             XCTFail("Failed to read in the credentials.json file")
             exit(1)
         }
-        // Convert NSData to JSON object
-        let credentialsJson = JSON(data: credentialsData)
 
-        guard
-          let hostName = credentialsJson["host"].string,
-          let port = credentialsJson["port"].int16
-        else {
+        guard let credentialsJson = try? JSONDecoder().decode(Credentials.self, from: credentialsData) else {
             XCTFail("Error in credentials.json.")
             exit(1)
         }
-        let userName = credentialsJson["username"].string
-        let password = credentialsJson["password"].string
-
-        print(">> Successfully read in credentials.")
-        return Credentials(host: hostName, port: port, username: userName, password: password)
+        return credentialsJson
     }
+}
+
+struct MyDocument: Document {
+    let _id: String?
+    var _rev: String?
+    let truncated: Bool
+    let created_at: String
+    let favorited: Bool
+    var value: String
 }

@@ -57,14 +57,14 @@ public struct SessionInfo: Codable {
 }
 
 public struct AllDatabaseDocuments {
-    init(total_rows: Int, offset: Int, rows: [Data]) {
+    init(total_rows: Int, offset: Int, rows: [[String: Any]]) {
         self.total_rows = total_rows
         self.offset = offset
         self.rows = rows
     }
     public let total_rows: Int
     public let offset: Int
-    public let rows: [Data]
+    public let rows: [[String: Any]]
 }
 
 public protocol Document: Codable {
@@ -74,6 +74,30 @@ public protocol Document: Codable {
 
 // http://docs.couchdb.org/en/2.2.0/api/ddoc/common.html#put--db-_design-ddoc
 public struct DesignDocument: Codable, Document {
+    public init(_id: String? = nil,
+            _rev: String? = nil,
+            language: String? = nil,
+            options: [String: Bool]? = nil,
+            filters: [String: String]? = nil,
+            lists: [String: String]? = nil,
+            rewrites: [String]? = nil,
+            shows: [String: String]? = nil,
+            updates: [String: String]? = nil,
+            validate_doc_update: String? = nil,
+            views: [String: [String: String]]? = nil
+    ) {
+        self._id = _id
+        self._rev = _rev
+        self.language = language
+        self.options = options
+        self.filters = filters
+        self.lists = lists
+        self.rewrites = rewrites
+        self.shows = shows
+        self.updates = updates
+        self.validate_doc_update = validate_doc_update
+        self.views = views
+    }
     public let _id: String?
     public let _rev: String?
     public let language: String?
@@ -91,11 +115,16 @@ public struct DesignDocument: Codable, Document {
 public struct BulkResponse: Codable {
     public let id: String
     public let rev: String?
+    public let ok: Bool?
     public let error: String?
     public let reason: String?
 }
 
 public struct BulkDocuments {
+    public init(docs: [[String: Any]], new_edits: Bool = true) {
+        self.docs = docs
+        self.new_edits = new_edits
+    }
     public let new_edits: Bool
-    public let docs: [Data]
+    public let docs: [[String: Any]]
 }

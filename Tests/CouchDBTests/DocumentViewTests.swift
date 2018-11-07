@@ -23,7 +23,8 @@ import XCTest
 #endif
 
 import Foundation
-import SwiftyJSON
+import HeliumLogger
+import LoggerAPI
 
 @testable import CouchDB
 
@@ -35,70 +36,26 @@ class DocumentViewTests: CouchDBTest {
         ]
     }
 
+    
     let documentId = "123456"
-    var jsonDocument: JSON?
+    var jsonDocument: MyDocument?
 
     func testViewTest() {
         setUpDatabase() {
             self.createDocument()
-            }
-    }
-
-    func chainer(_ document: JSON?, next: (_ revisionNumber: String) -> Void) {
-        if let revisionNumber = document?["rev"].string {
-            print("revisionNumber is \(revisionNumber)")
-            next(revisionNumber)
-        } else if let revisionNumber = document?["_rev"].string {
-            print("revisionNumber is \(revisionNumber)")
-            next(revisionNumber)
-        } else {
-            XCTFail(">> Oops something went wrong... could not get revisionNumber!")
-        }
-    }
-
-    //Read document
-    func readDocument() {
-#if os(Linux)
-        let key = "viewTest"
-#else
-        let key: NSString = "viewTest"
-#endif
-        database!.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (document: JSON?, error: NSError?) in
-            if let error = error {
-                XCTFail("Error in querying by view document \(error.code) \(error.domain) \(error.userInfo)")
-            } else {
-                guard let id = document!["rows"][0]["id"].string, let value = document!["rows"][0]["value"]["value"].string, value == "viewTest" else {
-                    XCTFail("Error: Keys not found when reading document")
-                    exit(1)
-                }
-
-                XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")
-                XCTAssertEqual(key as String, value, "Wrong value read from document")
-
-                print(">> Successfully read the following JSON document: ")
-                print(document!)
-            }
         }
     }
 
     //Create document closure
     func createDocument() {
-        // JSON document in string format
-        let jsonStr =
-            "{" +
-                "\"_id\": \"\(documentId)\"," +
-                "\"coordinates\": null," +
-                "\"truncated\": false," +
-                "\"created_at\": \"Tue Aug 28 21:16:23 +0000 2012\"," +
-                "\"favorited\": false," +
-                "\"value\": \"viewTest\"" +
-        "}"
+        let jsonDoc = MyDocument(_id: documentId,
+                                 _rev: nil,
+                                 truncated: false,
+                                 created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                 favorited: false,
+                                 value: "viewTest")
 
-        // Convert JSON string to NSData
-        let jsonData = jsonStr.data(using: .utf8)
-        // Convert NSData to JSON object
-        jsonDocument = JSON(data: jsonData!)
-        database!.create(jsonDocument!, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+        database?.create(jsonDoc, callback: { (document: CouchResponse?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
             } else {
@@ -110,31 +67,42 @@ class DocumentViewTests: CouchDBTest {
 
     func createDesign() {
         let name = "test"
-        #if os(Linux)
-            let designDocument: [String:Any] =
-                ["_id" : "_design/\(name)",
-                 "views" : [
-                               "matching" : [
-                                                "map" : "function(doc) { emit(doc.value, doc); }"
-                    ]
-                    ]
-            ]
-        #else
-            let designDocument: [String:Any] =
-                ["_id" : "_design/\(name)" as NSString,
-                 "views" : [
-                               "matching" : [
-                                                "map" : "function(doc) { emit(doc.value, doc); }"
-                    ]
-                    ]
-            ]
-        #endif
-        database!.createDesign(name, document: JSON(designDocument)) { (document: JSON?, error: NSError?) in
+        let designDocument = DesignDocument(_id: "_design/\(name)",
+                                            views: [
+                                                "matching" : [
+                                                    "map" : "function(doc) { emit(doc.value, doc); }"
+                                                ]
+                                            ])
+        database?.createDesign(name, document: designDocument) { (document: CouchResponse?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
             } else {
                 print(">> Successfully created the design.")
                 self.readDocument()
+            }
+        }
+    }
+    
+    //Read document
+    func readDocument() {
+        let key = "viewTest"
+        
+        database?.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (document: AllDatabaseDocuments?, error: NSError?) in
+            if let error = error {
+                XCTFail("Error in querying by view document \(error.code) \(error.domain) \(error.userInfo)")
+            } else {
+                guard let value = ((document?.rows[0])?["value"] as? [String:Any])?["value"] as? String,
+                    let id = document?.rows[0]["id"] as? String
+                else {
+                    XCTFail("Error: Keys not found when reading document")
+                    exit(1)
+                }
+                
+                XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")
+                XCTAssertEqual(key, value, "Wrong value read from document")
+                
+                print(">> Successfully read the following JSON document: ")
+                print(document!)
             }
         }
     }

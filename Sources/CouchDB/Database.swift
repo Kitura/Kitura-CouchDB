@@ -29,12 +29,7 @@ public class Database {
         case updateAfter
     }
 
-    #if os(Linux)
     public typealias KeyType = Any
-    #else
-    /// Typealias used for building query parameters in view functions.
-    public typealias KeyType = AnyObject
-    #endif
 
     /// Query parameters for view functions from design documents.
     public enum QueryParameters {
@@ -194,11 +189,9 @@ public class Database {
                     let bodyJSON = (try? JSONSerialization.jsonObject(with: bodyData, options: [])) as? [String:Any],
                     let total_rows = bodyJSON["total_rows"] as? Int,
                     let offset = bodyJSON["offset"] as? Int,
-                    let rows = bodyJSON["rows"] as? [Any],
-                    let dataRows = try? rows.map({ try JSONSerialization.data(withJSONObject: $0, options: []) })
+                    let rows = bodyJSON["rows"] as? [[String:Any]]
                 {
-                    
-                    document = AllDatabaseDocuments(total_rows: total_rows, offset: offset, rows: dataRows)
+                    document = AllDatabaseDocuments(total_rows: total_rows, offset: offset, rows: rows)
                 }
                 
                 if response.statusCode != HTTPStatusCode.OK {
@@ -267,7 +260,7 @@ public class Database {
 
 			if let response = response {
 				documentsUpdateResult = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK {
+                if response.statusCode != HTTPStatusCode.OK && response.statusCode != HTTPStatusCode.created {
                     let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
                 }
@@ -431,10 +424,9 @@ public class Database {
                     let bodyJSON = (try? JSONSerialization.jsonObject(with: bodyData, options: [])) as? [String:Any],
                     let total_rows = bodyJSON["total_rows"] as? Int,
                     let offset = bodyJSON["offset"] as? Int,
-                    let rows = bodyJSON["rows"] as? [Any],
-                    let dataRows = try? rows.map({ try JSONSerialization.data(withJSONObject: $0, options: []) })
+                    let rows = bodyJSON["rows"] as? [[String: Any]]
                 {
-                    document = AllDatabaseDocuments(total_rows: total_rows, offset: offset, rows: dataRows)
+                    document = AllDatabaseDocuments(total_rows: total_rows, offset: offset, rows: rows)
                 }
                 if response.statusCode != HTTPStatusCode.OK {
                     let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
