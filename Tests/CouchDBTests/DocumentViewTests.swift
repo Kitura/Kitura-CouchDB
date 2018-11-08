@@ -23,8 +23,6 @@ import XCTest
 #endif
 
 import Foundation
-import HeliumLogger
-import LoggerAPI
 
 @testable import CouchDB
 
@@ -35,10 +33,7 @@ class DocumentViewTests: CouchDBTest {
                    ("testViewTest", testViewTest)
         ]
     }
-
-    
     let documentId = "123456"
-    var jsonDocument: MyDocument?
 
     func testViewTest() {
         setUpDatabase() {
@@ -48,14 +43,14 @@ class DocumentViewTests: CouchDBTest {
 
     //Create document closure
     func createDocument() {
-        let jsonDoc = MyDocument(_id: documentId,
+        let myDoc = MyDocument(_id: documentId,
                                  _rev: nil,
                                  truncated: false,
                                  created_at: "Tue Aug 28 21:16:23 +0000 2012",
                                  favorited: false,
                                  value: "viewTest")
 
-        database?.create(jsonDoc, callback: { (document: CouchResponse?, error: NSError?) in
+        database?.create(myDoc, callback: { (document: CouchResponse?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
             } else {
@@ -87,23 +82,21 @@ class DocumentViewTests: CouchDBTest {
     func readDocument() {
         let key = "viewTest"
         
-        database?.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (document: AllDatabaseDocuments?, error: NSError?) in
-            if let error = error {
-                XCTFail("Error in querying by view document \(error.code) \(error.domain) \(error.userInfo)")
-            } else {
-                guard let value = ((document?.rows[0])?["value"] as? [String:Any])?["value"] as? String,
-                    let id = document?.rows[0]["id"] as? String
-                else {
-                    XCTFail("Error: Keys not found when reading document")
-                    exit(1)
-                }
-                
-                XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")
-                XCTAssertEqual(key, value, "Wrong value read from document")
-                
-                print(">> Successfully read the following JSON document: ")
-                print(document!)
+        database?.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (documents: AllDatabaseDocuments?, error: NSError?) in
+            guard let documents = documents else {
+                return XCTFail("Error in querying by view document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
             }
+            guard let value = ((documents.rows[0])["value"] as? [String:Any])?["value"] as? String,
+                let id = documents.rows[0]["id"] as? String
+            else {
+                return XCTFail("Error: Keys not found when reading document")
+            }
+            
+            XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")
+            XCTAssertEqual(key, value, "Wrong value read from document")
+            
+            print(">> Successfully read the following JSON document: ")
+            print(documents)
         }
     }
 }

@@ -84,8 +84,8 @@ class CouchDBUtils {
             return codable
         } catch {
             //Log this exception
+            return nil
         }
-        return nil
     }
 
     class func getBodyAsData (_ response: ClientResponse) -> Data? {
@@ -106,9 +106,8 @@ class CouchDBUtils {
                 var error: NSError?
                 if let response = response {
                     doc = CouchDBUtils.getBodyAsCodable(response)
-                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted,
-                        let errorDesc: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
-                    {
+                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
+                        let errorDesc: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
                         error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: document._id, rev: nil)
                     }
                 } else {

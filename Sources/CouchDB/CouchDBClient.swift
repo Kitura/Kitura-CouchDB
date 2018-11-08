@@ -70,11 +70,8 @@ public class CouchDBClient {
                 if response.statusCode == .created {
                     db = Database(connProperties: self.connProperties, dbName: dbName)
                 } else {
-                    if let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response) {
-                        error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                    } else {
-                        error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                    }
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
                 }
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
@@ -128,11 +125,8 @@ public class CouchDBClient {
             var error: NSError?
             if let response = response {
                 if response.statusCode != HTTPStatusCode.OK {
-                    if let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response) {
-                        error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                    } else {
-                        error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                    }
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
                 }
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
@@ -267,14 +261,10 @@ public class CouchDBClient {
             var cookie: String?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK,
-                    let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
-                {
+                if response.statusCode != HTTPStatusCode.OK {
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                } else {
-                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
-
                 cookie = response.headers["Set-Cookie"]?.first
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
@@ -308,12 +298,9 @@ public class CouchDBClient {
             var document: SessionResponse?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK,
-                    let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
-                {
+                if response.statusCode != HTTPStatusCode.OK {
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                } else {
-                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
@@ -348,12 +335,9 @@ public class CouchDBClient {
             var cookie: String?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK,
-                    let responseError: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
-                {
+                if response.statusCode != HTTPStatusCode.OK {
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
                     error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                } else {
-                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                 }
                 cookie = response.headers["Set-Cookie"]?.first
             } else {

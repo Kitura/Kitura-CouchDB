@@ -34,14 +34,14 @@ class CouchDBTest: XCTestCase {
     let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "kitura_test_db"
 
     let couchDBClient: CouchDBClient = {
-        //let credentials = Utils.readCredentials()
+        let credentials = Utils.readCredentials()
 
         // Connection properties for testing Cloudant or CouchDB instance
-        let connProperties = ConnectionProperties(host: "127.0.0.1",
-                                                  port: 5984,
-                                                  secured: false,
-                                                  username: "andrew",
-                                                  password: "password")
+        let connProperties = ConnectionProperties(host: credentials.host,
+                                                  port: credentials.port,
+                                                  secured: true,
+                                                  username: credentials.username,
+                                                  password: credentials.password)
 
         // Create couchDBClient instance using connection properties
         let client = CouchDBClient(connectionProperties: connProperties)

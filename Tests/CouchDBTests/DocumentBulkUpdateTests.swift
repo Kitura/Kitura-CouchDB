@@ -86,32 +86,20 @@ class DocumentBulkUpdateTests: CouchDBTest {
             let documents = [self.json1, self.json2, self.json3, self.json4, self.json5, self.json6]
 
             // Bulk insert documents
-            database.bulk(documents: BulkDocuments(docs: documents)) { json, error in
-                if let error = error {
-                    XCTFail("Failed to bulk insert documents into database, error: \(error.localizedDescription)")
-                    return
+            database.bulk(documents: BulkDocuments(docs: documents)) { bulkResponse, error in
+                guard let bulkResponse = bulkResponse else {
+                    return XCTFail("Failed to bulk insert documents into database, error: \(String(describing: error?.localizedDescription))")
                 }
 
-                guard let jsonArray = json else {
-                    XCTFail("Did not receive a JSON array in response")
-                    return
-                }
-
-                XCTAssert(jsonArray.count == documents.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
+                XCTAssert(bulkResponse.count == documents.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
 
                 // Get all documents and compare their number to match the inserted number of documents
-                database.retrieveAll() { json, error in
-                    if let error = error {
-                        XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
-                        return
+                database.retrieveAll() { bulkResponse, error in
+                    guard let retrievedDocuments = bulkResponse?.rows else {
+                        return XCTFail("Failed to retrieve all documents, error: \(String(describing: error?.localizedDescription))")
                     }
 
-                    guard let jsonArray = json?.rows else {
-                        XCTFail("Did not receive a JSON array in response")
-                        return
-                    }
-
-                    XCTAssert(jsonArray.count == documents.count, "Incorrect number of documents retrieved, error: Couldn't insert all documents")
+                    XCTAssert(retrievedDocuments.count == documents.count, "Incorrect number of documents retrieved, error: Couldn't insert all documents")
                 }
             }
         }
@@ -120,71 +108,47 @@ class DocumentBulkUpdateTests: CouchDBTest {
     func testBulkUpdate() {
         setUpDatabase() {
             guard let database = self.database else {
-                XCTFail("Failed to retrieve database")
-                return
+               return XCTFail("Failed to retrieve database")
             }
 
             let documentsToInsert = [self.json1, self.json3, self.json5]
             let documentsToUpdate = [self.json2, self.json4, self.json6]
 
             // Bulk insert documents
-            database.bulk(documents: BulkDocuments(docs: documentsToInsert)) { json, error in
-                if let error = error {
-                    XCTFail("Failed to bulk insert documents into database, error: \(error.localizedDescription)")
-                    return
+            database.bulk(documents: BulkDocuments(docs: documentsToInsert)) { bulkResponse, error in
+                guard let bulkResponse = bulkResponse else {
+                    return XCTFail("Failed to bulk insert documents into database, error: \(String(describing: error?.localizedDescription))")
                 }
 
-                guard let jsonArray = json else {
-                    XCTFail("Did not receive a JSON array in response")
-                    return
-                }
-
-                XCTAssert(jsonArray.count == documentsToInsert.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
+                XCTAssert(bulkResponse.count == documentsToInsert.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
 
                 // Assign same ID and REV numbers to documents to update
                 let documentsToUpdate: [[String: Any]] = documentsToUpdate.enumerated().map {
                     var doc = $1
-
-                    doc["_id"] = jsonArray[$0].id
-                    doc["_rev"] = jsonArray[$0].rev
-
+                    doc["_id"] = bulkResponse[$0].id
+                    doc["_rev"] = bulkResponse[$0].rev
                     return doc
                 }
 
                 // Bulk update documents
-                database.bulk(documents: BulkDocuments(docs: documentsToUpdate)) { json, error in
-                    if let error = error {
-                        XCTFail("Failed to bulk update documents from database, error: \(error.localizedDescription)")
-                        return
+                database.bulk(documents: BulkDocuments(docs: documentsToUpdate)) { bulkResponse, error in
+                    guard let bulkResponse = bulkResponse else {
+                        return XCTFail("Failed to bulk insert documents into database, error: \(String(describing: error?.localizedDescription))")
                     }
-
-                    guard let jsonArray = json else {
-                        XCTFail("Did not receive a JSON array in response")
-                        return
-                    }
-
+                    
                     // Check if all documents were updated successfully
-                    let success = jsonArray.reduce(true) { $0 && ($1.ok ?? false) }
-
-                    guard success == true else {
-                        XCTFail("Failed to bulk update documents from database, error: Not all documents were updated successfully")
-                        return
+                    guard (bulkResponse.reduce(true) { $0 && ($1.ok ?? false) }) == true else {
+                        return XCTFail("Failed to bulk update documents from database, error: Not all documents were updated successfully")
                     }
 
                     // Get all documents and compare their contents to match the updated documents
-                    database.retrieveAll(includeDocuments: true) { json, error in
-                        if let error = error {
-                            XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
-                            return
-                        }
-
-                        guard let jsonArray = json?.rows else {
-                            XCTFail("Did not receive a JSON array in response")
-                            return
+                    database.retrieveAll(includeDocuments: true) { bulkResponse, error in
+                        guard let retrievedDocuments = bulkResponse?.rows else {
+                            return XCTFail("Failed to retrieve all documents, error: \(String(describing: error?.localizedDescription))")
                         }
 
                         // Check if all retrieved documents match the updated documents
-                        let success = jsonArray.reduce(true) { result, doc1 in
+                        let success = retrievedDocuments.reduce(true) { result, doc1 in
 //                            // Get document with the same ID as this one
                             guard let doc2 = (documentsToUpdate.first() {
                                 $0["_id"] as? String == doc1["id"] as? String
@@ -200,7 +164,6 @@ class DocumentBulkUpdateTests: CouchDBTest {
                                     comparisonResult = comparisonResult && ($1 as? String == doc2[$0] as? String)
                                 }
                             }
-                            print(result)
                             return result && comparisonResult
                         }
 
@@ -214,71 +177,48 @@ class DocumentBulkUpdateTests: CouchDBTest {
     func testBulkDelete() {
         setUpDatabase() {
             guard let database = self.database else {
-                XCTFail("Failed to retrieve database")
-                return
+                return XCTFail("Failed to retrieve database")
             }
 
             let documents = [self.json4, self.json6, self.json5, self.json1, self.json3, self.json2]
 
             // Bulk insert documents
-            database.bulk(documents: BulkDocuments(docs: documents)) { json, error in
-                if let error = error {
-                    XCTFail("Failed to bulk insert documents into database, error: \(error.localizedDescription)")
-                    return
+            database.bulk(documents: BulkDocuments(docs: documents)) { bulkResponse, error in
+                guard let bulkResponse = bulkResponse else {
+                    return XCTFail("Failed to bulk insert documents into database, error: \(String(describing: error?.localizedDescription))")
                 }
 
-                guard let jsonArray = json else {
-                    XCTFail("Did not receive a JSON array in response")
-                    return
-                }
-
-                XCTAssert(jsonArray.count == documents.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
+                XCTAssert(bulkResponse.count == documents.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
 
                 // Get all documents and build the payload sent for bulk deletion
-                database.retrieveAll() { json, error in
-                    if let error = error {
-                        XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
-                        return
+                database.retrieveAll() { bulkResponse, error in
+                    guard let retrievedDocuments = bulkResponse?.rows else {
+                        return XCTFail("Failed to retrieve all documents, error: \(String(describing: error?.localizedDescription))")
                     }
-
-                    guard let jsonArray = json?.rows else {
-                        XCTFail("Did not receive a JSON array in response")
-                        return
-                    }
-                    XCTAssert(jsonArray.count == documents.count, "Incorrect number of documents retrieved, error: Couldn't insert all documents")
+                    
+                    XCTAssert(retrievedDocuments.count == documents.count, "Incorrect number of documents retrieved, error: Couldn't insert all documents")
 
                     // Build the payload sent for bulk deletion by extracting ID and REV values from the retrieved JSON array
-                    let documentsToDelete = jsonArray.map() {
+                    let documentsToDelete = retrievedDocuments.map() {
                         ["_id": $0["id"] as Any, "_rev": ($0["value"] as? [String: Any])?["rev"] as Any, "_deleted": true as Any]
                     } as [[String : Any]]
                 
                     // Bulk delete documents
-                    database.bulk(documents: BulkDocuments(docs: documentsToDelete)) { json, error in
-                        if let error = error {
-                            XCTFail("Failed to bulk delete documents from database, error: \(error.localizedDescription)")
-                            return
-                        }
-
-                        guard let jsonArray = json else {
-                            XCTFail("Did not receive a JSON array in response")
-                            return
+                    database.bulk(documents: BulkDocuments(docs: documentsToDelete)) { bulkResponse, error in
+                        guard let bulkResponse = bulkResponse else {
+                            return XCTFail("Failed to bulk delete documents from database, error: \(String(describing: error?.localizedDescription))")
                         }
 
                         // Check if all documents were deleted successfully
-                        let success = jsonArray.reduce(true) { $0 && ($1.ok ?? false) }
-
-                        guard success == true else {
-                            XCTFail("Failed to bulk delete documents from database, error: Not all documents were deleted successfully")
-                            return
+                        guard (bulkResponse.reduce(true) { $0 && ($1.ok ?? false) }) == true else {
+                            return XCTFail("Failed to bulk delete documents from database, error: Not all documents were deleted successfully")
                         }
 
-                        // Get all documents (there should be nont)
-                        database.retrieveAll() { json, error in
+                        // Get all documents (there should be none)
+                        database.retrieveAll() { bulkResponse, error in
                             if let error = error {
-                                XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
-                                return
+                                return XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
                             }
-
                             XCTAssert(json?.rows.count == 0, "Failed to bulk delete documents from database, error: Not all documents were deleted")
                         }
                     }

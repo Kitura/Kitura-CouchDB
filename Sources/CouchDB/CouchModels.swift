@@ -24,38 +24,6 @@ public struct CouchUser: Codable {
     }
 }
 
-public struct CouchResponse: Codable {
-    public let ok: Bool
-    public let id: String?
-    public let rev: String?
-}
-
-public struct SessionResponse: Codable {
-    public let ok: Bool
-    public let name: String?
-    public let roles: [String]?
-    public let userCtx: UserContextObject?
-    public let info: SessionInfo?
-}
-
-public struct CouchErrorResponse: Codable {
-    public let id: String
-    public let error: String
-    public let reason: String
-}
-
-public struct UserContextObject: Codable {
-    public let db: String
-    public let name: String
-    public let roles: [String]
-}
-
-public struct SessionInfo: Codable {
-    public let authenticated: String
-    public let authentication_db: String
-    public let authentication_handlers: [String]
-}
-
 public struct AllDatabaseDocuments {
     init(total_rows: Int, offset: Int, rows: [[String: Any]]) {
         self.total_rows = total_rows
@@ -111,6 +79,15 @@ public struct DesignDocument: Codable, Document {
     public let views: [String: [String: String]]?
 }
 
+public struct BulkDocuments {
+    public init(docs: [[String: Any]], new_edits: Bool = true) {
+        self.docs = docs
+        self.new_edits = new_edits
+    }
+    public let new_edits: Bool
+    public let docs: [[String: Any]]
+}
+
 // http://docs.couchdb.org/en/2.2.0/api/database/bulk-api.html#db-bulk-docs
 public struct BulkResponse: Codable {
     public let id: String
@@ -120,11 +97,34 @@ public struct BulkResponse: Codable {
     public let reason: String?
 }
 
-public struct BulkDocuments {
-    public init(docs: [[String: Any]], new_edits: Bool = true) {
-        self.docs = docs
-        self.new_edits = new_edits
+public struct CouchResponse: Codable {
+    public let ok: Bool
+    public let id: String?
+    public let rev: String?
+}
+
+public struct UserContextObject: Codable {
+    public let db: String
+    public let name: String
+    public let roles: [String]
+}
+
+public struct SessionResponse: Codable {
+    public let ok: Bool
+    public let name: String?
+    public let roles: [String]?
+    public let userCtx: UserContextObject?
+    public let info: SessionInfo?
+    
+    public struct SessionInfo: Codable {
+        public let authenticated: String
+        public let authentication_db: String
+        public let authentication_handlers: [String]
     }
-    public let new_edits: Bool
-    public let docs: [[String: Any]]
+}
+
+public struct CouchErrorResponse: Codable {
+    public let id: String
+    public let error: String
+    public let reason: String
 }

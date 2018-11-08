@@ -90,8 +90,8 @@ let connProperties = ConnectionProperties(
     host: host,         // httpd address
     port: port,         // httpd port
     secured: secured,   // https or http
-    username: "andrew",      // admin username
-    password: "password"       // admin password
+    username: username,      // admin username
+    password: password       // admin password
 )
 
 Log.info("Connection Properties:\n\(connProperties)")
@@ -104,27 +104,7 @@ Log.info("Hostname is: \(couchDBClient.connProperties.host)")
 let database = couchDBClient.database("kitura_test_db")
 
 //// Document ID
-//#if os(Linux)
 let documentId = "123456"
-//#else
-//let documentId = "123456" as NSString
-//#endif
-//
-//#if os(Linux)
-//typealias valuetype = Any
-//#else
-//typealias valuetype = AnyObject
-//#endif
-//
-//// JSON document in string format
-//let jsonDict: [String: valuetype] = [
-//    "_id": documentId,
-//    "truncated": false as valuetype,
-//    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as valuetype,
-//    "favorited": false as valuetype,
-//    "value": "value1" as valuetype
-//]
-//let jsonData = try JSONSerialization.data(withJSONObject: jsonDict, options: [])
 
 struct MyDocument: Document {
     let _id: String?
@@ -186,8 +166,6 @@ func readDocument() {
 // MARK: Update document
 
 func updateDocument(revisionNumber: String) {
-    //var json = JSON(data: jsonData!)
-    //json["value"] = "value2"
     database.update(documentId, rev: revisionNumber, document: myDocument,
         callback: { (response: CouchResponse?, error: NSError?) in
             if let error = error {

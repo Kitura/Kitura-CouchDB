@@ -44,11 +44,10 @@ public class UsersDatabase: Database {
                 var error: NSError?
                 if let response = response {
                     doc = CouchDBUtils.getBodyAsCodable(response)
-                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted,
-                        let errorDesc: CouchErrorResponse = CouchDBUtils.getBodyAsCodable(response)
-                    {
+                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
+                        let errorDesc: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
                         error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: id, rev: nil)
-                    } 
+                    }
                 } else {
                     error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
                 }
