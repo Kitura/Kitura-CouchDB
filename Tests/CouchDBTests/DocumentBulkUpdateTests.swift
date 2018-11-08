@@ -219,7 +219,7 @@ class DocumentBulkUpdateTests: CouchDBTest {
                             if let error = error {
                                 return XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
                             }
-                            XCTAssert(json?.rows.count == 0, "Failed to bulk delete documents from database, error: Not all documents were deleted")
+                            XCTAssert(bulkResponse?.rows.count == 0, "Failed to bulk delete documents from database, error: Not all documents were deleted")
                         }
                     }
                 }
