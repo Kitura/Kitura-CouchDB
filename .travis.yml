@@ -1,10 +1,14 @@
+# Travis CI build file.
+
 # whitelist (branches that should be built)
 branches:
   only:
     - master
-    - develop
     - /^issue.*$/
 
+# the matrix of builds should cover each combination of Swift version
+# and platform that is supported. The version of Swift used is specified
+# by .swift-version, unless SWIFT_SNAPSHOT is specified.
 matrix:
   include:
     - os: linux
