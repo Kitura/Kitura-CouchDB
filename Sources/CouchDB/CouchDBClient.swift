@@ -19,17 +19,6 @@ import KituraNet
 
 // MARK: CouchDBClient
 
-#if os(OSX)
-    /// Represents a CouchDB configuration value.
-    public typealias CouchDBValue = AnyObject
-#else
-    public typealias CouchDBValue = Any
-#endif
-
-/// Callback for _session requests, containing the session cookie, the JSON response,
-/// and NSError if one occurred.
-public typealias SessionCallback = (String?, SessionResponse?, NSError?) -> ()
-
 /// Represents a CouchDB connection.
 public class CouchDBClient {
 
@@ -185,9 +174,9 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - keyPath: The configuration parameter String to update.
-    ///     - value: The `CouchDBValue` to set the configuration parameter to.
+    ///     - value: The value to set the configuration parameter to.
     ///     - callback: Callback containing an NSError if one occurred.
-    public func setConfig(keyPath: String, value: CouchDBValue, callback: @escaping (NSError?) -> ()) {
+    public func setConfig(keyPath: String, value: Any, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "PUT",
                                                          path: "/_config/\(keyPath)",
@@ -246,7 +235,7 @@ public class CouchDBClient {
     ///     - password: Password String.
     ///     - callback: `SessionCallback` containing the session cookie and JSON response,
     ///                 or an NSError if one occurred.
-    public func createSession(name: String, password: String, callback: @escaping SessionCallback) {
+    public func createSession(name: String, password: String, callback: @escaping (String?, UserSessionInformation?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
                                                          path: "/_session",
@@ -257,7 +246,7 @@ public class CouchDBClient {
 
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var document: SessionResponse?
+            var document: UserSessionInformation?
             var cookie: String?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
@@ -280,7 +269,7 @@ public class CouchDBClient {
     ///     - cookie: String session cookie.
     ///     - callback: `SessionCallback` containing the cookie, JSON response,
     ///                 and an NSError if the user is not authenticated or an error occurred.
-    public func getSession(cookie: String, callback: @escaping SessionCallback) {
+    public func getSession(cookie: String, callback: @escaping (UserSessionInformation?, NSError?) -> ()) {
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
         requestOptions.append(.port(connProperties.port))
@@ -295,7 +284,7 @@ public class CouchDBClient {
 
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var document: SessionResponse?
+            var document: UserSessionInformation?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
                 if response.statusCode != HTTPStatusCode.OK {
@@ -305,45 +294,7 @@ public class CouchDBClient {
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             }
-            callback(cookie, document, error)
-        }
-        req.end()
-    }
-
-    /// Logout a session.
-    ///
-    /// - parameters:
-    ///     - cookie: String session cookie.
-    ///     - callback: `SessionCallback` containing the cookie, JSON response,
-    ///                 and NSError if one occurred.
-    public func deleteSession(cookie: String, callback: @escaping SessionCallback) {
-        var requestOptions: [ClientRequest.Options] = []
-        requestOptions.append(.hostname(connProperties.host))
-        requestOptions.append(.port(connProperties.port))
-        requestOptions.append(.method("DELETE"))
-        requestOptions.append(.path("/_session"))
-
-        var headers = [String : String]()
-        headers["Accept"] = "application/json"
-        headers["Content-Type"] = "application/json"
-        headers["Cookie"] = cookie
-        requestOptions.append(.headers(headers))
-
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var document: SessionResponse?
-            var cookie: String?
-            if let response = response {
-                document = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK {
-                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                }
-                cookie = response.headers["Set-Cookie"]?.first
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(cookie, document, error)
+            callback(document, error)
         }
         req.end()
     }

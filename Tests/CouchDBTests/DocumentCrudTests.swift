@@ -60,7 +60,7 @@ class DocumentCrudTests: CouchDBTest {
     
     //Create document closure
     func createDocument<D: Document>(document: D) {
-        database?.create(document, callback: { (response: CouchResponse?, error: NSError?) in
+        database?.create(document, callback: { (response: DocumentResponse?, error: NSError?) in
             guard let documentId = response?.id else {
                 return XCTFail("Error in creating document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
             }
@@ -125,11 +125,11 @@ class DocumentCrudTests: CouchDBTest {
     func updateDocument(_ revisionNumber: String) {
         var newDoc = myDocument1
         newDoc.value = "value3"
-        database?.update(documentId1, rev: revisionNumber, document: newDoc, callback: { (document: CouchResponse?, error: NSError?) in
-            guard let document = document, let id = document.id else {
+        database?.update(documentId1, rev: revisionNumber, document: newDoc, callback: { (document: DocumentResponse?, error: NSError?) in
+            guard let document = document else {
                 return XCTFail("Error in updating document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
             }
-            XCTAssertEqual(self.documentId1, id, "Wrong documentId read from updated document")
+            XCTAssertEqual(self.documentId1, document.id , "Wrong documentId read from updated document")
             print(">> Successfully updated the JSON document.")
             self.delay(self.confirmUpdate)
         })

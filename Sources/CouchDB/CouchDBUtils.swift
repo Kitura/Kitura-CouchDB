@@ -99,9 +99,9 @@ class CouchDBUtils {
         return nil
     }
     
-    class func makeRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (CouchResponse?, NSError?) -> ()) {
+    class func makeRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         if let requestBody = try? JSONEncoder().encode(document) {
-            var doc: CouchResponse?
+            var doc: DocumentResponse?
             let req = HTTP.request(options) { response in
                 var error: NSError?
                 if let response = response {

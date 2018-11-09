@@ -50,7 +50,7 @@ class DocumentViewTests: CouchDBTest {
                                  favorited: false,
                                  value: "viewTest")
 
-        database?.create(myDoc, callback: { (document: CouchResponse?, error: NSError?) in
+        database?.create(myDoc, callback: { (document: DocumentResponse?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
             } else {
@@ -68,7 +68,7 @@ class DocumentViewTests: CouchDBTest {
                                                     "map" : "function(doc) { emit(doc.value, doc); }"
                                                 ]
                                             ])
-        database?.createDesign(name, document: designDocument) { (document: CouchResponse?, error: NSError?) in
+        database?.createDesign(name, document: designDocument) { (document: DocumentResponse?, error: NSError?) in
             if let error = error {
                 XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
             } else {

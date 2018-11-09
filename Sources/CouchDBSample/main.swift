@@ -167,7 +167,7 @@ func readDocument() {
 
 func updateDocument(revisionNumber: String) {
     database.update(documentId, rev: revisionNumber, document: myDocument,
-        callback: { (response: CouchResponse?, error: NSError?) in
+        callback: { (response: DocumentResponse?, error: NSError?) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not update document.")
                 Log.error("Error: \(error.localizedDescription) Code: \(error.code)")

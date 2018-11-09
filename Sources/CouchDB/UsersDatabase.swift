@@ -22,8 +22,6 @@ import KituraNet
 /// Represents a CouchDB database of users.
 public class UsersDatabase: Database {
 
-    typealias JSONDictionary = [String: Any]
-
     /// Create new user by name and password.
     ///
     /// - parameters:
@@ -31,10 +29,10 @@ public class UsersDatabase: Database {
     ///     - password: Password String.
     ///     - callback: Callback containing the username, JSON response,
     ///                 and an NSError if one occurred.
-    public func createUser(document: CouchUser, callback: @escaping (CouchResponse?, NSError?) -> ()) {
+    public func createUser<D: NewUserDocument>(document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         if let requestBody = try? JSONEncoder().encode(document) {
             let id = "org.couchdb.user:\(document.name)"
-            var doc: CouchResponse?
+            var doc: DocumentResponse?
             let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                              method: "PUT",
                                                              path: "/_users/\(id)",
@@ -64,7 +62,7 @@ public class UsersDatabase: Database {
     /// - parameters:
     ///     - name: Name String of the desired user.
     ///     - callback: Callback containing the user JSON, or an NSError if one occurred.
-    public func getUser(name: String, callback: @escaping (UserContextObject?, NSError?) -> ()) {
+    public func getUser<D: RetrievedUserDocument>(name: String, callback: @escaping (D?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
         retrieve(id, callback: { (doc, error) in
             callback(doc, error)
