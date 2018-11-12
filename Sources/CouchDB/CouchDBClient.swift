@@ -174,8 +174,9 @@ public class CouchDBClient {
     ///
     /// http://docs.couchdb.org/en/stable/api/server/configuration.html#put--_node-node-name-_config-section-key
     /// - parameters:
-    ///     - keyPath: The configuration parameter String to update.
-    ///     - value: The value to set the configuration parameter to.
+    ///     - node: The server node that will be configured.
+    ///     - section: The configuration section to be changed.
+    ///     - key: The key from the configuration section to be changed.
     ///     - callback: Callback containing an NSError if one occurred.
     public func setConfig(node: String = "_local", section: String, key: String, value: String, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
@@ -196,9 +197,16 @@ public class CouchDBClient {
             configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
             return callback(configError)
         }
-        req.end(value)
+        let jsonValue = "\"" + value + "\""
+        req.end(jsonValue)
     }
 
+    /// Get the entire configuration document for a server node.
+    ///
+    /// http://docs.couchdb.org/en/stable/api/server/configuration.html#node-node-name-config
+    /// - parameters:
+    ///     - node: The server node with the configuration document.
+    ///     - callback: Callback containing either the configuration dictionary or an NSError if one occurred.
     public func getConfig(node: String = "_local", callback: @escaping ([String: [String: String]]?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
@@ -222,6 +230,13 @@ public class CouchDBClient {
         req.end()
     }
     
+    /// Get the configuration dictionary for a section of the configuration document.
+    ///
+    /// http://docs.couchdb.org/en/stable/api/server/configuration.html#node-node-name-config-section
+    /// - parameters:
+    ///     - node: The server node with the configuration document.
+    ///     - section: The configuration section to be retrieved.
+    ///     - callback: Callback containing either the configuration section dictionary or an NSError if one occurred.
     public func getConfig(node: String = "_local", section: String, callback: @escaping ([String: String]?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
@@ -245,12 +260,14 @@ public class CouchDBClient {
         req.end()
     }
     
-    /// Get the value for a CouchDB configuration parameter.
-    ///
+    /// Get the value for a specific key in the configuration document.
+    /// The returned value will be a JSON String.
+    /// http://docs.couchdb.org/en/stable/api/server/configuration.html#node-node-name-config-section
     /// - parameters:
-    ///     - keyPath: The configuration parameter String to get the value for.
-    ///     - callback: Callback containing the JSON return value for the configuration parameter,
-    ///                 or an NSError if one occurred.
+    ///     - node: The server node with the configuration document.
+    ///     - section: The configuration section to be retrieved.
+    ///     - key: The key in the configuration section for the desired value.
+    ///     - callback: Callback containing either the configuration value as a JSON String or an NSError if one occurred.
     public func getConfig(node: String = "_local", section: String, key: String, callback: @escaping (String?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
@@ -259,7 +276,9 @@ public class CouchDBClient {
                                                          contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
             if let response = response {
-                guard let configJSON = try? response.readString(), let jsonString = configJSON else {
+                guard let configJSON = CouchDBUtils.getBodyAsData(response),
+                    let jsonString = try? (JSONSerialization.jsonObject(with: configJSON, options: [.allowFragments]) as? String)
+                else {
                     let configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                     return callback(nil, configError)
                 }
@@ -279,7 +298,7 @@ public class CouchDBClient {
     ///     - password: Password String.
     ///     - callback: `SessionCallback` containing the session cookie and JSON response,
     ///                 or an NSError if one occurred.
-    public func createSession(name: String, password: String, callback: @escaping (String?, UserSessionInformation?, NSError?) -> ()) {
+    public func createSession(name: String, password: String, callback: @escaping (String?, NewSessionResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
                                                          path: "/_session",
@@ -290,7 +309,7 @@ public class CouchDBClient {
 
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
-            var document: UserSessionInformation?
+            var document: NewSessionResponse?
             var cookie: String?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)

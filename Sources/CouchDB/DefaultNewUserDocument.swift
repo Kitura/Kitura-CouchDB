@@ -18,6 +18,17 @@ import Foundation
 
 /// A Default implementation of the `NewUserDocument` protocol with no custom user fields defined.
 public struct DefaultNewUserDocument: NewUserDocument {
+    
+    /// The document ID.
+    public var _id: String? {
+        return "org.couchdb.user:" + name
+    }
+    
+    /// The document revision.
+    public var _rev: String?
+    
+    /// The document type.
+    public let type: String = "user"
 
     /// The unique immutable username that will be used to log in.
     /// If the name already exists, the old user will be replaced with this new user.
@@ -36,9 +47,11 @@ public struct DefaultNewUserDocument: NewUserDocument {
     /// - parameter name: The username that will be used to log in.
     /// - parameter password: The password for the user in plaintext.
     /// - parameter roles: A list of user roles.
-    public init(name: String, password: String, roles: [String]) {
+    /// - parameter rev: The user revision for updating an existing user.
+    public init(name: String, password: String, roles: [String], rev: String? = nil) {
         self.name = name
         self.roles = roles
         self.password = password
+        self._rev = rev
     }
 }

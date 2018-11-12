@@ -35,7 +35,7 @@ public struct UserSessionInformation: Codable {
     public struct UserContextObject: Codable {
 
         /// Database name.
-        public let db: String
+        public let db: String?
 
         /// User name.
         public let name: String

@@ -18,7 +18,7 @@ import Foundation
 
 /// A protocol defining the required fields to create a new user document or update an existing user document.
 /// http://docs.couchdb.org/en/2.2.0/intro/security.html#creating-a-new-user
-public protocol NewUserDocument: Codable {
+public protocol NewUserDocument: Document {
 
     /// The unique immutable username that will be used to log in.
     /// If the name already exists, the old user will be replaced with this new user.
@@ -35,10 +35,4 @@ public protocol NewUserDocument: Codable {
     /// Document type.
     var type: String { get }
 
-}
-public extension NewUserDocument {
-    /// The Default value of type is "user".
-    var type: String {
-        return "user"
-    }
 }
