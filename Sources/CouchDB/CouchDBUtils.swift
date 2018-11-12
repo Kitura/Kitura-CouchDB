@@ -29,12 +29,7 @@ class CouchDBUtils {
     }
 
     class func createError(_ code: Int, desc: String?, id: String?, rev: String?) -> NSError {
-        // Interim solution while Apple provides clear interoperability on both platforms
-        #if os(Linux)
-            var info = [String:Any]()
-        #else
-            var info = [String:String]()
-        #endif
+        var info = [String:String]()
 
         info[NSLocalizedDescriptionKey] = desc
         if let id = id {
@@ -76,7 +71,7 @@ class CouchDBUtils {
         return requestOptions
     }
 
-    class func getBodyAsCodable<O: Codable> (_ response: ClientResponse) -> O? {
+    class func getBodyAsCodable<O: Decodable> (_ response: ClientResponse) -> O? {
         do {
             var body = Data()
             try response.readAllData(into: &body)

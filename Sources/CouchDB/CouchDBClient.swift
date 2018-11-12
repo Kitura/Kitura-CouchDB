@@ -172,59 +172,103 @@ public class CouchDBClient {
 
     /// Set a CouchDB configuration parameter to a new value.
     ///
+    /// http://docs.couchdb.org/en/stable/api/server/configuration.html#put--_node-node-name-_config-section-key
     /// - parameters:
     ///     - keyPath: The configuration parameter String to update.
     ///     - value: The value to set the configuration parameter to.
     ///     - callback: Callback containing an NSError if one occurred.
-    public func setConfig(keyPath: String, value: Any, callback: @escaping (NSError?) -> ()) {
+    public func setConfig(node: String = "_local", section: String, key: String, value: String, callback: @escaping (NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "PUT",
-                                                         path: "/_config/\(keyPath)",
+                                                         path: "/_node/\(node)/_config/\(section)/\(key)",
                                                          hasBody: true,
                                                          contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
             var configError: NSError?
             if let response = response {
-                if response.statusCode != .OK {
+                if response.statusCode == .OK {
+                    return callback(nil)
+                } else {
                     configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                    return callback(configError)
                 }
             }
-            callback(configError)
+            configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            return callback(configError)
         }
-        if let body = try? JSONSerialization.data(withJSONObject: value, options: []) {
-            req.end(body)
-        } else {
-            req.end()
-        }
+        req.end(value)
     }
 
+    public func getConfig(node: String = "_local", callback: @escaping ([String: [String: String]]?, NSError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                         method: "GET",
+                                                         path: "/_node/\(node)/_config/",
+            hasBody: false,
+            contentType: "application/json")
+        let req = HTTP.request(requestOptions) { response in
+            if let response = response {
+                guard let bodyData = CouchDBUtils.getBodyAsData(response),
+                    let jsonDict = try? (JSONSerialization.jsonObject(with: bodyData) as? [String: [String: String]])
+                    else {
+                        let configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                        return callback(nil, configError)
+                }
+                return callback(jsonDict, nil)
+            } else {
+                let configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                return callback(nil, configError)
+            }
+        }
+        req.end()
+    }
+    
+    public func getConfig(node: String = "_local", section: String, callback: @escaping ([String: String]?, NSError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                         method: "GET",
+                                                         path: "/_node/\(node)/_config/\(section)",
+            hasBody: false,
+            contentType: "application/json")
+        let req = HTTP.request(requestOptions) { response in
+            if let response = response {
+                guard let bodyData = CouchDBUtils.getBodyAsData(response),
+                let jsonDict = try? (JSONSerialization.jsonObject(with: bodyData) as? [String: String])
+                else {
+                    let configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                    return callback(nil, configError)
+                }
+                return callback(jsonDict, nil)
+            } else {
+                let configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                return callback(nil, configError)
+            }
+        }
+        req.end()
+    }
+    
     /// Get the value for a CouchDB configuration parameter.
     ///
     /// - parameters:
     ///     - keyPath: The configuration parameter String to get the value for.
     ///     - callback: Callback containing the JSON return value for the configuration parameter,
     ///                 or an NSError if one occurred.
-    public func getConfig<O: Codable>(keyPath: String, callback: @escaping (O?, NSError?) -> ()) {
+    public func getConfig(node: String = "_local", section: String, key: String, callback: @escaping (String?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
-                                                         path: "/_config/\(keyPath)",
+                                                         path: "/_node/\(node)/_config/\(section)/\(key)",
                                                          hasBody: false,
                                                          contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
-            var configError: NSError?
-            var configJSON: O?
             if let response = response {
-                configJSON = CouchDBUtils.getBodyAsCodable(response)
-                guard configJSON != nil else {
-                    configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
+                guard let configJSON = try? response.readString(), let jsonString = configJSON else {
+                    let configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
                     return callback(nil, configError)
                 }
+                return callback(jsonString, nil)
             } else {
-                configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                let configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                return callback(nil, configError)
             }
-            callback(configJSON, configError)
         }
-
         req.end()
     }
 

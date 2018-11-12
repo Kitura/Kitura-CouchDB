@@ -16,12 +16,6 @@
 
 import XCTest
 
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Foundation
 
 @testable import CouchDB

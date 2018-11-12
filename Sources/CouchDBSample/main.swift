@@ -14,12 +14,6 @@
 * limitations under the License.
 **/
 
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Foundation
 import CouchDB
 import LoggerAPI
