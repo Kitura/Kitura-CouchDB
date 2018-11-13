@@ -146,7 +146,7 @@ class DocumentCrudTests: CouchDBTest {
     
     //Delete document
     func deleteDocument(_ revisionNumber: String) {
-        database?.delete(documentId1, rev: revisionNumber, failOnNotFound: true, callback: { (error: NSError?) in
+        database?.delete(documentId1, rev: revisionNumber, failOnNotFound: true, callback: { (response, error) in
             if let error = error {
                 XCTFail("Error in rereading document \(error.code) \(error.domain) \(error.userInfo)")
             } else {

@@ -23,10 +23,10 @@ class Utils {
     
     struct Credentials: Codable {
         let host: String
-        let port: Int16
+        let port: Int
         let username: String?
         let password: String?
-        init(host: String, port: Int16, username: String?, password: String?) {
+        init(host: String, port: Int, username: String?, password: String?) {
             self.host = host
             self.port = port
             self.username = username

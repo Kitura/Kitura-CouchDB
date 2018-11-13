@@ -21,12 +21,28 @@ import KituraNet
 
 /// Represents a CouchDB database.
 public class Database {
+    
+    // MARK: Database Properties
+    
     /// Indicates when to update.
-    public enum StaleOptions {
+    public struct StaleOptions: Equatable {
+        
+        /// A String description of the StaleOptions instance.
+        public let description: String
+        
+        init(description: String) {
+            self.description = description
+        }
         /// CouchDB will not refresh the view even if it is stale.
-        case OK
+        static let OK = StaleOptions(description: "OK")
+        
         /// CouchDB will update the view after the stale result is returned.
-        case updateAfter
+        static let updateAfter = StaleOptions(description: "updateAfter")
+        
+        /// Check if two StaleOptions are equal. Required to conform to the Equatable protocol.
+        public static func == (lhs: StaleOptions, rhs: StaleOptions) -> Bool {
+            return lhs.description == rhs.description
+        }
     }
 
     /// Query parameters for view functions from design documents.
@@ -130,6 +146,8 @@ public class Database {
         return result + "]"
     }
 
+    // MARK: Initializer
+    
     /// Initialize a new Database instance.
     ///
     /// - parameters:
@@ -141,22 +159,23 @@ public class Database {
         self.connProperties = connProperties
     }
 
+    // MARK: Single Documents requests
+    
     /// Retrieve a document from the database by ID.
     ///
     /// - parameters:
     ///     - id: String ID for the document.
     ///     - callback: Callback containing the document JSON or an NSError if one occurred.
-    public func retrieve<O: Codable>(_ id: String, callback: @escaping (O?, NSError?) -> ()) {
+    public func retrieve<D: Document>(_ id: String, callback: @escaping (D?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(escapedName)/\(HTTP.escape(url: id))", hasBody: false)
-        var document: O?
+        var document: D?
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
                 if response.statusCode != HTTPStatusCode.OK {
-                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: nil, rev: nil)
                 }
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
@@ -166,121 +185,17 @@ public class Database {
         req.end()
     }
 
-    /// Retrieve all documents from the database
-    ///
-    /// - parameters:
-    ///     - includeDocuments: Bool indicating whether to return the full contents of the documents.
-    ///                         Defaults to `false`.
-    ///     - callback: Callback containing the documents JSON or an NSError if one occurred.
-    public func retrieveAll(includeDocuments: Bool = false, callback: @escaping (AllDatabaseDocuments?, NSError?) -> ()) {
-        var path = "/\(escapedName)/_all_docs"
-        if includeDocuments {
-            path += "?include_docs=true"
-        }
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
-                                                         path: path, hasBody: false)
-        var document: AllDatabaseDocuments?
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                if let bodyData = CouchDBUtils.getBodyAsData(response),
-                    let bodyJSON = (try? JSONSerialization.jsonObject(with: bodyData, options: [])) as? [String:Any],
-                    let total_rows = bodyJSON["total_rows"] as? Int,
-                    let offset = bodyJSON["offset"] as? Int,
-                    let rows = bodyJSON["rows"] as? [[String:Any]]
-                {
-                    document = AllDatabaseDocuments(total_rows: total_rows, offset: offset, rows: rows)
-                }
-                
-                if response.statusCode != HTTPStatusCode.OK {
-                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(document, error)
-        }
-        req.end()
-    }
-
-	/// Bulk update or insert documents into the database.
-	///
-	/// - Note:
-	///   - CouchDB will return the results in the same order as supplied in the array. The `id` and revision will be
-	///     added for every document passed as content to a bulk insert, even for those that were just deleted.
-	///   - If you omit the per-document `_id` specification, CouchDB will generate unique IDs for you, as it does for
-	///     regular `create(_:callback:)` function.
-	///   - Updating existing documents requires setting the `_rev` member to the revision being updated. To delete a
-	///     document set the `_deleted` member to `true`.
-	///     ````
-	///     [
-	///       {"_id": "0", "_rev": "1-62657917", "_deleted": true},
-	///       {"_id": "1", "_rev": "1-2089673485", "integer": 2, "string": "2"},
-	///       {"_id": "2", "_rev": "1-2063452834", "integer": 3, "string": "3"}
-	///     ]
-	///     ````
-	///   - If the `_rev` does not match the current version of the document, then that particular document will not be
-	///     saved and will be reported as a conflict, but this does not prevent other documents in the batch from being
-	///     saved.
-	///     ````
-	///     [
-	///       {"id": "0", "error": "conflict", "reason": "Document update conflict."},
-	///       {"id": "1", "rev": "2-1579510027"},
-	///       {"id": "2", "rev": "2-3978456339"}
-	///     ]
-	///     ````
-	///
-	/// - Parameter documents: An array containing JSON documents to be updated or inserted.
-	/// - Parameter newEdits: Boolean value to mark documents as new edits. A value of `false` prevents the database
-	///                       from assigning new revision IDs to the documents. Default is `true`.
-	/// - Parameter callback: callback containing the bulk update/insert result.
-	/// - Parameter json: JSON response containing a list of `_id`, `_rev`, `error` and `reason` for every document. The
-	///                   results are returned in the same order as the supplied documents array.
-	/// - Parameter error: Request error if one occurred.
-	///
-	public func bulk(documents: BulkDocuments, callback: @escaping ([BulkResponse]?, NSError?) -> ()) {
-
-		// Prepare request options
-		let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)/_bulk_docs", hasBody: true)
-
-        let body: [String : Any] = ["docs": documents.docs, "new_edits": documents.new_edits ?? true]
-		// Create request body and check if it was generated successfully
-        guard let requestBody = try? JSONSerialization.data(withJSONObject: body, options: []) else {
-			callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
-			return
-		}
-
-		// Create bulk update request and send it
-		let req = HTTP.request(requestOptions) { response in
-			var error: NSError?
-			var documentsUpdateResult: [BulkResponse]?
-
-			if let response = response {
-				documentsUpdateResult = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK && response.statusCode != HTTPStatusCode.created {
-                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(documentsUpdateResult, error)
-		}
-		req.end(requestBody)
-	}
 
 	/// Update a document in the database.
     ///
     /// - parameters:
     ///     - id: String ID for the document.
     ///     - rev: The current revision number for the document.
-    ///     - document: JSON data of the updated document.
-    ///     - callback: Callback containing the new revision number, the JSON response,
-    ///                 and NSError if one occurred.
+    ///     - document: The new `Document`.
+    ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func update<D: Document>(_ id: String, rev: String, document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: true)
-        CouchDBUtils.makeRequest(document: document, options: requestOptions) { (response, error) in
+        CouchDBUtils.documentRequest(document: document, options: requestOptions) { (response, error) in
             callback(response, error)
         }
     }
@@ -288,12 +203,12 @@ public class Database {
     /// Create a new document.
     ///
     /// - parameters:
-    ///     - document: JSON data for the document.
+    ///     - document: The new `Document`.
     ///     - callback: Callback containing the ID of the newly created document, revision number,
     ///                 JSON response, and NSError if one occurred.
     public func create<D: Document>(_ document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)", hasBody: true)
-        CouchDBUtils.makeRequest(document: document, options: requestOptions) { (response, error) in
+        CouchDBUtils.documentRequest(document: document, options: requestOptions) { (response, error) in
             callback(response, error)
         }
     }
@@ -305,22 +220,74 @@ public class Database {
     ///     - rev: Latest revision String for the document.
     ///     - failOnNotFound: Bool indicating whether to return an error if the document is not found.
     ///     - callback: Callback containing an NSError if one occurred.
-    public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ()) {
+    public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: false)
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .accepted) || (response.statusCode == .notFound && failOnNotFound) {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: id, rev: rev)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: id, rev: rev)
-            }
-            callback(error)
-        }
-        req.end()
+        CouchDBUtils.deleteRequest(id: id, rev: rev, failOnNotFound: failOnNotFound, options: requestOptions, callback: callback)
     }
 
+    // MARK: Multiple Documents requests
+    
+    /// Bulk update or insert documents into the database.
+    ///
+    /// - Note:
+    ///   - CouchDB will return the results in the same order as supplied in the array. The `id` and revision will be
+    ///     added for every document passed as content to a bulk insert, even for those that were just deleted.
+    ///   - If you omit the per-document `_id` specification, CouchDB will generate unique IDs for you, as it does for
+    ///     regular `create(_:callback:)` function.
+    ///   - Updating existing documents requires setting the `_rev` member to the revision being updated. To delete a
+    ///     document set the `_deleted` member to `true`.
+    ///     ````
+    ///     [
+    ///       {"_id": "0", "_rev": "1-62657917", "_deleted": true},
+    ///       {"_id": "1", "_rev": "1-2089673485", "integer": 2, "string": "2"},
+    ///       {"_id": "2", "_rev": "1-2063452834", "integer": 3, "string": "3"}
+    ///     ]
+    ///     ````
+    ///   - If the `_rev` does not match the current version of the document, then that particular document will not be
+    ///     saved and will be reported as a conflict, but this does not prevent other documents in the batch from being
+    ///     saved.
+    ///     ````
+    ///     [
+    ///       {"id": "0", "error": "conflict", "reason": "Document update conflict."},
+    ///       {"id": "1", "rev": "2-1579510027"},
+    ///       {"id": "2", "rev": "2-3978456339"}
+    ///     ]
+    ///     ````
+    ///
+    /// - Parameter documents: An `BulkDocuments` struct containing an array of JSON documents to be updated or inserted.
+    /// - Parameter callback: callback containing either a `BulkResponse` array or an error.
+    ///
+    public func bulk(documents: BulkDocuments, callback: @escaping ([BulkResponse]?, NSError?) -> ()) {
+        
+        // Prepare request options
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)/_bulk_docs", hasBody: true)
+        
+        let body: [String : Any] = ["docs": documents.docs, "new_edits": documents.new_edits ?? true]
+        // Create request body and check if it was generated successfully
+        guard let requestBody = try? JSONSerialization.data(withJSONObject: body, options: []) else {
+            callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+            return
+        }
+        
+        // Create bulk update request and send it
+        let req = HTTP.request(requestOptions) { response in
+            var error: NSError?
+            var documentsUpdateResult: [BulkResponse]?
+            
+            if let response = response {
+                documentsUpdateResult = CouchDBUtils.getBodyAsCodable(response)
+                if response.statusCode != HTTPStatusCode.OK && response.statusCode != HTTPStatusCode.created {
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
+                }
+            } else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(documentsUpdateResult, error)
+        }
+        req.end(requestBody)
+    }
+    
     /// Executes the specified view function from the specified design document.
     ///
     /// - parameters:
@@ -443,6 +410,47 @@ public class Database {
         }
     }
 
+    
+    /// Retrieve all documents from the database
+    ///
+    /// - parameters:
+    ///     - includeDocuments: Bool indicating whether to return the full contents of the documents.
+    ///                         Defaults to `false`.
+    ///     - callback: Callback containing AllDatabaseDocuments or an NSError if one occurred.
+    public func retrieveAll(includeDocuments: Bool = false, callback: @escaping (AllDatabaseDocuments?, NSError?) -> ()) {
+        var path = "/\(escapedName)/_all_docs"
+        if includeDocuments {
+            path += "?include_docs=true"
+        }
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
+                                                         path: path, hasBody: false)
+        var document: AllDatabaseDocuments?
+        let req = HTTP.request(requestOptions) { response in
+            var error: NSError?
+            if let response = response {
+                if let bodyData = CouchDBUtils.getBodyAsData(response),
+                    let bodyJSON = (try? JSONSerialization.jsonObject(with: bodyData, options: [])) as? [String:Any],
+                    let total_rows = bodyJSON["total_rows"] as? Int,
+                    let offset = bodyJSON["offset"] as? Int,
+                    let rows = bodyJSON["rows"] as? [[String:Any]]
+                {
+                    document = AllDatabaseDocuments(total_rows: total_rows, offset: offset, rows: rows)
+                }
+                
+                if response.statusCode != HTTPStatusCode.OK {
+                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
+                }
+            } else {
+                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+            }
+            callback(document, error)
+        }
+        req.end()
+    }
+    
+    // MARK: Design Documents
+    
     /// Create a design document.
     ///
     /// - parameters:
@@ -451,9 +459,7 @@ public class Database {
     ///     - callback: Callback containing the JSON response or an NSError if one occurred.
     public func createDesign(_ designName: String, document: DesignDocument, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))", hasBody: true)
-        CouchDBUtils.makeRequest(document: document, options: requestOptions) { (response, error) in
-            callback(response, error)
-        }
+        CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 
     /// Delete a design document.
@@ -463,22 +469,13 @@ public class Database {
     ///     - revision: The latest revision String of the design document to delete.
     ///     - failOnNotFound: Bool indicating whether to return an error if the design document was not found.
     ///     - callback: Callback containing an NSError if one occurred.
-    public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ()) {
+    public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))?rev=\(HTTP.escape(url: revision))", hasBody: false)
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .accepted) || (response.statusCode == .notFound && failOnNotFound) {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: designName, rev: revision)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: designName, rev: revision)
-            }
-            callback(error)
-        }
-        req.end()
+        CouchDBUtils.deleteRequest(id: designName, rev: revision, failOnNotFound: failOnNotFound, options: requestOptions, callback: callback)
     }
 
+    // MARK: Attachments
+    
     /// Create an attachment.
     ///
     /// - parameters:
@@ -490,22 +487,8 @@ public class Database {
     ///     - callback: Callback containing the new revision String, the JSON response,
     ///                 and an NSError if one occurred.
     public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: Data, contentType: String, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
-        var doc: DocumentResponse?
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: true, contentType: contentType)
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                doc = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
-                    let errorDesc: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: docId, rev: docRevison)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: docId, rev: docRevison)
-            }
-            callback(doc, error)
-        }
-        req.end(attachmentData)
+        CouchDBUtils.couchRequest(id: docId, rev: docRevison, body: attachmentData, options: requestOptions, passStatusCodes: [.created, .accepted], callback: callback)
     }
 
     /// Get an attachment associated with a specified document.
@@ -513,9 +496,8 @@ public class Database {
     /// - parameters:
     ///     - docId: Document ID String that the attachment is associated with.
     ///     - attachmentName: Name String for the desired attachment.
-    ///     - callback: Callback containing the retrieved attachment data, an NSError if one occurred,
-    ///                 and the content type of the attachment.
-    public func retrieveAttachment(_ docId: String, attachmentName: String, callback: @escaping (Data?, NSError?, String?) -> ()) {
+    ///     - callback: Callback containing either the retrieved attachment data and the content type of the attachment or an NSError.
+    public func retrieveAttachment(_ docId: String, attachmentName: String, callback: @escaping (Data?, String?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
@@ -530,7 +512,7 @@ public class Database {
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: docId, rev: nil)
             }
-            callback(attachment, error, contentType)
+            callback(attachment, contentType, error)
         }
         req.end()
     }
@@ -543,19 +525,8 @@ public class Database {
     ///     - attachmentName: Name String of the attachment to be deleted.
     ///     - failOnNotFound: Bool indicating whether to return an NSError if the attachment could not be found.
     ///     - callback: Callback containing an NSError if one occurred.
-    public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: @escaping (NSError?) -> ()) {
+    public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: false)
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                if (response.statusCode != .OK && response.statusCode != .accepted) || (response.statusCode == .notFound && failOnNotFound) {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: docId, rev: docRevison)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: docId, rev: docRevison)
-            }
-            callback(error)
-        }
-        req.end()
+        CouchDBUtils.deleteRequest(id: docId, rev: docRevison, failOnNotFound: failOnNotFound, options: requestOptions, callback: callback)
     }
 }

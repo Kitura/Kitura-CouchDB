@@ -59,7 +59,7 @@ class CouchDBUtils {
         }
         requestOptions.append(.schema("\(connProperties.HTTPProtocol)://"))
         requestOptions.append(.hostname(connProperties.host))
-        requestOptions.append(.port(connProperties.port))
+        requestOptions.append(.port(Int16(connProperties.port)))
         requestOptions.append(.method(method))
         requestOptions.append(.path(path))
         var headers = [String:String]()
@@ -94,25 +94,40 @@ class CouchDBUtils {
         return nil
     }
     
-    class func makeRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (DocumentResponse?, NSError?) -> ()) {
+    class func documentRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         if let requestBody = try? JSONEncoder().encode(document) {
-            var doc: DocumentResponse?
-            let req = HTTP.request(options) { response in
-                var error: NSError?
-                if let response = response {
-                    doc = CouchDBUtils.getBodyAsCodable(response)
-                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
-                        let errorDesc: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                        error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: document._id, rev: nil)
-                    }
-                } else {
-                    error = CouchDBUtils.createError(Database.InternalError, id: document._id, rev: nil)
-                }
-                callback(doc, error)
-            }
-            req.end(requestBody)
+            couchRequest(id: document._id, rev: document._rev, body: requestBody, options: options, passStatusCodes: [.created, .accepted], callback: callback)
         } else {
             callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: document._id, rev: document._rev))
+        }
+    }
+    
+    class func deleteRequest(id: String, rev: String, failOnNotFound: Bool, options: [ClientRequest.Options], callback: @escaping (DocumentResponse?, NSError?) -> ()) {
+        var passCodes: [HTTPStatusCode] = [.OK, .accepted]
+        if !failOnNotFound {
+            passCodes.append(.notFound)
+        }
+        couchRequest(id: id, rev: rev, body: nil, options: options, passStatusCodes: passCodes, callback: callback)
+    }
+    
+    class func couchRequest(id: String?, rev: String?, body: Data?, options: [ClientRequest.Options], passStatusCodes: [HTTPStatusCode], callback: @escaping (DocumentResponse?, NSError?) -> ()) {
+        var doc: DocumentResponse?
+        let req = HTTP.request(options) { response in
+            var error: NSError?
+            if let response = response {
+                doc = CouchDBUtils.getBodyAsCodable(response)
+                if !passStatusCodes.contains(response.statusCode) {
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: id, rev: rev)
+                }
+            } else {
+                error = CouchDBUtils.createError(Database.InternalError, id: id, rev: rev)
+            }
+            callback(doc, error)
+        }
+        if let body = body {
+            req.end(body)
+        } else {
+            req.end()
         }
     }
 }

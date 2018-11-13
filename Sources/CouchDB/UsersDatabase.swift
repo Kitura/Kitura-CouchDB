@@ -27,33 +27,17 @@ public class UsersDatabase: Database {
     /// - parameters:
     ///     - name: Username String.
     ///     - password: Password String.
-    ///     - callback: Callback containing the username, JSON response,
-    ///                 and an NSError if one occurred.
-    public func createUser<D: NewUserDocument>(document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
-        if let requestBody = try? JSONEncoder().encode(document) {
-            let id = "org.couchdb.user:\(document.name)"
-            var doc: DocumentResponse?
-            let requestOptions = CouchDBUtils.prepareRequest(connProperties,
-                                                             method: "PUT",
-                                                             path: "/_users/\(id)",
-                                                             hasBody: true,
-                                                             contentType: "application/json")
-            let req = HTTP.request(requestOptions) { response in
-                var error: NSError?
-                if let response = response {
-                    doc = CouchDBUtils.getBodyAsCodable(response)
-                    if response.statusCode != HTTPStatusCode.created && response.statusCode != HTTPStatusCode.accepted {
-                        let errorDesc: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                        error = CouchDBUtils.createError(response.statusCode, errorDesc: errorDesc, id: id, rev: nil)
-                    }
-                } else {
-                    error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
-                }
-                callback(doc, error)
-            }
-            req.end(requestBody)
-        } else {
-            callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
+    ///     - callback: Callback containing the DocumentResponse,
+    ///                 or an NSError if one occurred.
+    public func createUser<U: NewUserDocument>(document: U, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
+        let id = "org.couchdb.user:\(document.name)"
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
+                                                         method: "PUT",
+                                                         path: "/_users/\(id)",
+                                                         hasBody: true,
+                                                         contentType: "application/json")
+        CouchDBUtils.documentRequest(document: document, options: requestOptions) { (response, error) in
+            callback(response, error)
         }
     }
 
@@ -62,7 +46,7 @@ public class UsersDatabase: Database {
     /// - parameters:
     ///     - name: Name String of the desired user.
     ///     - callback: Callback containing the user JSON, or an NSError if one occurred.
-    public func getUser<D: RetrievedUserDocument>(name: String, callback: @escaping (D?, NSError?) -> ()) {
+    public func getUser<U: RetrievedUserDocument>(name: String, callback: @escaping (U?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
         retrieve(id, callback: { (doc, error) in
             callback(doc, error)

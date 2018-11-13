@@ -52,9 +52,9 @@ else {
     host = "127.0.0.1" /* localhost */
 }
 
-let port: Int16
+let port: Int
 if args.count > 1 {
-    port = Int16(args[1]) ?? 5984
+    port = Int(args[1]) ?? 5984
 }
 else {
     port = 5984
@@ -179,7 +179,7 @@ func updateDocument(revisionNumber: String) {
 
 func deleteDocument(revisionNumber: String) {
     database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
-        callback: { (error: NSError?) in
+        callback: { (response, error) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not delete document.")
                 Log.error("Error: \(error.localizedDescription) Code: \(error.code)")

@@ -45,6 +45,12 @@ class UsersDBTests: CouchDBTest {
                     return XCTFail("Failed to create new users: \(error)")
                 }
                 XCTAssertTrue(response?.ok ?? false)
+                usersDatabase.getUser(name: "David") { (userDoc: DefaultRetrievedUserDocument?, error) in
+                    guard let userDoc = userDoc else {
+                        return XCTFail("Failed to create new users: \(String(describing: error))")
+                    }
+                    XCTAssertEqual(userDoc.name, "David")
+                }
                 self.delay{self.createSession()}
             }
         }
