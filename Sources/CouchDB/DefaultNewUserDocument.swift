@@ -20,9 +20,7 @@ import Foundation
 public struct DefaultNewUserDocument: NewUserDocument {
     
     /// The document ID.
-    public var _id: String? {
-        return "org.couchdb.user:" + name
-    }
+    public let _id: String?
     
     /// The document revision.
     public var _rev: String?
@@ -32,7 +30,7 @@ public struct DefaultNewUserDocument: NewUserDocument {
 
     /// The unique immutable username that will be used to log in.
     /// If the name already exists, the old user will be replaced with this new user.
-    public var name: String
+    public let name: String
 
     /// The password for the user in plaintext.
     /// The CouchDB authentication database will replaces this with the secured hash.
@@ -53,5 +51,6 @@ public struct DefaultNewUserDocument: NewUserDocument {
         self.roles = roles
         self.password = password
         self._rev = rev
+        self._id = "org.couchdb.user:" + name
     }
 }

@@ -34,7 +34,7 @@ class Utils {
         }
     }
 
-    static func readCredentials() -> Credentials {
+    static func readCredentials() -> Credentials? {
         // Read in credentials an Data
         let credentialsData: Data
         let sourceFileName = NSString(string: #file)
@@ -49,13 +49,13 @@ class Utils {
         do {
             credentialsData = try Data(contentsOf: URL(fileURLWithPath: "\(fileNamePrefix)credentials.json"))
         } catch {
-            XCTFail("Failed to read in the credentials.json file")
-            exit(1)
+            print("Failed to read in the credentials.json file")
+            return nil
         }
 
         guard let credentialsJson = try? JSONDecoder().decode(Credentials.self, from: credentialsData) else {
-            XCTFail("Error in credentials.json.")
-            exit(1)
+            print("Error in credentials.json.")
+            return nil
         }
         return credentialsJson
     }

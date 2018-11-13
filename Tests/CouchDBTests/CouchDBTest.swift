@@ -15,11 +15,6 @@
 **/
 
 import XCTest
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
 import Foundation
 import Dispatch
 
@@ -33,8 +28,11 @@ class CouchDBTest: XCTestCase {
     // in Travis, to allow each Travis build to use a separate database.
     let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "kitura_test_db"
 
-    let couchDBClient: CouchDBClient = {
-        let credentials = Utils.readCredentials()
+    var couchDBClient: CouchDBClient? {
+        guard let credentials = Utils.readCredentials() else {
+            XCTFail("Failed to read credentials from credentials.json file")
+            return nil
+        }
 
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
@@ -49,7 +47,7 @@ class CouchDBTest: XCTestCase {
         print("Hostname is: \(client.connProperties.host)")
 
         return client
-    }()
+    }
 
     var database: Database?
 
@@ -58,7 +56,7 @@ class CouchDBTest: XCTestCase {
     func dropDatabaseIfExists(completion: @escaping () -> Void) {
         // Check if DB exists
        delay {
-            self.couchDBClient.dbExists(self.dbName) { exists, error in
+        self.couchDBClient?.dbExists(self.dbName) { exists, error in
                 if  error != nil {
                     XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
                 } else {
@@ -87,7 +85,7 @@ class CouchDBTest: XCTestCase {
 
     fileprivate func createDatabase( _ handler: @escaping () -> Void)  -> Void {
         delay {
-            self.couchDBClient.createDB(self.dbName) { database, error in
+            self.couchDBClient?.createDB(self.dbName) { database, error in
                 if let error = error {
                     XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
                     return
@@ -109,7 +107,7 @@ class CouchDBTest: XCTestCase {
     fileprivate func dropDatabase(_ handler: @escaping () -> Void) -> Void {
         // Retrieve and delete test database
         delay {
-            self.couchDBClient.deleteDB(self.dbName) { error in
+            self.couchDBClient?.deleteDB(self.dbName) { error in
                 if let error = error {
                     XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
                     return

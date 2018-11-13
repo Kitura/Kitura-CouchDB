@@ -32,7 +32,7 @@ class UUIDTests : CouchDBTest {
     func testUUIDsTest() {
         let expectedCount : UInt = 10
         setUpDatabase {
-            self.couchDBClient.getUUIDs(count: expectedCount) { (uuids, error) in
+            self.couchDBClient?.getUUIDs(count: expectedCount) { (uuids, error) in
                 guard let uuids = uuids else {
                     return XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(String(describing: error))")
                 }
@@ -45,7 +45,7 @@ class UUIDTests : CouchDBTest {
 
     func testUUIDTest() {
         setUpDatabase {
-            self.couchDBClient.getUUID() { (uuid, error) in
+            self.couchDBClient?.getUUID() { (uuid, error) in
                 guard let uuid = uuid else {
                     return XCTFail("Failed to retrieve UUID: \(String(describing: error))")
                 }

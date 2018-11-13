@@ -35,9 +35,9 @@ class ConfigTests: CouchDBTest {
     }
     
     func setConfig() {
-        self.couchDBClient.setConfig(section: "log", key: "level", value: "debug") { (error) in
+        self.couchDBClient?.setConfig(section: "log", key: "level", value: "debug") { (error) in
             if let error = error {
-                XCTFail("Failed to set config: \(error)")
+                return XCTFail("Failed to set config: \(error)")
             }
             print("Log level set to debug")
             self.delay{self.getAllConfig()}
@@ -47,9 +47,9 @@ class ConfigTests: CouchDBTest {
     }
     
     func getAllConfig() {
-        self.couchDBClient.getConfig { (config, error) in
+        self.couchDBClient?.getConfig { (config, error) in
             if let error = error {
-                XCTFail("Failed to get all config: \(error)")
+                return XCTFail("Failed to get all config: \(error)")
             }
             let logLevel = config?["log"]?["level"]
             XCTAssertEqual(logLevel, "debug")
@@ -58,9 +58,9 @@ class ConfigTests: CouchDBTest {
     }
     
     func getConfigSection() {
-        self.couchDBClient.getConfig(section: "log") { (config, error) in
+        self.couchDBClient?.getConfig(section: "log") { (config, error) in
             if let error = error {
-                XCTFail("Failed to get config section: \(error)")
+                return XCTFail("Failed to get config section: \(error)")
             }
             let logLevel = config?["level"]
             XCTAssertEqual(logLevel, "debug")
@@ -69,9 +69,9 @@ class ConfigTests: CouchDBTest {
     }
     
     func getConfigKey() {
-        self.couchDBClient.getConfig(section: "log", key: "level") { (config, error) in
+        self.couchDBClient?.getConfig(section: "log", key: "level") { (config, error) in
             if let error = error {
-                XCTFail("Failed to get config section: \(error)")
+                return XCTFail("Failed to get config section: \(error)")
             }
             let logLevel = config
             XCTAssertEqual(logLevel, "debug")

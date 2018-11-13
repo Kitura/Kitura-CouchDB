@@ -30,8 +30,9 @@ class UsersDBTests: CouchDBTest {
     
     func testUserDBTest() {
         setUpDatabase {
-            let usersDatabase = self.couchDBClient.usersDatabase()
-            self.delay{self.createUser(usersDatabase: usersDatabase)}
+            if let usersDatabase = self.couchDBClient?.usersDatabase() {
+                self.delay{self.createUser(usersDatabase: usersDatabase)}
+            }
         }
     }
     
@@ -50,7 +51,7 @@ class UsersDBTests: CouchDBTest {
     }
     
     func createSession() {
-        couchDBClient.createSession(name: "David", password: "password") { (cookie, sessionInfo, error) in
+        couchDBClient?.createSession(name: "David", password: "password") { (cookie, sessionInfo, error) in
             guard let cookie = cookie, let sessionInfo = sessionInfo else {
                 return XCTFail("Did not receive cookie and info when creating session: \(String(describing: error))")
             }
@@ -60,7 +61,7 @@ class UsersDBTests: CouchDBTest {
     }
     
     func getSession(cookie: String) {
-        couchDBClient.getSession(cookie: cookie) { (sessionInfo, error) in
+        couchDBClient?.getSession(cookie: cookie) { (sessionInfo, error) in
             guard let sessionInfo = sessionInfo else {
                 return XCTFail("Failed to get session: \(String(describing: error))")
             }

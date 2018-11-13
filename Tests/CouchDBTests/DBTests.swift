@@ -31,13 +31,13 @@ class DBTests: CouchDBTest {
     /// Test that the database can be created and deleted.
     func testDB() {
         setUpDatabase() {
-            self.couchDBClient.deleteDB(self.dbName) {(error: NSError?) in
+            self.couchDBClient?.deleteDB(self.dbName) {(error: NSError?) in
                 if let error = error {
                     XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
                 }
                 print(">> Database successfully deleted ")
 
-                self.couchDBClient.createDB(self.dbName) {(db: Database?, error: NSError?) in
+                self.couchDBClient?.createDB(self.dbName) {(db: Database?, error: NSError?) in
                     if let error = error {
                         XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
                     }
