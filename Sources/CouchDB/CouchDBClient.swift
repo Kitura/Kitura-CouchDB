@@ -209,23 +209,8 @@ public class CouchDBClient {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
                                                          path: "/_node/\(node)/_config/",
-            hasBody: false,
-            contentType: "application/json")
-        let req = HTTP.request(requestOptions) { response in
-            if let response = response {
-                guard let bodyData = CouchDBUtils.getBodyAsData(response),
-                    let jsonDict = try? (JSONSerialization.jsonObject(with: bodyData) as? [String: [String: String]])
-                    else {
-                        let configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                        return callback(nil, configError)
-                }
-                return callback(jsonDict, nil)
-            } else {
-                let configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-                return callback(nil, configError)
-            }
-        }
-        req.end()
+                                                         hasBody: false)
+        CouchDBUtils.couchRequest(options: requestOptions, passStatusCodes: [.OK], callback: callback)
     }
     
     /// Get the configuration dictionary for a section of the configuration document.
@@ -239,23 +224,8 @@ public class CouchDBClient {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
                                                          path: "/_node/\(node)/_config/\(section)",
-            hasBody: false,
-            contentType: "application/json")
-        let req = HTTP.request(requestOptions) { response in
-            if let response = response {
-                guard let bodyData = CouchDBUtils.getBodyAsData(response),
-                let jsonDict = try? (JSONSerialization.jsonObject(with: bodyData) as? [String: String])
-                else {
-                    let configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                    return callback(nil, configError)
-                }
-                return callback(jsonDict, nil)
-            } else {
-                let configError = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-                return callback(nil, configError)
-            }
-        }
-        req.end()
+                                                         hasBody: false)
+        CouchDBUtils.couchRequest(options: requestOptions, passStatusCodes: [.OK], callback: callback)
     }
     
     /// Get the value for a specific key in the configuration document.
@@ -265,15 +235,15 @@ public class CouchDBClient {
     ///     - node: The server node with the configuration document.
     ///     - section: The configuration section to be retrieved.
     ///     - key: The key in the configuration section for the desired value.
-    ///     - callback: Callback containing either the configuration value as a JSON String or an NSError if one occurred.
+    ///     - callback: Callback containing either the configuration value as a JSON String or an NSError.
     public func getConfig(node: String = "_local", section: String, key: String, callback: @escaping (String?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "GET",
                                                          path: "/_node/\(node)/_config/\(section)/\(key)",
-                                                         hasBody: false,
-                                                         contentType: "application/json")
+                                                         hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             if let response = response {
+                // JSONSerialization used here since JSONEncoder will not decode fragments
                 guard let configJSON = CouchDBUtils.getBodyAsData(response),
                     let jsonString = try? (JSONSerialization.jsonObject(with: configJSON, options: [.allowFragments]) as? String)
                 else {
@@ -294,8 +264,7 @@ public class CouchDBClient {
     /// - parameters:
     ///     - name: Username String.
     ///     - password: Password String.
-    ///     - callback: `SessionCallback` containing the session cookie and JSON response,
-    ///                 or an NSError if one occurred.
+    ///     - callback: Callback containing either the session cookie and a `NewSessionResponse`, or an NSError.
     public func createSession(name: String, password: String, callback: @escaping (String?, NewSessionResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
                                                          method: "POST",
@@ -303,8 +272,6 @@ public class CouchDBClient {
                                                          hasBody: true,
                                                          contentType: "application/x-www-form-urlencoded")
         let body = "name=\(name)&password=\(password)"
-        let id = "org.couchdb.user:\(name)"
-
         let req = HTTP.request(requestOptions) { response in
             var error: NSError?
             var document: NewSessionResponse?
@@ -312,11 +279,11 @@ public class CouchDBClient {
             if let response = response {
                 document = CouchDBUtils.getBodyAsCodable(response)
                 if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: nil, rev: nil)
+                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: name, rev: nil)
                 }
                 cookie = response.headers["Set-Cookie"]?.first
             } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
+                error = CouchDBUtils.createError(Database.InternalError, id: name, rev: nil)
             }
             callback(cookie, document, error)
         }
@@ -327,8 +294,7 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - cookie: String session cookie.
-    ///     - callback: `SessionCallback` containing the cookie, JSON response,
-    ///                 and an NSError if the user is not authenticated or an error occurred.
+    ///     - callback: Callback containing either the `UserSessionInformation` or an NSError if the cookie is not valid.
     public func getSession(cookie: String, callback: @escaping (UserSessionInformation?, NSError?) -> ()) {
         var requestOptions: [ClientRequest.Options] = []
         requestOptions.append(.hostname(connProperties.host))
@@ -341,20 +307,6 @@ public class CouchDBClient {
         headers["Content-Type"] = "application/json"
         headers["Cookie"] = cookie
         requestOptions.append(.headers(headers))
-
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var document: UserSessionInformation?
-            if let response = response {
-                document = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(document, error)
-        }
-        req.end()
+        CouchDBUtils.couchRequest(options: requestOptions, passStatusCodes: [.OK], callback: callback)
     }
 }

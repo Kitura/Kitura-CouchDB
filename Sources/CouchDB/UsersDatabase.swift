@@ -36,9 +36,7 @@ public class UsersDatabase: Database {
                                                          path: "/_users/\(id)",
                                                          hasBody: true,
                                                          contentType: "application/json")
-        CouchDBUtils.documentRequest(document: document, options: requestOptions) { (response, error) in
-            callback(response, error)
-        }
+        CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 
     /// Get a user by name.
@@ -48,9 +46,7 @@ public class UsersDatabase: Database {
     ///     - callback: Callback containing the user JSON, or an NSError if one occurred.
     public func getUser<U: RetrievedUserDocument>(name: String, callback: @escaping (U?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
-        retrieve(id, callback: { (doc, error) in
-            callback(doc, error)
-        })
+        retrieve(id, callback: callback)
     }
 }
 

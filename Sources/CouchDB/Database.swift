@@ -169,20 +169,7 @@ public class Database {
     public func retrieve<D: Document>(_ id: String, callback: @escaping (D?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(escapedName)/\(HTTP.escape(url: id))", hasBody: false)
-        var document: D?
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                document = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: CouchDBUtils.getBodyAsCodable(response), id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
-            }
-            callback(document, error)
-        }
-        req.end()
+        CouchDBUtils.couchRequest(id: id, options: requestOptions, passStatusCodes: [.OK], callback: callback)
     }
 
 
@@ -195,9 +182,7 @@ public class Database {
     ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func update<D: Document>(_ id: String, rev: String, document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: true)
-        CouchDBUtils.documentRequest(document: document, options: requestOptions) { (response, error) in
-            callback(response, error)
-        }
+        CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 
     /// Create a new document.
@@ -208,9 +193,7 @@ public class Database {
     ///                 JSON response, and NSError if one occurred.
     public func create<D: Document>(_ document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)", hasBody: true)
-        CouchDBUtils.documentRequest(document: document, options: requestOptions) { (response, error) in
-            callback(response, error)
-        }
+        CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 
     /// Delete a document.
@@ -268,24 +251,7 @@ public class Database {
             callback(nil, CouchDBUtils.createError(Database.InvalidDocument, id: nil, rev: nil))
             return
         }
-        
-        // Create bulk update request and send it
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var documentsUpdateResult: [BulkResponse]?
-            
-            if let response = response {
-                documentsUpdateResult = CouchDBUtils.getBodyAsCodable(response)
-                if response.statusCode != HTTPStatusCode.OK && response.statusCode != HTTPStatusCode.created {
-                    let responseError: CouchErrorResponse? = CouchDBUtils.getBodyAsCodable(response)
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: responseError, id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(documentsUpdateResult, error)
-        }
-        req.end(requestBody)
+        CouchDBUtils.couchRequest(body: requestBody, options: requestOptions, passStatusCodes: [.OK, .created], callback: callback)
     }
     
     /// Executes the specified view function from the specified design document.
@@ -294,8 +260,7 @@ public class Database {
     ///     - view: View function name String.
     ///     - design: Design document name.
     ///     - params: Query parameters for the function.
-    ///     - callback: Callback containing the JSON response or NSError if one occurred.
-    ///                 Refer to http://docs.couchdb.org/en/2.1.0/api/ddoc/views.html for info on JSON contents.
+    ///     - callback: Callback containing either the `AllDatabaseDocuments` or an NSError.
     public func queryByView(_ view: String, ofDesign design: String, usingParameters params: [Database.QueryParameters], callback: @escaping (AllDatabaseDocuments?, NSError?) -> ()) {
         var paramString = ""
         var keys: [Any]?

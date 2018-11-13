@@ -110,8 +110,8 @@ class CouchDBUtils {
         couchRequest(id: id, rev: rev, body: nil, options: options, passStatusCodes: passCodes, callback: callback)
     }
     
-    class func couchRequest(id: String?, rev: String?, body: Data?, options: [ClientRequest.Options], passStatusCodes: [HTTPStatusCode], callback: @escaping (DocumentResponse?, NSError?) -> ()) {
-        var doc: DocumentResponse?
+    class func couchRequest<O: Codable>(id: String? = nil, rev: String? = nil, body: Data? = nil, options: [ClientRequest.Options], passStatusCodes: [HTTPStatusCode], callback: @escaping (O?, NSError?) -> ()) {
+        var doc: O?
         let req = HTTP.request(options) { response in
             var error: NSError?
             if let response = response {

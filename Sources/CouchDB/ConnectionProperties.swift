@@ -31,8 +31,6 @@ public struct ConnectionProperties {
     /// Whether or not to use a secured connection
     public let secured: Bool
 
-    // MARK: Authentication credentials to access CouchDB
-
     /// CouchDB admin username
     let username: String?
 
@@ -58,8 +56,6 @@ public struct ConnectionProperties {
         }
     }
 
-    // MARK: Computed properties
-
     /// Use https or http.
     var HTTPProtocol: String {
         return secured ? "https" : "http"
@@ -74,8 +70,6 @@ public struct ConnectionProperties {
         }
     }
 }
-
-// MARK: Extension for <CustomStringConvertible>
 
 extension ConnectionProperties: CustomStringConvertible {
     /// String description for a `ConnectionProperties`.
