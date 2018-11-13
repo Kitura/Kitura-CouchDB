@@ -59,11 +59,11 @@ class AttachmentTests: CouchDBTest {
                 return XCTFail("Error creating attachment: \(String(describing: error))")
             }
             print("Added Attachment")
-            self.delay{self.retrieveAttachment(id: response.id, name: "myAttachment")}
+            self.delay{self.retrieveAttachment(id: response.id, name: "myAttachment", rev: response.rev)}
         })
     }
     
-    func retrieveAttachment(id: String, name: String) {
+    func retrieveAttachment(id: String, name: String, rev: String) {
         database?.retrieveAttachment(id, attachmentName: name, callback: { (data, contentType, error) in
             XCTAssertEqual(contentType, "text/*")
             guard let data = data else {
@@ -72,6 +72,24 @@ class AttachmentTests: CouchDBTest {
             let attachmentString = String(data: data, encoding: .utf8)
             XCTAssertEqual(attachmentString, "Hello World")
             print("Retrieved Attachment")
+            self.delay{self.deleteAttachment(id: id, name: name, rev: rev)}
+        })
+    }
+    
+    func deleteAttachment(id: String, name: String, rev: String) {
+        database?.deleteAttachment(id, docRevison: rev, attachmentName: name, callback: { (response, error) in
+            guard let response = response else {
+                return XCTFail("Error deleting attachment: \(String(describing: error))")
+            }
+            print("Deleted attachment")
+            self.delay{
+                self.database?.retrieveAttachment(response.id, attachmentName: name, callback: { (data, contentType, error) in
+                    guard data == nil, contentType == nil else {
+                        return XCTFail("Attachment wasn't deleted)")
+                    }
+                    XCTAssertEqual(error?.code, 404)
+                })
+            }
         })
     }
 }

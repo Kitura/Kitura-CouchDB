@@ -469,10 +469,11 @@ public class Database {
             var attachment: Data?
             var contentType: String?
             if let response = response {
-                attachment = CouchDBUtils.getBodyAsData(response)
-                contentType = response.headers["Content-Type"]?.first
                 if response.statusCode != HTTPStatusCode.OK {
                     error = CouchDBUtils.createError(response.statusCode, id: docId, rev: nil)
+                } else {
+                    attachment = CouchDBUtils.getBodyAsData(response)
+                    contentType = response.headers["Content-Type"]?.first
                 }
             } else {
                 error = CouchDBUtils.createError(Database.InternalError, id: docId, rev: nil)
