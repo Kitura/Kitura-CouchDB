@@ -173,7 +173,7 @@ public class Database {
     }
 
 
-	/// Update a document in the database.
+	/// Update a document in the database. If no document exists for the provided id, a new document is created.
     ///
     /// - parameters:
     ///     - id: String ID for the document.
@@ -189,8 +189,7 @@ public class Database {
     ///
     /// - parameters:
     ///     - document: The new `Document`.
-    ///     - callback: Callback containing the ID of the newly created document, revision number,
-    ///                 JSON response, and NSError if one occurred.
+    ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func create<D: Document>(_ document: D, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "POST", path: "/\(escapedName)", hasBody: true)
         CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
@@ -202,7 +201,7 @@ public class Database {
     ///     - id: String ID for the document.
     ///     - rev: Latest revision String for the document.
     ///     - failOnNotFound: Bool indicating whether to return an error if the document is not found.
-    ///     - callback: Callback containing an NSError if one occurred.
+    ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: false)
         CouchDBUtils.deleteRequest(id: id, rev: rev, failOnNotFound: failOnNotFound, options: requestOptions, callback: callback)
@@ -421,7 +420,7 @@ public class Database {
     /// - parameters:
     ///     - designName: Name String for the design document.
     ///     - document: The JSON data of the new design document.
-    ///     - callback: Callback containing the JSON response or an NSError if one occurred.
+    ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func createDesign(_ designName: String, document: DesignDocument, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))", hasBody: true)
         CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
@@ -433,7 +432,7 @@ public class Database {
     ///     - designName: Name String of the design document to delete.
     ///     - revision: The latest revision String of the design document to delete.
     ///     - failOnNotFound: Bool indicating whether to return an error if the design document was not found.
-    ///     - callback: Callback containing an NSError if one occurred.
+    ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func deleteDesign(_ designName: String, revision: String, failOnNotFound: Bool = false, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/_design/\(HTTP.escape(url: designName))?rev=\(HTTP.escape(url: revision))", hasBody: false)
         CouchDBUtils.deleteRequest(id: designName, rev: revision, failOnNotFound: failOnNotFound, options: requestOptions, callback: callback)
@@ -449,8 +448,7 @@ public class Database {
     ///     - attachmentName: Attachment name String.
     ///     - attachmentData: The attachment Data.
     ///     - contentType: Attachment MIME type String.
-    ///     - callback: Callback containing the new revision String, the JSON response,
-    ///                 and an NSError if one occurred.
+    ///     - callback: Callback containing the `DocumentResponse` or an NSError.
     public func createAttachment(_ docId: String, docRevison: String, attachmentName: String, attachmentData: Data, contentType: String, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: true, contentType: contentType)
         CouchDBUtils.couchRequest(id: docId, rev: docRevison, body: attachmentData, options: requestOptions, passStatusCodes: [.created, .accepted], callback: callback)
@@ -490,7 +488,7 @@ public class Database {
     ///     - docRevision: Latest revision String of the document.
     ///     - attachmentName: Name String of the attachment to be deleted.
     ///     - failOnNotFound: Bool indicating whether to return an NSError if the attachment could not be found.
-    ///     - callback: Callback containing an NSError if one occurred.
+    ///     - callback: Callback containing either the `DocumentResponse` or an NSError.
     public func deleteAttachment(_ docId: String, docRevison: String, attachmentName: String, failOnNotFound: Bool = false, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: docId))/\(HTTP.escape(url: attachmentName))?rev=\(HTTP.escape(url: docRevison))", hasBody: false)
         CouchDBUtils.deleteRequest(id: docId, rev: docRevison, failOnNotFound: failOnNotFound, options: requestOptions, callback: callback)

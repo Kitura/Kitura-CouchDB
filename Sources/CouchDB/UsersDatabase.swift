@@ -27,8 +27,7 @@ public class UsersDatabase: Database {
     /// - parameters:
     ///     - name: Username String.
     ///     - password: Password String.
-    ///     - callback: Callback containing the DocumentResponse,
-    ///                 or an NSError if one occurred.
+    ///     - callback: Callback containing either the DocumentResponse or an NSError.
     public func createUser<U: NewUserDocument>(document: U, callback: @escaping (DocumentResponse?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(document.name)"
         let requestOptions = CouchDBUtils.prepareRequest(connProperties,
@@ -42,8 +41,8 @@ public class UsersDatabase: Database {
     /// Get a user by name.
     ///
     /// - parameters:
-    ///     - name: Name String of the desired user.
-    ///     - callback: Callback containing the user JSON, or an NSError if one occurred.
+    ///     - name: The name of the desired user.
+    ///     - callback: Callback containing either the `RetrievedUserDocument` object, or an NSError.
     public func getUser<U: RetrievedUserDocument>(name: String, callback: @escaping (U?, NSError?) -> ()) {
         let id = "org.couchdb.user:\(name)"
         retrieve(id, callback: callback)
