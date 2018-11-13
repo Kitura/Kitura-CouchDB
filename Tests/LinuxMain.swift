@@ -25,5 +25,6 @@ XCTMain([
     testCase(DocumentViewTests.allTests),
     testCase(DocumentBulkUpdateTests.allTests),
     testCase(DBTests.allTests),
-    testCase(UUIDTests.allTests)
+    testCase(UUIDTests.allTests),
+    testCase(AttachmentTests.allTests)
 ])
