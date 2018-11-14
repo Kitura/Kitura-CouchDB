@@ -54,9 +54,9 @@ class DocumentCrudTests: CouchDBTest {
     
     //Create document closure
     func createDocument<D: Document>(document: D) {
-        database?.create(document, callback: { (response: DocumentResponse?, error: NSError?) in
+        database?.create(document, callback: { (response: DocumentResponse?, error) in
             guard let documentId = response?.id else {
-                return XCTFail("Error in creating document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in creating document: \(String(describing: error?.description))")
             }
             if documentId == self.documentId1 {
                 print(">> Successfully created the JSON document.")
@@ -69,9 +69,9 @@ class DocumentCrudTests: CouchDBTest {
 
     //Read document
     func readDocument() {
-        database?.retrieve(documentId1, callback: { (document: MyDocument?, error: NSError?) in
+        database?.retrieve(documentId1, callback: { (document: MyDocument?, error) in
             guard let document = document, let id = document._id else {
-                return XCTFail("Error in reading document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in reading document \(String(describing: error?.statusCode)) \(String(describing: error?.description))")
             }
             let value = document.value
             XCTAssertEqual(self.documentId1, id, "Wrong documentId read from document")
@@ -85,9 +85,9 @@ class DocumentCrudTests: CouchDBTest {
     
     // Retrieve all documents
     func retrieveAll() {
-        database?.retrieveAll(includeDocuments: true, callback: { (documents: AllDatabaseDocuments?, error: NSError?) in
+        database?.retrieveAll(includeDocuments: true, callback: { (documents: AllDatabaseDocuments?, error) in
             guard let documents = documents, documents.total_rows == 2 else {
-                return XCTFail("Error in retrieving all documents \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in retrieving all documents \(String(describing: error?.description))")
             }
             let document1 = documents.rows[0]
             guard let id1 = document1["id"] as? String,
@@ -119,9 +119,9 @@ class DocumentCrudTests: CouchDBTest {
     func updateDocument(_ revisionNumber: String) {
         var newDoc = myDocument1
         newDoc.value = "value3"
-        database?.update(documentId1, rev: revisionNumber, document: newDoc, callback: { (document: DocumentResponse?, error: NSError?) in
+        database?.update(documentId1, rev: revisionNumber, document: newDoc, callback: { (document: DocumentResponse?, error) in
             guard let document = document else {
-                return XCTFail("Error in updating document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in updating document \(String(describing: error?.description))")
             }
             XCTAssertEqual(self.documentId1, document.id , "Wrong documentId read from updated document")
             print(">> Successfully updated the JSON document.")
@@ -131,9 +131,9 @@ class DocumentCrudTests: CouchDBTest {
 
     //Re-read document to confirm update
     func confirmUpdate() {
-        database?.retrieve(documentId1, callback: { (document: MyDocument?, error: NSError?) in
+        database?.retrieve(documentId1, callback: { (document: MyDocument?, error) in
             guard let document = document, let id = document._id, let rev = document._rev else {
-                return XCTFail("Error in rereading document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in rereading document \(String(describing: error?.description))")
             }
             XCTAssertEqual(self.documentId1, id, "Wrong documentId read from updated document")
             XCTAssertEqual("value3", document.value, "Wrong value read from updated document")
@@ -146,9 +146,9 @@ class DocumentCrudTests: CouchDBTest {
     
     //Delete document
     func deleteDocument(_ revisionNumber: String) {
-        database?.delete(documentId1, rev: revisionNumber, failOnNotFound: true, callback: { (response, error) in
+        database?.delete(documentId1, rev: revisionNumber, callback: { (error) in
             if let error = error {
-                XCTFail("Error in rereading document \(error.code) \(error.domain) \(error.userInfo)")
+                XCTFail("Error in rereading document \(error.description)")
             } else {
                 print(">> Successfully deleted the JSON document with ID \(self.documentId1) from CouchDB.")
             }

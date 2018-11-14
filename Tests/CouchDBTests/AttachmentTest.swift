@@ -43,9 +43,9 @@ class AttachmentTests: CouchDBTest {
     
     //Create document closure
     func createDocument<D: Document>(document: D) {
-        database?.create(document, callback: { (response: DocumentResponse?, error: NSError?) in
+        database?.create(document, callback: { (response: DocumentResponse?, error) in
             guard let response = response else {
-                return XCTFail("Error in creating document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in creating document \(String(describing: error?.description))")
             }
             print("Created document")
             self.delay{self.addAttachment(id: response.id, rev: response.rev)}
@@ -77,17 +77,17 @@ class AttachmentTests: CouchDBTest {
     }
     
     func deleteAttachment(id: String, name: String, rev: String) {
-        database?.deleteAttachment(id, docRevison: rev, attachmentName: name, callback: { (response, error) in
-            guard let response = response else {
+        database?.deleteAttachment(id, docRevison: rev, attachmentName: name, callback: { (error) in
+            if let error = error {
                 return XCTFail("Error deleting attachment: \(String(describing: error))")
             }
             print("Deleted attachment")
             self.delay{
-                self.database?.retrieveAttachment(response.id, attachmentName: name, callback: { (data, contentType, error) in
+                self.database?.retrieveAttachment(id, attachmentName: name, callback: { (data, contentType, error) in
                     guard data == nil, contentType == nil else {
                         return XCTFail("Attachment wasn't deleted)")
                     }
-                    XCTAssertEqual(error?.code, 404)
+                    XCTAssertEqual(error?.statusCode, 404)
                 })
             }
         })

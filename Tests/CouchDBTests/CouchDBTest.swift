@@ -56,15 +56,11 @@ class CouchDBTest: XCTestCase {
     func dropDatabaseIfExists(completion: @escaping () -> Void) {
         // Check if DB exists
        delay {
-        self.couchDBClient?.dbExists(self.dbName) { exists, error in
-                if  error != nil {
-                    XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
+        self.couchDBClient?.dbExists(self.dbName) { exists in
+                if  exists {
+                    self.dropDatabase(completion)
                 } else {
-                    if  exists {
-                        self.dropDatabase(completion)
-                    } else {
-                        completion()
-                    }
+                    completion()
                 }
             }
         }
@@ -87,7 +83,7 @@ class CouchDBTest: XCTestCase {
         delay {
             self.couchDBClient?.createDB(self.dbName) { database, error in
                 if let error = error {
-                    XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
+                    XCTFail("DB creation error: \(error.description)")
                     return
                 }
                 if database == nil {
@@ -109,7 +105,7 @@ class CouchDBTest: XCTestCase {
         delay {
             self.couchDBClient?.deleteDB(self.dbName) { error in
                 if let error = error {
-                    XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+                    XCTFail("DB deletion error: \(error.description)")
                     return
                 }
                 print("Database \"\(self.dbName)\" successfully deleted")

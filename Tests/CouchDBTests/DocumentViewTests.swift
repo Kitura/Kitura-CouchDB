@@ -44,9 +44,9 @@ class DocumentViewTests: CouchDBTest {
                                  favorited: false,
                                  value: "viewTest")
 
-        database?.create(myDoc, callback: { (document: DocumentResponse?, error: NSError?) in
+        database?.create(myDoc, callback: { (document: DocumentResponse?, error) in
             if let error = error {
-                XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
+                XCTFail("Error in creating document \(error.description)")
             } else {
                 print(">> Successfully created the JSON document.")
                 self.createDesign()
@@ -62,9 +62,9 @@ class DocumentViewTests: CouchDBTest {
                                                     "map" : "function(doc) { emit(doc.value, doc); }"
                                                 ]
                                             ])
-        database?.createDesign(name, document: designDocument) { (document: DocumentResponse?, error: NSError?) in
+        database?.createDesign(name, document: designDocument) { (document: DocumentResponse?, error) in
             if let error = error {
-                XCTFail("Error in creating document \(error.code) \(error.domain) \(error.userInfo)")
+                XCTFail("Error in creating document \(error.description)")
             } else {
                 print(">> Successfully created the design.")
                 self.readDocument()
@@ -76,9 +76,9 @@ class DocumentViewTests: CouchDBTest {
     func readDocument() {
         let key = "viewTest"
         
-        database?.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (documents: AllDatabaseDocuments?, error: NSError?) in
+        database?.queryByView("matching", ofDesign: "test", usingParameters: [.keys([key])]) { (documents: AllDatabaseDocuments?, error) in
             guard let documents = documents else {
-                return XCTFail("Error in querying by view document \(String(describing: error?.code)) \(String(describing: error?.domain)) \(String(describing: error?.userInfo))")
+                return XCTFail("Error in querying by view document \(String(describing: error?.description))")
             }
             guard let value = ((documents.rows[0])["value"] as? [String:Any])?["value"] as? String,
                 let id = documents.rows[0]["id"] as? String

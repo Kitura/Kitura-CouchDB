@@ -27,10 +27,10 @@ public struct AllDatabaseDocuments {
     }
 
     /// Number of documents in the database/view.
-    public let total_rows: Int
+    public let total_rows: Int?
 
     /// Offset where the document list started
-    public let offset: Int
+    public let offset: Int?
 
     /// Current update sequence for the database.
     public let update_seq: String?

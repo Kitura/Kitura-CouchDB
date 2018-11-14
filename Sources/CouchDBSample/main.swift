@@ -132,7 +132,7 @@ func createDocument() {
     database.create(myDocument, callback: { (document, error) in
         if let error = error {
             Log.error(">> Oops something went wrong; could not persist document.")
-            Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+            Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
         } else {
             Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
             readDocument()
@@ -144,10 +144,10 @@ func createDocument() {
 // MARK: Read document
 
 func readDocument() {
-    database.retrieve(documentId, callback: { (document: MyDocument?, error: NSError?) in
+    database.retrieve(documentId, callback: { (document: MyDocument?, error: CouchDBError?) in
         if let error = error {
             Log.error("Oops something went wrong; could not read document.")
-            Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+            Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
         } else {
             Log.info(">> Successfully read the following JSON document with ID " +
                 "\(documentId) from CouchDB:\n\t\(String(describing: document))")
@@ -161,10 +161,10 @@ func readDocument() {
 
 func updateDocument(revisionNumber: String) {
     database.update(documentId, rev: revisionNumber, document: myDocument,
-        callback: { (response: DocumentResponse?, error: NSError?) in
+        callback: { (response: DocumentResponse?, error: CouchDBError?) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not update document.")
-                Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+                Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
             } else {
                 myDocument._rev = response?.rev
                 Log.info(">> Successfully updated the JSON document with ID" +
@@ -179,10 +179,10 @@ func updateDocument(revisionNumber: String) {
 
 func deleteDocument(revisionNumber: String) {
     database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
-        callback: { (response, error) in
+        callback: { (error) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not delete document.")
-                Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+                Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
             } else {
                 Log.info(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
             }
