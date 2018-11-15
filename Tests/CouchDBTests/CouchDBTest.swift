@@ -37,7 +37,7 @@ class CouchDBTest: XCTestCase {
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
                                                   port: credentials.port,
-                                                  secured: false,
+                                                  secured: (dbName == "kitura_test_db" ?  false : true),
                                                   username: credentials.username,
                                                   password: credentials.password)
 
