@@ -30,37 +30,29 @@ class ConfigTests: CouchDBTest {
     
     func testConfigTest() {
         setUpDatabase {
-            self.delay{self.setConfig()}
+            self.delay{self.getNode()}
         }
     }
     
-    func setConfig() {
-        print("Entered setConfig: \(self.couchDBClient.debugDescription)")
+    func getNode() {
+        // Get the config node
         let requestOptions = CouchDBUtils.prepareRequest((self.couchDBClient?.connProperties)!,
                                                          method: "GET",
                                                          path: "/_membership",
                                                          hasBody: false)
         CouchDBUtils.couchRequest(options: requestOptions, passStatusCodes: [.OK]) { (response: [String: [String]]?, error) in
-            guard let response = response else {
-                print("No _membership response: \(String(describing: error))")
-                return
+            guard let response = response, let node = response["all_nodes"]?[0] else {
+                return XCTFail("No _membership node response: \(String(describing: error))")
             }
-            print(response)
-            print(response["all_nodes"]?[0] as Any)
+            print("Found node: \(node)")
+            self.delay{self.setConfig(node: node)}
         }
-        print()
-        self.couchDBClient?.setConfig(section: "log", key: "level", value: "debug") { (error) in
+    }
+    
+    func setConfig(node: String) {
+        self.couchDBClient?.setConfig(node: node, section: "log", key: "level", value: "debug") { (error) in
             if let error = error {
                 XCTFail("Failed to set config: \(error)")
-                self.couchDBClient?.setConfig(node: "nonode@nohost", section: "log", key: "level", value: "debug") { (error) in
-                    if let error = error {
-                        return XCTFail("Failed to set config: \(error)")
-                    }
-                    print("Log level set to debug with nonode")
-                    self.delay{self.getAllConfig()}
-                    self.delay{self.getConfigSection()}
-                    self.delay{self.getConfigKey()}
-                }
             }
             print("Log level set to debug")
             self.delay{self.getAllConfig()}

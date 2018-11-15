@@ -35,7 +35,7 @@ public class UsersDatabase: Database {
                                                          path: "/_users/\(id)",
                                                          hasBody: true,
                                                          contentType: "application/json")
-        print("create user called")
+        print("createUser request options: \(requestOptions)")
         CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 

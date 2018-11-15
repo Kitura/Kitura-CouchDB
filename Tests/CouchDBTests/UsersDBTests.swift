@@ -31,13 +31,28 @@ class UsersDBTests: CouchDBTest {
     func testUserDBTest() {
         setUpDatabase {
             if let usersDatabase = self.couchDBClient?.usersDatabase() {
-                self.delay{self.createUser(usersDatabase: usersDatabase)}
+                self.delay{self.cloudantSecurity(usersDatabase: usersDatabase)}
             }
         }
     }
     
+    func cloudantSecurity(usersDatabase: UsersDatabase) {
+        // Get the config node
+        let requestOptions = CouchDBUtils.prepareRequest((self.couchDBClient?.connProperties)!,
+                                                         method: "PUT",
+                                                         path: "/_security",
+                                                         hasBody: true)
+        let body = try! JSONEncoder().encode(["couchdb_auth_only": true])
+        CouchDBUtils.couchRequest(body: body, options: requestOptions, passStatusCodes: [.OK]) { (response: DocumentResponse?, error) in
+            if let error = error {
+                print("Didn't set cloudent security level: \(error)")
+            }
+            print("Setting cloudent security: \(String(describing: response))")
+            self.delay{self.createUser(usersDatabase: usersDatabase)}
+        }
+    }
+    
     func createUser(usersDatabase: UsersDatabase) {
-        print("Inside createUser: \(usersDatabase.name)")
         usersDatabase.getUser(name: "David") { (userDoc: DefaultRetrievedUserDocument?, error) in
             if let error = error {
                 print("get user called with error: \(error)")
