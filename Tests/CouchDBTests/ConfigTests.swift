@@ -35,9 +35,32 @@ class ConfigTests: CouchDBTest {
     }
     
     func setConfig() {
+        print("Entered setConfig: \(self.couchDBClient.debugDescription)")
+        let requestOptions = CouchDBUtils.prepareRequest((self.couchDBClient?.connProperties)!,
+                                                         method: "GET",
+                                                         path: "/_membership",
+                                                         hasBody: false)
+        CouchDBUtils.couchRequest(options: requestOptions, passStatusCodes: [.OK]) { (response: [String: [String]]?, error) in
+            guard let response = response else {
+                print("No _membership response: \(String(describing: error))")
+                return
+            }
+            print(response)
+            print(response["all_nodes"]?[0] as Any)
+        }
+        print()
         self.couchDBClient?.setConfig(section: "log", key: "level", value: "debug") { (error) in
             if let error = error {
-                return XCTFail("Failed to set config: \(error)")
+                XCTFail("Failed to set config: \(error)")
+                self.couchDBClient?.setConfig(node: "nonode@nohost", section: "log", key: "level", value: "debug") { (error) in
+                    if let error = error {
+                        return XCTFail("Failed to set config: \(error)")
+                    }
+                    print("Log level set to debug with nonode")
+                    self.delay{self.getAllConfig()}
+                    self.delay{self.getConfigSection()}
+                    self.delay{self.getConfigKey()}
+                }
             }
             print("Log level set to debug")
             self.delay{self.getAllConfig()}

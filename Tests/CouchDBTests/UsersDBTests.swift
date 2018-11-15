@@ -37,7 +37,13 @@ class UsersDBTests: CouchDBTest {
     }
     
     func createUser(usersDatabase: UsersDatabase) {
+        print("Inside createUser: \(usersDatabase.name)")
         usersDatabase.getUser(name: "David") { (userDoc: DefaultRetrievedUserDocument?, error) in
+            if let error = error {
+                print("get user called with error: \(error)")
+            } else if let userDoc = userDoc{
+                print("get user called with existing user: \(userDoc._id ?? ""), \(userDoc._rev ?? ""), \(userDoc.name)")
+            }
             let rev = userDoc?._rev
             let newUser = DefaultNewUserDocument(name: "David", password: "password", roles: [], rev: rev)
             usersDatabase.createUser(document: newUser) { (response, error) in

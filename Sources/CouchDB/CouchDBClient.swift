@@ -159,10 +159,13 @@ public class CouchDBClient {
                                                          hasBody: true,
                                                          contentType: "application/json")
         let req = HTTP.request(requestOptions) { response in
+            print("inside setConfig request")
             if let response = response {
+                print("Got response")
                 if response.statusCode == .OK {
                     return callback(nil)
                 } else {
+                    print("failed status code: \(response.statusCode)")
                     return callback(CouchDBUtils.getBodyAsError(response))
                 }
             }
