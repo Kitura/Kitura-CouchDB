@@ -18,8 +18,6 @@ import Foundation
 import KituraNet
 
 class CouchDBUtils {
-    static let couchDBDomain = "CouchDBDomain"
-
     class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequest.Options] {
         var requestOptions: [ClientRequest.Options] = []
 
@@ -85,8 +83,6 @@ class CouchDBUtils {
             return callback(nil, CouchDBError(HTTPStatusCode.internalServerError, reason: error.localizedDescription))
         }
     }
-    
-    
     
     class func deleteRequest(options: [ClientRequest.Options], callback: @escaping (CouchDBError?) -> ()) {
         struct DeleteResponse: Codable {

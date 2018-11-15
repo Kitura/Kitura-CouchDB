@@ -52,5 +52,4 @@ public struct CouchDBError: Codable, Swift.Error, CustomStringConvertible {
         self.error = error
         self.reason = reason ?? error
     }
-
 }
