@@ -172,9 +172,8 @@ public class Database {
     /// - parameters:
     ///     - id: String ID for the document.
     ///     - rev: Latest revision String for the document.
-    ///     - failOnNotFound: Bool indicating whether to return an error if the document is not found.
     ///     - callback: Callback containing the `DocumentResponse` or an CouchDBError.
-    public func delete(_ id: String, rev: String, failOnNotFound: Bool = false, callback: @escaping (CouchDBError?) -> ()) {
+    public func delete(_ id: String, rev: String, callback: @escaping (CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE", path: "/\(escapedName)/\(HTTP.escape(url: id))?rev=\(HTTP.escape(url: rev))", hasBody: false)
         CouchDBUtils.deleteRequest(options: requestOptions, callback: callback)
     }

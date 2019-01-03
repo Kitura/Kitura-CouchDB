@@ -178,7 +178,7 @@ func updateDocument(revisionNumber: String) {
 // MARK: Delete document
 
 func deleteDocument(revisionNumber: String) {
-    database.delete(documentId, rev: revisionNumber, failOnNotFound: false,
+    database.delete(documentId, rev: revisionNumber,
         callback: { (error) in
             if let error = error {
                 Log.error(">> Oops something went wrong; could not delete document.")
