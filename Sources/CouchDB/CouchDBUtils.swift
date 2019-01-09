@@ -29,7 +29,7 @@ class CouchDBUtils {
         }
         requestOptions.append(.schema("\(connProperties.HTTPProtocol)://"))
         requestOptions.append(.hostname(connProperties.host))
-        requestOptions.append(.port(Int16(connProperties.port)))
+        requestOptions.append(.port(Int16(bitPattern: connProperties.port)))
         requestOptions.append(.method(method))
         requestOptions.append(.path(path))
         var headers = [String:String]()
@@ -52,6 +52,8 @@ class CouchDBUtils {
         }
     }
     
+    // decodes the Couch response as a `CouchDBError`
+    // http://docs.couchdb.org/en/stable/json-structure.html#couchdb-error-status
     class func getBodyAsError(_ response: ClientResponse) -> CouchDBError {
         do {
             var body = Data()

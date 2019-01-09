@@ -20,7 +20,7 @@ import Foundation
 import CouchDB
 
 class Utils {
-    
+
     struct Credentials: Codable {
         let host: String
         let port: Int

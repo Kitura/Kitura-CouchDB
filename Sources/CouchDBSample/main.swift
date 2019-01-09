@@ -52,9 +52,9 @@ else {
     host = "127.0.0.1" /* localhost */
 }
 
-let port: Int
+let port: UInt16
 if args.count > 1 {
-    port = Int(args[1]) ?? 5984
+    port = UInt16(args[1]) ?? 5984
 }
 else {
     port = 5984

@@ -26,7 +26,7 @@ public struct ConnectionProperties {
     public let host: String
 
     /// Port number where CouchDB server is listening for incoming connections
-    public let port: Int
+    public let port: UInt16
 
     /// Whether or not to use a secured connection
     public let secured: Bool
@@ -45,7 +45,7 @@ public struct ConnectionProperties {
     ///     - secured: Whether or not to use a secured connection.
     ///     - username: CouchDB admin username. Defaults to `nil`.
     ///     - password: CouchDB admin password. Defaults to `nil`.
-    public init(host: String, port: Int, secured: Bool, username: String?=nil, password: String?=nil) {
+    public init(host: String, port: UInt16, secured: Bool, username: String?=nil, password: String?=nil) {
         self.host = host
         self.port = port
         self.secured = secured

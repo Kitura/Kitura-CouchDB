@@ -49,7 +49,7 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - dbName: String name of the database
-    ///     - callback: Callback containing the newly created `Database`, or an `CouchDBError` on failure.
+    ///     - callback: Callback containing the newly created `Database` on success or a `CouchDBError` on failure.
     public func createDB(_ dbName: String, callback: @escaping (Database?, CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
@@ -71,7 +71,7 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - dbName: String name of the `Database` to look up.
-    ///     - callback: Callback containing the result of the lookup or an CouchDBError if one occurred.
+    ///     - callback: Callback containing the result of the lookup or a `CouchDBError` if one occurred.
     public func dbExists(_ dbName: String, callback: @escaping (Bool) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
@@ -89,7 +89,7 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - database: An instance of the `Database` to delete.
-    ///     - callback: Callback containing an CouchDBError if one occurred.
+    ///     - callback: Callback containing a `CouchDBError` if one occurred.
     public func deleteDB(_ database: Database, callback: @escaping (CouchDBError?) -> ()) {
         deleteDB(database.name, callback: callback)
     }
@@ -98,7 +98,7 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - dbName: String name of the `Database` to delete.
-    ///     - callback: Callback containing an CouchDBError if one occurred.
+    ///     - callback: Callback containing a `CouchDBError` if one occurred.
     public func deleteDB(_ dbName: String, callback: @escaping (CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
@@ -111,7 +111,7 @@ public class CouchDBClient {
     ///
     /// - parameters:
     ///     - count: The number of UUIDs to get.
-    ///     - callback: Callback containing an array of UUIDs or an CouchDBError if one occured.
+    ///     - callback: Callback containing an array of UUIDs or a `CouchDBError` if one occured.
     public func getUUIDs(count : UInt, callback : @escaping ([String]?, CouchDBError?) -> Void) {
 
         let url = "/_uuids?count=\(count)"
@@ -125,7 +125,7 @@ public class CouchDBClient {
 
     /// Returns a UUID created by CouchDB.
     ///
-    /// - parameter callback: Callback containing the UUID or an CouchDBError if one occurred.
+    /// - parameter callback: Callback containing the UUID or a `CouchDBError` if one occurred.
     public func getUUID(callback : @escaping (String?, CouchDBError?) -> Void) {
         getUUIDs(count: 1) { (uuids, error) in
             var uuid : String?
