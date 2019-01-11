@@ -93,8 +93,8 @@ To run the CouchDB Sample, you must set up and connect to a local CouchDB databa
 #### Document
 
 CouchDB is a NoSQL database for storing documents. A `Document` is any structure that can be represented as JSON and contains `_id` and `_rev` fields.  
-The `_id` field is the unique identifier for the document. If it is not set, a random UUID will be assigned for the document.  
-The `_rev` field is the revision of the document. It is returned when you make requests and is used to prevent conflicts from multiple users updating the same document.  
+ - The `_id` field is the unique identifier for the document. If it is not set, a random UUID will be assigned for the document.  
+ - The `_rev` field is the revision of the document. It is returned when you make requests and is used to prevent conflicts from multiple users updating the same document.  
 
 To define a CouchDB document, create a Swift object and make it conform to the `Document` protocol:
  ```swift

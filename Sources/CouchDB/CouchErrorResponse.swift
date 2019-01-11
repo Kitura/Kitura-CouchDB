@@ -33,7 +33,7 @@ public struct CouchDBError: Codable, Swift.Error, CustomStringConvertible {
     /// The Document ID.
     public let id: String?
 
-    /// The error that occured.
+    /// The error that occurred.
     public let error: String
     
     /// The HTTP status code of the error
@@ -54,7 +54,7 @@ public struct CouchDBError: Codable, Swift.Error, CustomStringConvertible {
         self.reason = reason ?? error
     }
     
-    // Don't decode statusCode, It is extracted from the HTTP request.
+    // Don't decode statusCode because it is extracted from the HTTP request.
     enum CodingKeys: String, CodingKey {
         case error, reason, id
     }

@@ -87,7 +87,7 @@ let connProperties = ConnectionProperties(
 
 print("Connection Properties:\n\(connProperties)")
 
-// Create couchDBClient instance using conn properties
+// Create couchDBClient instance using connection properties
 let couchDBClient = CouchDBClient(connectionProperties: connProperties)
 print("Hostname is: \(couchDBClient.connProperties.host)")
 var database: Database?
