@@ -46,7 +46,6 @@ class DBTests: CouchDBTest {
                         XCTFail("Created database is nil")
                         return
                     }
-
                     print(">> Database successfully created \(db.name)")
                 }
             }

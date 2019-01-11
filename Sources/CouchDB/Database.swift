@@ -19,7 +19,14 @@ import KituraNet
 
 // MARK: Database
 
-/// Represents a CouchDB database.
+/**
+ The `Database` class is used to make HTTP requests to the corresponding CouchDB database. This class can make CRUD (Create, Retrieve, Update, Delete) requests for:  
+ 
+ - A single CouchDB `Document`
+ - An array of CouchDB documents
+ - A CouchDB `DesignDocument`
+ - A `Document` attachment
+*/
 public class Database {
     
     // MARK: Database Properties
@@ -124,7 +131,7 @@ public class Database {
     /// - parameters:
     ///     - connProperties: `ConnectionProperties` the Database will use for its actions.
     ///     - dbName: String name for the Database.
-    public init (connProperties: ConnectionProperties, dbName: String) {
+    init(connProperties: ConnectionProperties, dbName: String) {
         self.name = dbName
         self.escapedName = HTTP.escape(url: name)
         self.connProperties = connProperties
@@ -132,8 +139,23 @@ public class Database {
 
     // MARK: Single Documents requests
     
-    /// Create a new document.
-    ///
+    /**
+     Create a new document.
+     ### Usage Example: ###
+     ```swift
+     struct MyDocument: Document {
+         let _id: String?
+         var _rev: String?
+         var value: String
+     }
+     var myDocument = MyDocument(_id: "Kitura", _rev: nil, value: "Hello World")
+     database.create(myDocument) { (response, error) in
+        if let response = response {
+            print("Document: \(response.id), created with rev: \(response.rev)")
+        }
+     }
+     ```
+    */
     /// - parameters:
     ///     - document: The new `Document`.
     ///     - callback: Callback containing the `DocumentResponse` or a `CouchDBError`.
@@ -142,8 +164,22 @@ public class Database {
         CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 
-    /// Retrieve a document from the database by ID.
-    ///
+    /**
+     Retrieve a document from the database.
+     ### Usage Example: ###
+     ```swift
+     struct MyDocument: Document {
+         let _id: String?
+         var _rev: String?
+         var value: String
+     }
+     database.retrieve("Kitura") { (document: MyDocument?, error: CouchDBError?) in
+        if var document = document {
+            print("Retrieved document with value: \(document.value)")
+        }
+     }
+     ```
+     */
     /// - parameters:
     ///     - id: String ID for the document.
     ///     - callback: Callback containing either the `Document` or an `CouchDBError`.
@@ -154,8 +190,24 @@ public class Database {
     }
 
 
-	/// Update a document in the database. If no document exists for the provided id, a new document is created.
-    ///
+	///
+    /**
+     Update a document in the database. If no document exists for the provided id, a new document is created.
+     ### Usage Example: ###
+     ```swift
+     struct MyDocument: Document {
+         let _id: String?
+         var _rev: String?
+         var value: String
+     }
+     var myDocument = MyDocument(_id: "Kitura", _rev: nil, value: "New Value")
+     database.update("<document_id>", rev: "<latest_rev>", document: myDocument) { (response, error) in
+         if let response = response {
+            print("Document: \(response.id), updated")
+         }
+     }
+     ```
+     */
     /// - parameters:
     ///     - id: String ID for the document.
     ///     - rev: The current revision number for the document.
@@ -166,9 +218,17 @@ public class Database {
         CouchDBUtils.documentRequest(document: document, options: requestOptions, callback: callback)
     }
 
-
-    /// Delete a document.
-    ///
+    /**
+     Delete a document.
+     ### Usage Example: ###
+     ```swift
+     database.delete("<document_id>", rev: "<latest_rev>") { (error) in
+         if let response = response {
+            print("Document: \(response.id), deleted")
+         }
+     }
+     ```
+     */
     /// - parameters:
     ///     - id: String ID for the document.
     ///     - rev: Latest revision String for the document.
@@ -382,7 +442,7 @@ public class Database {
     
     // MARK: Design Documents
     
-    /// Create a design document.
+    /// Create a design document. If a design document already exists with the same name it will be replaced.
     ///
     /// - parameters:
     ///     - designName: Name String for the design document.
@@ -407,7 +467,8 @@ public class Database {
 
     // MARK: Attachments
     
-    /// Create an attachment.
+    /// Attach the provided `Data` the `Document` with the provided ID with the given attachmentName.
+    /// If an attachment exists with the same name it will be replaced with the new attachment.
     ///
     /// - parameters:
     ///     - docId: Document ID String that the attachment is associated with.

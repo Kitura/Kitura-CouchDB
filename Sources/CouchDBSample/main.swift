@@ -16,11 +16,8 @@
 
 import Foundation
 import CouchDB
-import LoggerAPI
-import HeliumLogger
 
-Log.logger = HeliumLogger()
-Log.info("Starting sample program...")
+print("Starting sample program...")
 
 // Parse runtime args...
 let args = Array(CommandLine.arguments[1..<CommandLine.arguments.count])
@@ -84,18 +81,16 @@ let connProperties = ConnectionProperties(
     host: host,         // httpd address
     port: port,         // httpd port
     secured: secured,   // https or http
-    username: username,      // admin username
-    password: password       // admin password
+    username: nil,      // admin username
+    password: nil       // admin password
 )
 
-Log.info("Connection Properties:\n\(connProperties)")
+print("Connection Properties:\n\(connProperties)")
 
 // Create couchDBClient instance using conn properties
 let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-Log.info("Hostname is: \(couchDBClient.connProperties.host)")
-
-// Create database instance to perform any document operations
-let database = couchDBClient.database("kitura_test_db")
+print("Hostname is: \(couchDBClient.connProperties.host)")
+var database: Database?
 
 //// Document ID
 let documentId = "123456"
@@ -104,93 +99,108 @@ struct MyDocument: Document {
     let _id: String?
     var _rev: String?
     let truncated: Bool
-    let created_at: String
+    let created_at: Date
     let favorited: Bool
     let value: String
 }
 var myDocument = MyDocument(_id: documentId,
                                 _rev: nil,
                                 truncated: false,
-                                created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                created_at: Date(),
                                 favorited: false,
                                 value: "value1")
 // MARK: Chainer
 
 func chainer(_ document: MyDocument?, next: (String) -> Void) {
     if let revisionNumber = document?._rev {
-        Log.info("revisionNumber is \(revisionNumber)")
+        print("revisionNumber is \(revisionNumber)")
         next(revisionNumber)
     } else {
-        Log.error(">> Oops something went wrong... could not get revisionNumber!")
+        print(">> Oops something went wrong... could not get revisionNumber!")
     }
 }
 
+// Create database instance to perform any document operations
+func initializeDatabase() {
+    couchDBClient.retrieveDB("kitura_test_db") { (localDatabase, error) in
+        if let localDatabase = localDatabase {
+            database = localDatabase
+            createDocument()
+        } else {
+            couchDBClient.createDB("kitura_test_db") { (localDatabase, error) in
+                guard let localDatabase = localDatabase else {
+                    print("Error initializing Database: \(String(describing: error))")
+                    return
+                }
+                database = localDatabase
+                createDocument()
+            }
+        }
+    }
+}
 
 // MARK: Create document
 
 func createDocument() {
-    database.create(myDocument, callback: { (document, error) in
+    database?.create(myDocument) { (document, error) in
         if let error = error {
-            Log.error(">> Oops something went wrong; could not persist document.")
-            Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
+            print(">> Oops something went wrong; could not persist document.")
+            print("Error: \(error.localizedDescription) Code: \(error.statusCode)")
         } else {
-            Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
+            print(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
             readDocument()
         }
-    })
+    }
 }
 
 
 // MARK: Read document
 
 func readDocument() {
-    database.retrieve(documentId, callback: { (document: MyDocument?, error: CouchDBError?) in
+    database?.retrieve(documentId) { (document: MyDocument?, error: CouchDBError?) in
         if let error = error {
-            Log.error("Oops something went wrong; could not read document.")
-            Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
+            print("Oops something went wrong; could not read document.")
+            print("Error: \(error.description) Code: \(error.statusCode)")
         } else {
-            Log.info(">> Successfully read the following JSON document with ID " +
+            print(">> Successfully read the following JSON document with ID " +
                 "\(documentId) from CouchDB:\n\t\(String(describing: document))")
             chainer(document, next: updateDocument)
         }
-    })
+    }
 }
 
 
 // MARK: Update document
 
 func updateDocument(revisionNumber: String) {
-    database.update(documentId, rev: revisionNumber, document: myDocument,
-        callback: { (response: DocumentResponse?, error: CouchDBError?) in
+    database?.update(documentId, rev: revisionNumber, document: myDocument) { (response, error) in
             if let error = error {
-                Log.error(">> Oops something went wrong; could not update document.")
-                Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
+                print(">> Oops something went wrong; could not update document.")
+                print("Error: \(error.description) Code: \(error.statusCode)")
             } else {
                 myDocument._rev = response?.rev
-                Log.info(">> Successfully updated the JSON document with ID" +
+                print(">> Successfully updated the JSON document with ID" +
                     "\(documentId) in CouchDB:\n\t\(String(describing: response))")
                 chainer(myDocument, next: deleteDocument)
             }
-    })
+    }
 }
 
 
 // MARK: Delete document
 
 func deleteDocument(revisionNumber: String) {
-    database.delete(documentId, rev: revisionNumber,
-        callback: { (error) in
+    database?.delete(documentId, rev: revisionNumber) { (error) in
             if let error = error {
-                Log.error(">> Oops something went wrong; could not delete document.")
-                Log.error("Error: \(error.localizedDescription) Code: \(error.statusCode)")
+                print(">> Oops something went wrong; could not delete document.")
+                print("Error: \(error.description) Code: \(error.statusCode)")
             } else {
-                Log.info(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
+                print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
             }
-    })
+    }
 }
 
-
 // Start tests...
-createDocument()
+initializeDatabase()
 
-Log.info("Sample program completed its execution.")
+print("Sample program completed its execution.")

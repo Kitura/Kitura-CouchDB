@@ -19,34 +19,54 @@ import KituraNet
 
 // MARK: CouchDBClient
 
-/// Represents a CouchDB connection.
+/**
+ The `CouchDBClient` represents a connection to a CouchDB server. It is initialized with your `ConnectionProperties` and handles the creation, retrieval and deletion of CouchDB databases.
+ ### Usage Example: ###
+ ```swift
+ let conProperties = ConnectionProperties(
+     host: "127.0.0.1",              // http address
+     port: 5984,                     // http port
+     secured: false,                 // https or http
+     username: "<CouchDB-username>", // admin username
+     password: "<CouchDB-password>"  // admin password
+ )
+ let couchDBClient = CouchDBClient(connectionProperties: conProperties)
+ ```
+ */
 public class CouchDBClient {
 
     // MARK: Properties
     
-    /// Connection properties for the `CouchDBClient`.
+    /// The `ConnectionProperties` for the `CouchDBClient`.
     public let connProperties: ConnectionProperties
 
     // MARK: Initializer
     
-    /// Initialize a `CouchDBClient`.
-    ///
+    /**
+     Initialize a `CouchDBClient`.
+     ### Usage Example: ###
+     ```swift
+     let couchDBClient = CouchDBClient(connectionProperties: conProperties)
+     ```
+     */
     /// - parameter connectionProperties: The connection properties for the CouchDB connection.
     public init(connectionProperties: ConnectionProperties) {
         self.connProperties = connectionProperties
     }
 
     // MARK: Databases
-    
-    /// Returns a `Database` instance by name.
-    ///
-    /// - parameter dbName: String name of the desired `Database`.
-    public func database(_ dbName: String) -> Database {
-        return Database(connProperties: self.connProperties, dbName: dbName)
-    }
 
-    /// Create a new `Database`.
-    ///
+    /**
+     Create a new `Database`.
+     ### Usage Example: ###
+     ```swift
+     couchDBClient.createDB("NewDB") { (database, error) in
+         if let database = database {
+            // Use database
+         }
+     }
+     ```
+     */
     /// - parameters:
     ///     - dbName: String name of the database
     ///     - callback: Callback containing the newly created `Database` on success or a `CouchDBError` on failure.
@@ -67,26 +87,39 @@ public class CouchDBClient {
         req.end()
     }
 
-    /// Returns a Bool indicating whether a `Database` with the given name exists.
-    ///
+    /**
+     Get an existing `Database` from the CouchDB Server.
+     ### Usage Example: ###
+     ```swift
+     couchDBClient.retrieveDB("ExistingDB") { (database, error) in
+        if let database = database {
+            // Use database
+        }
+     }
+     ```
+     */
     /// - parameters:
-    ///     - dbName: String name of the `Database` to look up.
-    ///     - callback: Callback containing the result of the lookup or a `CouchDBError` if one occurred.
-    public func dbExists(_ dbName: String, callback: @escaping (Bool) -> ()) {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
+    ///     - dbName: String name of the desired `Database`.
+    ///     - callback: Callback containing the desired `Database` on success or a `CouchDBError` on failure.
+    public func retrieveDB(_ dbName: String, callback: @escaping (Database?, CouchDBError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "HEAD",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
-            if let response = response, response.statusCode == HTTPStatusCode.OK {
-                return callback(true)
+            if let response = response {
+                
+                if response.statusCode == .OK {
+                    return callback(Database(connProperties: self.connProperties, dbName: dbName), nil)
+                } else {
+                    return callback(nil, CouchDBError(response.statusCode))
+                }
             } else {
-                return callback(false)
+                return callback(nil, CouchDBError(HTTPStatusCode.internalServerError, reason: "No response from createDB request"))
             }
         }
         req.end()
     }
-
+    
     /// Delete a `Database` given a local instance of it.
-    ///
     /// - parameters:
     ///     - database: An instance of the `Database` to delete.
     ///     - callback: Callback containing a `CouchDBError` if one occurred.
@@ -95,7 +128,16 @@ public class CouchDBClient {
     }
 
     /// Delete a `Database` given its name.
-    ///
+    /**
+     ### Usage Example: ###
+     ```swift
+     couchDBClient.deleteDB("ExistingDB") { (error) in
+        if let error = error {
+            // Handle the error
+        }
+     }
+     ```
+     */
     /// - parameters:
     ///     - dbName: String name of the `Database` to delete.
     ///     - callback: Callback containing a `CouchDBError` if one occurred.

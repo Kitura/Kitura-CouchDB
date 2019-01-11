@@ -55,9 +55,9 @@ class CouchDBTest: XCTestCase {
     ///
     func dropDatabaseIfExists(completion: @escaping () -> Void) {
         // Check if DB exists
-       delay {
-        self.couchDBClient?.dbExists(self.dbName) { exists in
-                if  exists {
+        delay {
+            self.couchDBClient?.retrieveDB(self.dbName) { (database, error) in
+                if database != nil {
                     self.dropDatabase(completion)
                 } else {
                     completion()

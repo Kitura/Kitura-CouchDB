@@ -36,6 +36,7 @@ public struct CouchDBError: Codable, Swift.Error, CustomStringConvertible {
     /// The error that occured.
     public let error: String
     
+    /// The HTTP status code of the error
     public internal(set) var statusCode: Int = HTTPStatusCode.unknown.rawValue
 
     /// Error reason.
@@ -51,5 +52,10 @@ public struct CouchDBError: Codable, Swift.Error, CustomStringConvertible {
         let error = HTTP.statusCodes[code] ?? String(code)
         self.error = error
         self.reason = reason ?? error
+    }
+    
+    // Don't decode statusCode, It is extracted from the HTTP request.
+    enum CodingKeys: String, CodingKey {
+        case error, reason, id
     }
 }
