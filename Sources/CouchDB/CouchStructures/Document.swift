@@ -19,7 +19,7 @@ import Foundation
 /**
  A protocol for a single JSON document the can be stored or retrieved from a CouchDB database.
 The `_id` field is the unique identifier for the document. If it is not set, a random UUID will be assigned for the document.
-The `_rev` field is the revision of the document. It is returned when you make requests and is used to prevent conflicts from multiple users updating the same document.
+The `_rev` field is the revision of the document. It is returned when you make requests and is used to prevent conflicts from multiple users updating the same document.  
  http://docs.couchdb.org/en/stable/json-structure.html#couchdb-document
  */
 public protocol Document: Codable {
