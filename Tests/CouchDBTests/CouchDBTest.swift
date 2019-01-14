@@ -31,7 +31,7 @@ class CouchDBTest: XCTestCase {
 
     // The database name should be defined in an environment variable TESTDB_NAME
     // in Travis, to allow each Travis build to use a separate database.
-    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
+    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "kitura_test_db"
 
     let couchDBClient: CouchDBClient! = {
         let credentials = Utils.readCredentials()
@@ -64,6 +64,8 @@ class CouchDBTest: XCTestCase {
                 } else {
                     if  exists {
                         self.dropDatabase(completion)
+                    } else {
+                        completion()
                     }
                 }
             }
