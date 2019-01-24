@@ -44,7 +44,7 @@ matrix:
       sudo: required
       env: SWIFT_SNAPSHOT=4.1.2 TESTDB_NAME=testdb_xcode94_1
     - os: osx
-      osx_image: xcode10
+      osx_image: xcode10.1
       sudo: required
       env: SWIFT_SNAPSHOT=4.2 TESTDB_NAME=testdb_xcode10_1
     - os: osx
