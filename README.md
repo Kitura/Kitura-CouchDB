@@ -120,22 +120,25 @@ let conProperties = ConnectionProperties(
 )
 // Initialize CouchDBClient
 let couchDBClient = CouchDBClient(connectionProperties: conProperties)
-
-// Create a new database
+```
+- Create a new database
+```swift
 couchDBClient.createDB("NewDB") { (database, error) in
     if let database = database {
         // Use database
     }
 }
-
-// Get an existing database
+```
+- Get an existing database
+```swift
 couchDBClient.retrieveDB("ExistingDB") { (database, error) in
     if let database = database {
         // Use database
     }
 }
-
-// Delete a database
+```
+- Delete a database
+```swift
 couchDBClient.deleteDB("ExistingDB") { (error) in
     if let error = error {
         // Handle the error
@@ -156,32 +159,36 @@ The following code demonstrates the CRUD operations for a single `Document`:
 
 ```swift
 var myDocument = MyDocument(_id: "Kitura", _rev: nil, value: "Hello World")
-
-// Create Document
+```
+- Create Document
+```swift
 database.create(myDocument) { (response, error) in
     if let response = response {
         print("Document: \(response.id), created with rev: \(response.rev)")
     }
 }
-
-// Retrieve Document
+```
+- Retrieve Document
+```swift
 database.retrieve("Kitura") { (document: MyDocument?, error: CouchDBError?) in
-    if var document = document {
+    if let document = document {
         print("Retrieved document with value: \(document.value)")
     }
 }
-
-// Update Document
+```
+- Update Document
+```swift
 myDocument.value = "New Value"
 database.update("Kitura", rev: "<latest_rev>", document: myDocument) { (response, error) in
     if let response = response {
         print("Document: \(response.id), updated")
     }
 }
-
-// Delete a Document
+```
+- Delete a Document
+```swift
 database.delete("Kitura", rev: "<latest_rev>") { (error) in
-    if let error = nil {
+    if error == nil {
         print("Document successfully deleted")
     }
 }
