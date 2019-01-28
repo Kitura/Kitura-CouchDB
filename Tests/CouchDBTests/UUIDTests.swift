@@ -16,14 +16,7 @@
 
 import XCTest
 
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Foundation
-import SwiftyJSON
 
 @testable import CouchDB
 
@@ -39,19 +32,12 @@ class UUIDTests : CouchDBTest {
     func testUUIDsTest() {
         let expectedCount : UInt = 10
         setUpDatabase {
-            self.couchDBClient.getUUIDs(count: expectedCount) { (uuids, error) in
-
-                if error != nil {
-                    XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(String(describing: error))")
-                } else {
-                    if let uuids = uuids {
-
-                        XCTAssertEqual(uuids.count, Int(expectedCount), "Expected count of UUIDs to be \(expectedCount), instead it is \(uuids.count)")
-                        print(">> Successfully retrieved \(expectedCount) UUIDs")
-                    } else {
-                        XCTFail("Failed to retrieve \(expectedCount) UUIDs, nil retrieved")
-                    }
+            self.couchDBClient?.getUUIDs(count: expectedCount) { (uuids, error) in
+                guard let uuids = uuids else {
+                    return XCTFail("Failed to retrieve \(expectedCount) UUIDs: \(String(describing: error))")
                 }
+                XCTAssertEqual(uuids.count, Int(expectedCount), "Expected count of UUIDs to be \(expectedCount), instead it is \(uuids.count)")
+                print(">> Successfully retrieved \(expectedCount) UUIDs")
             }
         }
 
@@ -59,21 +45,13 @@ class UUIDTests : CouchDBTest {
 
     func testUUIDTest() {
         setUpDatabase {
-            self.couchDBClient.getUUID() { (uuid, error) in
-
-                if error != nil {
-                    XCTFail("Failed to retrieve a UUID: \(String(describing: error))")
-                } else {
-                    if uuid != nil {
-
-                        print(">> Successfully retrieved a UUID")
-                    } else {
-                        XCTFail("Failed to retrieve a UUID, nil retrieved")
-                    }
+            self.couchDBClient?.getUUID() { (uuid, error) in
+                guard let uuid = uuid else {
+                    return XCTFail("Failed to retrieve UUID: \(String(describing: error))")
                 }
+                print(">> Successfully retrieved a UUID: \(uuid)")
             }
         }
-
     }
 
 }

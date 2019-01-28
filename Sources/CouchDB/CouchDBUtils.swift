@@ -16,44 +16,8 @@
 
 import Foundation
 import KituraNet
-import SwiftyJSON
 
 class CouchDBUtils {
-    static let couchDBDomain = "CouchDBDomain"
-
-    class func createError(_ code: HTTPStatusCode, id: String?, rev: String?) -> NSError {
-        return createError(code.rawValue, desc: HTTPURLResponse.localizedString(forStatusCode: code.rawValue), id: id, rev: rev)
-    }
-
-    class func createError(_ code: Int, id: String?, rev: String?) -> NSError {
-        return createError(code, desc: Database.Error[code], id: id, rev: rev)
-    }
-
-    class func createError(_ code: Int, desc: String?, id: String?, rev: String?) -> NSError {
-        // Interim solution while Apple provides clear interoperability on both platforms
-        #if os(Linux)
-            var info = [String:Any]()
-        #else
-            var info = [String:String]()
-        #endif
-
-        info[NSLocalizedDescriptionKey] = desc
-        if let id = id {
-            info["id"] = id
-        }
-        if let rev = rev {
-            info["rev"] = rev
-        }
-        return NSError(domain: couchDBDomain, code: code, userInfo: info)
-    }
-
-    class func createError(_ code: HTTPStatusCode, errorDesc: JSON?, id: String?, rev: String?) -> NSError {
-        if let errorDesc = errorDesc, let err = errorDesc["error"].string, let reason = errorDesc["reason"].string {
-            return createError(code.rawValue, desc: "Error: \(err), reason: \(reason)", id: id, rev: nil)
-        }
-        return createError(code, id: id, rev: rev)
-    }
-
     class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequest.Options] {
         var requestOptions: [ClientRequest.Options] = []
 
@@ -65,7 +29,7 @@ class CouchDBUtils {
         }
         requestOptions.append(.schema("\(connProperties.HTTPProtocol)://"))
         requestOptions.append(.hostname(connProperties.host))
-        requestOptions.append(.port(connProperties.port))
+        requestOptions.append(.port(Int16(bitPattern: connProperties.port)))
         requestOptions.append(.method(method))
         requestOptions.append(.path(path))
         var headers = [String:String]()
@@ -77,16 +41,29 @@ class CouchDBUtils {
         return requestOptions
     }
 
-    class func getBodyAsJson (_ response: ClientResponse) -> JSON? {
+    class func getBodyAsCodable<O: Decodable> (_ response: ClientResponse) throws -> O {
         do {
             var body = Data()
             try response.readAllData(into: &body)
-            let json = JSON(data: body)
-            return json
+            let codable = try JSONDecoder().decode(O.self, from: body)
+            return codable
         } catch {
-            //Log this exception
+            throw error
         }
-        return nil
+    }
+    
+    // decodes the Couch response as a `CouchDBError`
+    // http://docs.couchdb.org/en/stable/json-structure.html#couchdb-error-status
+    class func getBodyAsError(_ response: ClientResponse) -> CouchDBError {
+        do {
+            var body = Data()
+            try response.readAllData(into: &body)
+            var error = try JSONDecoder().decode(CouchDBError.self, from: body)
+            error.statusCode = response.httpStatusCode.rawValue
+            return error
+        } catch {
+            return CouchDBError(response.httpStatusCode.rawValue, id: nil, reason: error.localizedDescription)
+        }
     }
 
     class func getBodyAsData (_ response: ClientResponse) -> Data? {
@@ -99,4 +76,46 @@ class CouchDBUtils {
         }
         return nil
     }
+    
+    class func documentRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (DocumentResponse?, CouchDBError?) -> ()) {
+        do {
+            let requestBody = try JSONEncoder().encode(document)
+            couchRequest(body: requestBody, options: options, passStatusCodes: [.created, .accepted], callback: callback)
+        } catch {
+            return callback(nil, CouchDBError(HTTPStatusCode.internalServerError, reason: error.localizedDescription))
+        }
+    }
+    
+    class func deleteRequest(options: [ClientRequest.Options], callback: @escaping (CouchDBError?) -> ()) {
+        struct DeleteResponse: Codable {
+            let ok: Bool
+        }
+        couchRequest(options: options, passStatusCodes: [.OK, .accepted]) { (_: DeleteResponse?, error) in
+            callback(error)
+        }
+    }
+    
+    class func couchRequest<O: Codable>(body: Data? = nil, options: [ClientRequest.Options], passStatusCodes: [HTTPStatusCode], callback: @escaping (O?, CouchDBError?) -> ()) {
+        let req = HTTP.request(options) { response in
+            if let response = response {
+                guard passStatusCodes.contains(response.statusCode) else {
+                    return callback(nil, CouchDBUtils.getBodyAsError(response))
+                }
+                do {
+                    return callback(try CouchDBUtils.getBodyAsCodable(response), nil)
+                } catch {
+                    return callback(nil, CouchDBError(response.httpStatusCode, reason: error.localizedDescription))
+                }
+            } else {
+                return callback(nil, CouchDBError(HTTPStatusCode.internalServerError, reason: "No HTTP response"))
+            }
+        }
+        if let body = body {
+            req.end(body)
+        } else {
+            req.end()
+        }
+    }
 }
+
+

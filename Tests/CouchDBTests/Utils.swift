@@ -16,23 +16,17 @@
 
 import XCTest
 
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Foundation
-import SwiftyJSON
+import CouchDB
 
 class Utils {
 
-    struct Credentials {
+    struct Credentials: Codable {
         let host: String
-        let port: Int16
+        let port: UInt16
         let username: String?
         let password: String?
-        init(host: String, port: Int16, username: String?, password: String?) {
+        init(host: String, port: UInt16, username: String?, password: String?) {
             self.host = host
             self.port = port
             self.username = username
@@ -40,7 +34,7 @@ class Utils {
         }
     }
 
-    static func readCredentials() -> Credentials {
+    static func readCredentials() -> Credentials? {
         // Read in credentials an Data
         let credentialsData: Data
         let sourceFileName = NSString(string: #file)
@@ -55,23 +49,23 @@ class Utils {
         do {
             credentialsData = try Data(contentsOf: URL(fileURLWithPath: "\(fileNamePrefix)credentials.json"))
         } catch {
-            XCTFail("Failed to read in the credentials.json file")
-            exit(1)
+            print("Failed to read in the credentials.json file")
+            return nil
         }
-        // Convert NSData to JSON object
-        let credentialsJson = JSON(data: credentialsData)
 
-        guard
-          let hostName = credentialsJson["host"].string,
-          let port = credentialsJson["port"].int16
-        else {
-            XCTFail("Error in credentials.json.")
-            exit(1)
+        guard let credentialsJson = try? JSONDecoder().decode(Credentials.self, from: credentialsData) else {
+            print("Error in credentials.json.")
+            return nil
         }
-        let userName = credentialsJson["username"].string
-        let password = credentialsJson["password"].string
-
-        print(">> Successfully read in credentials.")
-        return Credentials(host: hostName, port: port, username: userName, password: password)
+        return credentialsJson
     }
+}
+
+struct MyDocument: Document {
+    let _id: String?
+    var _rev: String?
+    let truncated: Bool
+    let created_at: String
+    let favorited: Bool
+    var value: String
 }

@@ -14,20 +14,10 @@
 * limitations under the License.
 **/
 
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Foundation
-import SwiftyJSON
 import CouchDB
-import LoggerAPI
-import HeliumLogger
 
-Log.logger = HeliumLogger()
-Log.info("Starting sample program...")
+print("Starting sample program...")
 
 // Parse runtime args...
 let args = Array(CommandLine.arguments[1..<CommandLine.arguments.count])
@@ -59,9 +49,9 @@ else {
     host = "127.0.0.1" /* localhost */
 }
 
-let port: Int16
+let port: UInt16
 if args.count > 1 {
-    port = Int16(args[1]) ?? 5984
+    port = UInt16(args[1]) ?? 5984
 }
 else {
     port = 5984
@@ -91,128 +81,126 @@ let connProperties = ConnectionProperties(
     host: host,         // httpd address
     port: port,         // httpd port
     secured: secured,   // https or http
-    username: username, // username
-    password: password  // password
+    username: nil,      // admin username
+    password: nil       // admin password
 )
 
-Log.info("Connection Properties:\n\(connProperties)")
+print("Connection Properties:\n\(connProperties)")
 
-// Create couchDBClient instance using conn properties
+// Create couchDBClient instance using connection properties
 let couchDBClient = CouchDBClient(connectionProperties: connProperties)
-Log.info("Hostname is: \(couchDBClient.connProperties.host)")
+print("Hostname is: \(couchDBClient.connProperties.host)")
+var database: Database?
 
-// Create database instance to perform any document operations
-let database = couchDBClient.database("kitura_test_db")
-
-// Document ID
-#if os(Linux)
+//// Document ID
 let documentId = "123456"
-#else
-let documentId = "123456" as NSString
-#endif
 
-#if os(Linux)
-typealias valuetype = Any
-#else
-typealias valuetype = AnyObject
-#endif
-
-// JSON document in string format
-let jsonDict: [String: valuetype] = [
-    "_id": documentId,
-    "truncated": false as valuetype,
-    "created_at": "Tue Aug 28 21:16:23 +0000 2012" as valuetype,
-    "favorited": false as valuetype,
-    "value": "value1" as valuetype
-]
-#if os(Linux)
-let json = JSON(jsonDict)
-#else
-let json = JSON(jsonDict as AnyObject)
-#endif
-
-
+struct MyDocument: Document {
+    let _id: String?
+    var _rev: String?
+    let truncated: Bool
+    let created_at: Date
+    let favorited: Bool
+    let value: String
+}
+var myDocument = MyDocument(_id: documentId,
+                                _rev: nil,
+                                truncated: false,
+                                created_at: Date(),
+                                favorited: false,
+                                value: "value1")
 // MARK: Chainer
 
-func chainer(_ document: JSON?, next: (String) -> Void) {
-    if let revisionNumber = document?["rev"].string {
-        Log.info("revisionNumber is \(revisionNumber)")
-        next(revisionNumber)
-    } else if let revisionNumber = document?["_rev"].string {
-        Log.info("revisionNumber is \(revisionNumber)")
+func chainer(_ document: MyDocument?, next: (String) -> Void) {
+    if let revisionNumber = document?._rev {
+        print("revisionNumber is \(revisionNumber)")
         next(revisionNumber)
     } else {
-        Log.error(">> Oops something went wrong... could not get revisionNumber!")
+        print(">> Oops something went wrong... could not get revisionNumber!")
     }
 }
 
+// Create database instance to perform any document operations
+func initializeDatabase() {
+    couchDBClient.retrieveDB("kitura_test_db") { (localDatabase, error) in
+        if let localDatabase = localDatabase {
+            database = localDatabase
+            createDocument()
+        } else {
+            couchDBClient.createDB("kitura_test_db") { (localDatabase, error) in
+                guard let localDatabase = localDatabase else {
+                    print("Error initializing Database: \(String(describing: error))")
+                    return
+                }
+                database = localDatabase
+                createDocument()
+            }
+        }
+    }
+}
 
 // MARK: Create document
 
 func createDocument() {
-    database.create(json, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+    database?.create(myDocument) { (document, error) in
         if let error = error {
-            Log.error(">> Oops something went wrong; could not persist document.")
-            Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+            print(">> Oops something went wrong; could not persist document.")
+            print("Error: \(error.localizedDescription) Code: \(error.statusCode)")
         } else {
-            Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
+            print(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
             readDocument()
         }
-    })
+    }
 }
 
 
 // MARK: Read document
 
 func readDocument() {
-    database.retrieve(documentId as String, callback: { (document: JSON?, error: NSError?) in
+    database?.retrieve(documentId) { (document: MyDocument?, error: CouchDBError?) in
         if let error = error {
-            Log.error("Oops something went wrong; could not read document.")
-            Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+            print("Oops something went wrong; could not read document.")
+            print("Error: \(error.description) Code: \(error.statusCode)")
         } else {
-            Log.info(">> Successfully read the following JSON document with ID " +
+            print(">> Successfully read the following JSON document with ID " +
                 "\(documentId) from CouchDB:\n\t\(String(describing: document))")
             chainer(document, next: updateDocument)
         }
-    })
+    }
 }
 
 
 // MARK: Update document
 
 func updateDocument(revisionNumber: String) {
-    //var json = JSON(data: jsonData!)
-    //json["value"] = "value2"
-    database.update(documentId as String, rev: revisionNumber, document: json,
-        callback: { (rev: String?, document: JSON?, error: NSError?) in
+    database?.update(documentId, rev: revisionNumber, document: myDocument) { (response, error) in
             if let error = error {
-                Log.error(">> Oops something went wrong; could not update document.")
-                Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+                print(">> Oops something went wrong; could not update document.")
+                print("Error: \(error.description) Code: \(error.statusCode)")
             } else {
-                Log.info(">> Successfully updated the JSON document with ID" +
-                    "\(documentId) in CouchDB:\n\t\(String(describing: document))")
-                chainer(document, next: deleteDocument)
+                myDocument._rev = response?.rev
+                print(">> Successfully updated the JSON document with ID" +
+                    "\(documentId) in CouchDB:\n\t\(String(describing: response))")
+                chainer(myDocument, next: deleteDocument)
             }
-    })
+    }
 }
 
 
 // MARK: Delete document
 
 func deleteDocument(revisionNumber: String) {
-    database.delete(documentId as String, rev: revisionNumber, failOnNotFound: false,
-        callback: { (error: NSError?) in
+    database?.delete(documentId, rev: revisionNumber) { (error) in
             if let error = error {
-                Log.error(">> Oops something went wrong; could not delete document.")
-                Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+                print(">> Oops something went wrong; could not delete document.")
+                print("Error: \(error.description) Code: \(error.statusCode)")
             } else {
-                Log.info(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
+                print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
             }
-    })
+    }
 }
 
-
 // Start tests...
-createDocument()
+initializeDatabase()
 
-Log.info("Sample program completed its execution.")
+print("Sample program completed its execution.")
