@@ -65,27 +65,39 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Database/QueryParameters.html">– QueryParameters</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/UsersDatabase.html">UsersDatabase</a>
+                <a class="nav-group-task-link" href="../Protocols/Document.html">Document</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BulkDocuments.html">BulkDocuments</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BulkResponse.html">BulkResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ConnectionProperties.html">ConnectionProperties</a>
               </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:7CouchDB0A7DBValuea">CouchDBValue</a>
+                <a class="nav-group-task-link" href="../Structs/CouchDBError.html">CouchDBError</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:7CouchDB15SessionCallbacka">SessionCallback</a>
+                <a class="nav-group-task-link" href="../Structs/DesignDocument.html">DesignDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DocumentResponse.html">DocumentResponse</a>
               </li>
             </ul>
           </li>
@@ -98,11 +110,18 @@
             <h1>Database</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Database</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Database</span></code></pre>
 
                 </div>
               </div>
-            <p>Represents a CouchDB database.</p>
+            <p>The <code>Database</code> class is used to make HTTP requests to the corresponding CouchDB database. This class can make CRUD (Create, Retrieve, Update, Delete) requests for:  </p>
+
+<ul>
+<li>A single CouchDB <code><a href="../Protocols/Document.html">Document</a></code></li>
+<li>An array of CouchDB documents</li>
+<li>A CouchDB <code><a href="../Structs/DesignDocument.html">DesignDocument</a></code></li>
+<li>A <code><a href="../Protocols/Document.html">Document</a></code> attachment</li>
+</ul>
 
           </div>
         </section>
@@ -110,6 +129,13 @@
         <section class="section">
           <div class="section-content">
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Database%20Properties"></a>
+                <a name="//apple_ref/swift/Section/Database Properties" class="dashAnchor"></a>
+                <a href="#/Database%20Properties">
+                  <h3 class="section-name">Database Properties</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -132,34 +158,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">StaleOptions</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC7KeyTypea"></a>
-                    <a name="//apple_ref/swift/Alias/KeyType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC7KeyTypea">KeyType</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Typealias used for building query parameters in view functions.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">KeyType</span> <span class="o">=</span> <span class="kt">AnyObject</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">StaleOptions</span></code></pre>
 
                         </div>
                       </div>
@@ -187,7 +186,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">QueryParameters</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">QueryParameters</span></code></pre>
 
                         </div>
                       </div>
@@ -197,117 +196,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC5Errors10DictionaryVySiSSGvZ"></a>
-                    <a name="//apple_ref/swift/Variable/Error" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC5Errors10DictionaryVySiSSGvZ">Error</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Dictionary of Error cases.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">Error</span> <span class="o">=</span> <span class="p">[</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC13InternalErrorSivZ"></a>
-                    <a name="//apple_ref/swift/Variable/InternalError" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC13InternalErrorSivZ">InternalError</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Internal error.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">InternalError</span> <span class="o">=</span> <span class="mi">0</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC15InvalidDocumentSivZ"></a>
-                    <a name="//apple_ref/swift/Variable/InvalidDocument" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC15InvalidDocumentSivZ">InvalidDocument</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Invalid document.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">InvalidDocument</span> <span class="o">=</span> <span class="mi">1</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC17InvalidAttachmentSivZ"></a>
-                    <a name="//apple_ref/swift/Variable/InvalidAttachment" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC17InvalidAttachmentSivZ">InvalidAttachment</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Invalid attachment.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">InvalidAttachment</span> <span class="o">=</span> <span class="mi">2</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC4nameSSv"></a>
+                    <a name="/s:7CouchDB8DatabaseC4nameSSvp"></a>
                     <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC4nameSSv">name</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC4nameSSvp">name</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -322,7 +213,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -332,9 +223,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC11escapedNameSSv"></a>
+                    <a name="/s:7CouchDB8DatabaseC11escapedNameSSvp"></a>
                     <a name="//apple_ref/swift/Property/escapedName" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC11escapedNameSSv">escapedName</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC11escapedNameSSvp">escapedName</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -349,7 +240,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">escapedName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">escapedName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -359,9 +250,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC14connPropertiesAA010ConnectionE0Vv"></a>
+                    <a name="/s:7CouchDB8DatabaseC14connPropertiesAA010ConnectionE0Vvp"></a>
                     <a name="//apple_ref/swift/Property/connProperties" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC14connPropertiesAA010ConnectionE0Vv">connProperties</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC14connPropertiesAA010ConnectionE0Vvp">connProperties</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -376,277 +267,30 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">connProperties</span><span class="p">:</span> <span class="kt"><a href="../Structs/ConnectionProperties.html">ConnectionProperties</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">connProperties</span><span class="p">:</span> <span class="kt"><a href="../Structs/ConnectionProperties.html">ConnectionProperties</a></span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Single%20Documents%20requests"></a>
+                <a name="//apple_ref/swift/Section/Single Documents requests" class="dashAnchor"></a>
+                <a href="#/Single%20Documents%20requests">
+                  <h3 class="section-name">Single Documents requests</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseCAcA20ConnectionPropertiesV04connE0_SS6dbNametcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(connProperties:dbName:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseCAcA20ConnectionPropertiesV04connE0_SS6dbNametcfc">init(connProperties:dbName:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Initialize a new Database instance.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span> <span class="p">(</span><span class="nv">connProperties</span><span class="p">:</span> <span class="kt"><a href="../Structs/ConnectionProperties.html">ConnectionProperties</a></span><span class="p">,</span> <span class="nv">dbName</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>connProperties</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>ConnectionProperties</code> the Database will use for its actions.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dbName</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>String name for the Database.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC8retrieveySS_y10SwiftyJSON0F0VSg_So7NSErrorCSgtc8callbacktF"></a>
-                    <a name="//apple_ref/swift/Method/retrieve(_:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC8retrieveySS_y10SwiftyJSON0F0VSg_So7NSErrorCSgtc8callbacktF">retrieve(_:callback:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Retrieve a document from the database by ID.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retrieve</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>String ID for the document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>callback</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Callback containing the document JSON or an NSError if one occurred.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC11retrieveAllySb16includeDocuments_y10SwiftyJSON0I0VSg_So7NSErrorCSgtc8callbacktF"></a>
-                    <a name="//apple_ref/swift/Method/retrieveAll(includeDocuments:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC11retrieveAllySb16includeDocuments_y10SwiftyJSON0I0VSg_So7NSErrorCSgtc8callbacktF">retrieveAll(includeDocuments:callback:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Retrieve all documents from the database</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retrieveAll</span><span class="p">(</span><span class="nv">includeDocuments</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>includeDocuments</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Bool indicating whether to return the full contents of the documents.
-                Defaults to <code>false</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>callback</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Callback containing the documents JSON or an NSError if one occurred.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC6updateySS_SS3rev10SwiftyJSON0G0V8documentySSSg_AHSgSo7NSErrorCSgtc8callbacktF"></a>
-                    <a name="//apple_ref/swift/Method/update(_:rev:document:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC6updateySS_SS3rev10SwiftyJSON0G0V8documentySSSg_AHSgSo7NSErrorCSgtc8callbacktF">update(_:rev:document:callback:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Update a document in the database.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">update</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">document</span><span class="p">:</span> <span class="kt">JSON</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>String ID for the document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>rev</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The current revision number for the document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>JSON data of the updated document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>callback</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Callback containing the new revision number, the JSON response,
-        and NSError if one occurred.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB8DatabaseC6createy10SwiftyJSON0F0V_ySSSg_AhGSgSo7NSErrorCSgtc8callbacktF"></a>
+                    <a name="/s:7CouchDB8DatabaseC6createyx_yAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktAA0E0RzlF"></a>
                     <a name="//apple_ref/swift/Method/create(_:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC6createy10SwiftyJSON0F0V_ySSSg_AhGSgSo7NSErrorCSgtc8callbacktF">create(_:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC6createyx_yAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktAA0E0RzlF">create(_:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -655,47 +299,28 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Create a new document.</p>
+<h3 id='usage-example' class='heading'>Usage Example:</h3>
+<pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">MyDocument</span><span class="p">:</span> <span class="kt">Document</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">_id</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">String</span>
+<span class="p">}</span>
+<span class="k">var</span> <span class="nv">myDocument</span> <span class="o">=</span> <span class="kt">MyDocument</span><span class="p">(</span><span class="nv">_id</span><span class="p">:</span> <span class="s">"Kitura"</span><span class="p">,</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="s">"Hello World"</span><span class="p">)</span>
+<span class="n">database</span><span class="o">.</span><span class="nf">create</span><span class="p">(</span><span class="n">myDocument</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+   <span class="k">if</span> <span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">response</span> <span class="p">{</span>
+       <span class="nf">print</span><span class="p">(</span><span class="s">"Document: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">id</span><span class="se">)</span><span class="s">, created with rev: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">rev</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">create</span><span class="p">(</span><span class="n">_</span> <span class="nv">document</span><span class="p">:</span> <span class="kt">JSON</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">String</span><span class="p">?,</span> <span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">create</span><span class="o">&lt;</span><span class="kt">D</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Document.html">Document</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">document</span><span class="p">:</span> <span class="kt">D</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DocumentResponse.html">DocumentResponse</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>JSON data for the document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>callback</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Callback containing the ID of the newly created document, revision number,
-        JSON response, and NSError if one occurred.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -703,9 +328,88 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC6deleteySS_SS3revSb14failOnNotFoundySo7NSErrorCSgc8callbacktF"></a>
-                    <a name="//apple_ref/swift/Method/delete(_:rev:failOnNotFound:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC6deleteySS_SS3revSb14failOnNotFoundySo7NSErrorCSgc8callbacktF">delete(_:rev:failOnNotFound:callback:)</a>
+                    <a name="/s:7CouchDB8DatabaseC8retrieveySS_yxSg_AA0A7DBErrorVSgtc8callbacktAA8DocumentRzlF"></a>
+                    <a name="//apple_ref/swift/Method/retrieve(_:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC8retrieveySS_yxSg_AA0A7DBErrorVSgtc8callbacktAA8DocumentRzlF">retrieve(_:callback:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Retrieve a document from the database.</p>
+<h3 id='usage-example' class='heading'>Usage Example:</h3>
+<pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">MyDocument</span><span class="p">:</span> <span class="kt">Document</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">_id</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">String</span>
+<span class="p">}</span>
+<span class="n">database</span><span class="o">.</span><span class="nf">retrieve</span><span class="p">(</span><span class="s">"Kitura"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="nv">document</span><span class="p">:</span> <span class="kt">MyDocument</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">CouchDBError</span><span class="p">?)</span> <span class="k">in</span>
+   <span class="k">if</span> <span class="k">var</span> <span class="nv">document</span> <span class="o">=</span> <span class="n">document</span> <span class="p">{</span>
+       <span class="nf">print</span><span class="p">(</span><span class="s">"Retrieved document with value: </span><span class="se">\(</span><span class="n">document</span><span class="o">.</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">retrieve</span><span class="o">&lt;</span><span class="kt">D</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Document.html">Document</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">D</span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB8DatabaseC6updateySS_SS3revx8documentyAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktAA0G0RzlF"></a>
+                    <a name="//apple_ref/swift/Method/update(_:rev:document:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC6updateySS_SS3revx8documentyAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktAA0G0RzlF">update(_:rev:document:callback:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Update a document in the database. If no document exists for the provided id, a new document is created.</p>
+<h3 id='usage-example' class='heading'>Usage Example:</h3>
+<pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">MyDocument</span><span class="p">:</span> <span class="kt">Document</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">_id</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">String</span>
+<span class="p">}</span>
+<span class="k">var</span> <span class="nv">myDocument</span> <span class="o">=</span> <span class="kt">MyDocument</span><span class="p">(</span><span class="nv">_id</span><span class="p">:</span> <span class="s">"Kitura"</span><span class="p">,</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="s">"New Value"</span><span class="p">)</span>
+<span class="n">database</span><span class="o">.</span><span class="nf">update</span><span class="p">(</span><span class="s">"&lt;document_id&gt;"</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="s">"&lt;latest_rev&gt;"</span><span class="p">,</span> <span class="nv">document</span><span class="p">:</span> <span class="n">myDocument</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">response</span> <span class="p">{</span>
+       <span class="nf">print</span><span class="p">(</span><span class="s">"Document: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">id</span><span class="se">)</span><span class="s">, updated"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">update</span><span class="o">&lt;</span><span class="kt">D</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Document.html">Document</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">document</span><span class="p">:</span> <span class="kt">D</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DocumentResponse.html">DocumentResponse</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB8DatabaseC6deleteySS_SS3revyAA0A7DBErrorVSgc8callbacktF"></a>
+                    <a name="//apple_ref/swift/Method/delete(_:rev:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC6deleteySS_SS3revyAA0A7DBErrorVSgc8callbacktF">delete(_:rev:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -714,13 +418,89 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Delete a document.</p>
+<h3 id='usage-example' class='heading'>Usage Example:</h3>
+<pre class="highlight swift"><code><span class="n">database</span><span class="o">.</span><span class="nf">delete</span><span class="p">(</span><span class="s">"&lt;document_id&gt;"</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="s">"&lt;latest_rev&gt;"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">response</span> <span class="p">{</span>
+       <span class="nf">print</span><span class="p">(</span><span class="s">"Document: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">id</span><span class="se">)</span><span class="s">, deleted"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">failOnNotFound</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Multiple%20Documents%20requests"></a>
+                <a name="//apple_ref/swift/Section/Multiple Documents requests" class="dashAnchor"></a>
+                <a href="#/Multiple%20Documents%20requests">
+                  <h3 class="section-name">Multiple Documents requests</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB8DatabaseC4bulkyAA13BulkDocumentsV9documents_ySayAA0E8ResponseVGSg_AA0A7DBErrorVSgtc8callbacktF"></a>
+                    <a name="//apple_ref/swift/Method/bulk(documents:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC4bulkyAA13BulkDocumentsV9documents_ySayAA0E8ResponseVGSg_AA0A7DBErrorVSgtc8callbacktF">bulk(documents:callback:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Bulk update or insert documents into the database.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Note:</p>
+
+<ul>
+<li>CouchDB will return the results in the same order as supplied in the array. The <code>id</code> and revision will be
+added for every document passed as content to a bulk insert, even for those that were just deleted.</li>
+<li>If you omit the per-document <code>_id</code> specification, CouchDB will generate unique IDs for you, as it does for
+regular <code><a href="../Classes/Database.html#/s:7CouchDB8DatabaseC6createyx_yAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktAA0E0RzlF">create(_:callback:)</a></code> function.</li>
+<li>Updating existing documents requires setting the <code>_rev</code> member to the revision being updated. To delete a
+document set the <code>_deleted</code> member to <code>true</code>.
+<code>
+[
+{&quot;_id&quot;: &quot;0&quot;, &quot;_rev&quot;: &quot;1-62657917&quot;, &quot;_deleted&quot;: true},
+{&quot;_id&quot;: &quot;1&quot;, &quot;_rev&quot;: &quot;1-2089673485&quot;, &quot;integer&quot;: 2, &quot;string&quot;: &quot;2&quot;},
+{&quot;_id&quot;: &quot;2&quot;, &quot;_rev&quot;: &quot;1-2063452834&quot;, &quot;integer&quot;: 3, &quot;string&quot;: &quot;3&quot;}
+]
+</code></li>
+<li>If the <code>_rev</code> does not match the current version of the document, then that particular document will not be
+saved and will be reported as a conflict, but this does not prevent other documents in the batch from being
+saved.
+<code>
+[
+{&quot;id&quot;: &quot;0&quot;, &quot;error&quot;: &quot;conflict&quot;, &quot;reason&quot;: &quot;Document update conflict.&quot;},
+{&quot;id&quot;: &quot;1&quot;, &quot;rev&quot;: &quot;2-1579510027&quot;},
+{&quot;id&quot;: &quot;2&quot;, &quot;rev&quot;: &quot;2-3978456339&quot;}
+]
+</code></li>
+</ul>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">bulk</span><span class="p">(</span><span class="nv">documents</span><span class="p">:</span> <span class="kt"><a href="../Structs/BulkDocuments.html">BulkDocuments</a></span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">([</span><span class="kt"><a href="../Structs/BulkResponse.html">BulkResponse</a></span><span class="p">]?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -731,36 +511,12 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>id</em>
+                                <em>documents</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>String ID for the document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>rev</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Latest revision String for the document.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>failOnNotFound</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Bool indicating whether to return an error if the document is not found.</p>
+                                  <p>An <code><a href="../Structs/BulkDocuments.html">BulkDocuments</a></code> struct containing an array of JSON documents to be updated or inserted.</p>
                                 </div>
                               </td>
                             </tr>
@@ -772,7 +528,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing an NSError if one occurred.</p>
+                                  <p>callback containing either a <code><a href="../Structs/BulkResponse.html">BulkResponse</a></code> array or an error.</p>
                                 </div>
                               </td>
                             </tr>
@@ -785,9 +541,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC11queryByViewySS_SS8ofDesignSayAC15QueryParametersOG05usingJ0y10SwiftyJSON0M0VSg_So7NSErrorCSgtc8callbacktF"></a>
+                    <a name="/s:7CouchDB8DatabaseC11queryByViewySS_SS8ofDesignSayAC15QueryParametersOG05usingJ0yAA03AllC9DocumentsVSg_AA0A7DBErrorVSgtc8callbacktF"></a>
                     <a name="//apple_ref/swift/Method/queryByView(_:ofDesign:usingParameters:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC11queryByViewySS_SS8ofDesignSayAC15QueryParametersOG05usingJ0y10SwiftyJSON0M0VSg_So7NSErrorCSgtc8callbacktF">queryByView(_:ofDesign:usingParameters:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC11queryByViewySS_SS8ofDesignSayAC15QueryParametersOG05usingJ0yAA03AllC9DocumentsVSg_AA0A7DBErrorVSgtc8callbacktF">queryByView(_:ofDesign:usingParameters:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -802,7 +558,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">queryByView</span><span class="p">(</span><span class="n">_</span> <span class="nv">view</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">ofDesign</span> <span class="nv">design</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">usingParameters</span> <span class="nv">params</span><span class="p">:</span> <span class="p">[</span><span class="kt">Database</span><span class="o">.</span><span class="kt"><a href="../Classes/Database/QueryParameters.html">QueryParameters</a></span><span class="p">],</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">queryByView</span><span class="p">(</span><span class="n">_</span> <span class="nv">view</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">ofDesign</span> <span class="nv">design</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">usingParameters</span> <span class="nv">params</span><span class="p">:</span> <span class="p">[</span><span class="kt">Database</span><span class="o">.</span><span class="kt"><a href="../Classes/Database/QueryParameters.html">QueryParameters</a></span><span class="p">],</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -854,8 +610,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing the JSON response or NSError if one occurred.
-        Refer to <a href="http://docs.couchdb.org/en/2.1.0/api/ddoc/views.html">http://docs.couchdb.org/en/2.1.0/api/ddoc/views.html</a> for info on JSON contents.</p>
+                                  <p>Callback containing either the <code><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -868,9 +623,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC12createDesignySS_10SwiftyJSON0G0V8documentyAGSg_So7NSErrorCSgtc8callbacktF"></a>
-                    <a name="//apple_ref/swift/Method/createDesign(_:document:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC12createDesignySS_10SwiftyJSON0G0V8documentyAGSg_So7NSErrorCSgtc8callbacktF">createDesign(_:document:callback:)</a>
+                    <a name="/s:7CouchDB8DatabaseC11retrieveAllySb16includeDocuments_yAA0ecG0VSg_AA0A7DBErrorVSgtc8callbacktF"></a>
+                    <a name="//apple_ref/swift/Method/retrieveAll(includeDocuments:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC11retrieveAllySb16includeDocuments_yAA0ecG0VSg_AA0A7DBErrorVSgtc8callbacktF">retrieveAll(includeDocuments:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -878,14 +633,84 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Create a design document.</p>
+                        <p>Retrieve all documents from the database</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">createDesign</span><span class="p">(</span><span class="n">_</span> <span class="nv">designName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">document</span><span class="p">:</span> <span class="kt">JSON</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retrieveAll</span><span class="p">(</span><span class="nv">includeDocuments</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>includeDocuments</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Bool indicating whether to return the full contents of the documents.
+                Defaults to <code>false</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>callback</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Callback containing <code><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code> if one occurred.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Design%20Documents"></a>
+                <a name="//apple_ref/swift/Section/Design Documents" class="dashAnchor"></a>
+                <a href="#/Design%20Documents">
+                  <h3 class="section-name">Design Documents</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB8DatabaseC12createDesignySS_AA0E8DocumentV8documentyAA0F8ResponseVSg_AA0A7DBErrorVSgtc8callbacktF"></a>
+                    <a name="//apple_ref/swift/Method/createDesign(_:document:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC12createDesignySS_AA0E8DocumentV8documentyAA0F8ResponseVSg_AA0A7DBErrorVSgtc8callbacktF">createDesign(_:document:callback:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a design document. If a design document already exists with the same name it will be replaced.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">createDesign</span><span class="p">(</span><span class="n">_</span> <span class="nv">designName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DesignDocument.html">DesignDocument</a></span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DocumentResponse.html">DocumentResponse</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -925,7 +750,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing the JSON response or an NSError if one occurred.</p>
+                                  <p>Callback containing the <code><a href="../Structs/DocumentResponse.html">DocumentResponse</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -938,9 +763,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC12deleteDesignySS_SS8revisionSb14failOnNotFoundySo7NSErrorCSgc8callbacktF"></a>
+                    <a name="/s:7CouchDB8DatabaseC12deleteDesignySS_SS8revisionSb14failOnNotFoundyAA0A7DBErrorVSgc8callbacktF"></a>
                     <a name="//apple_ref/swift/Method/deleteDesign(_:revision:failOnNotFound:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC12deleteDesignySS_SS8revisionSb14failOnNotFoundySo7NSErrorCSgc8callbacktF">deleteDesign(_:revision:failOnNotFound:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC12deleteDesignySS_SS8revisionSb14failOnNotFoundyAA0A7DBErrorVSgc8callbacktF">deleteDesign(_:revision:failOnNotFound:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -955,7 +780,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">deleteDesign</span><span class="p">(</span><span class="n">_</span> <span class="nv">designName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">revision</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">failOnNotFound</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">deleteDesign</span><span class="p">(</span><span class="n">_</span> <span class="nv">designName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">revision</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">failOnNotFound</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -1007,7 +832,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing an NSError if one occurred.</p>
+                                  <p>Callback containing the <code><a href="../Structs/DocumentResponse.html">DocumentResponse</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1017,12 +842,23 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Attachments"></a>
+                <a name="//apple_ref/swift/Section/Attachments" class="dashAnchor"></a>
+                <a href="#/Attachments">
+                  <h3 class="section-name">Attachments</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC16createAttachmentySS_SS10docRevisonSS14attachmentName10Foundation4DataV0hK0SS11contentTypeySSSg_10SwiftyJSON0O0VSgSo7NSErrorCSgtc8callbacktF"></a>
+                    <a name="/s:7CouchDB8DatabaseC16createAttachmentySS_SS10docRevisonSS14attachmentName10Foundation4DataV0hK0SS11contentTypeyAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktF"></a>
                     <a name="//apple_ref/swift/Method/createAttachment(_:docRevison:attachmentName:attachmentData:contentType:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC16createAttachmentySS_SS10docRevisonSS14attachmentName10Foundation4DataV0hK0SS11contentTypeySSSg_10SwiftyJSON0O0VSgSo7NSErrorCSgtc8callbacktF">createAttachment(_:docRevison:attachmentName:attachmentData:contentType:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC16createAttachmentySS_SS10docRevisonSS14attachmentName10Foundation4DataV0hK0SS11contentTypeyAA16DocumentResponseVSg_AA0A7DBErrorVSgtc8callbacktF">createAttachment(_:docRevison:attachmentName:attachmentData:contentType:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1030,14 +866,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Create an attachment.</p>
+                        <p>Attach the provided <code>Data</code> the <code><a href="../Protocols/Document.html">Document</a></code> with the provided ID with the given attachmentName.
+If an attachment exists with the same name it will be replaced with the new attachment.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">createAttachment</span><span class="p">(</span><span class="n">_</span> <span class="nv">docId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">docRevison</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="nv">contentType</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">createAttachment</span><span class="p">(</span><span class="n">_</span> <span class="nv">docId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">docRevison</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="nv">contentType</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DocumentResponse.html">DocumentResponse</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -1113,8 +950,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing the new revision String, the JSON response,
-        and an NSError if one occurred.</p>
+                                  <p>Callback containing the <code><a href="../Structs/DocumentResponse.html">DocumentResponse</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1127,9 +963,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC18retrieveAttachmentySS_SS14attachmentNamey10Foundation4DataVSg_So7NSErrorCSgSSSgtc8callbacktF"></a>
+                    <a name="/s:7CouchDB8DatabaseC18retrieveAttachmentySS_SS14attachmentNamey10Foundation4DataVSg_SSSgAA0A7DBErrorVSgtc8callbacktF"></a>
                     <a name="//apple_ref/swift/Method/retrieveAttachment(_:attachmentName:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC18retrieveAttachmentySS_SS14attachmentNamey10Foundation4DataVSg_So7NSErrorCSgSSSgtc8callbacktF">retrieveAttachment(_:attachmentName:callback:)</a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC18retrieveAttachmentySS_SS14attachmentNamey10Foundation4DataVSg_SSSgAA0A7DBErrorVSgtc8callbacktF">retrieveAttachment(_:attachmentName:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1144,7 +980,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retrieveAttachment</span><span class="p">(</span><span class="n">_</span> <span class="nv">docId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Data</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retrieveAttachment</span><span class="p">(</span><span class="n">_</span> <span class="nv">docId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Data</span><span class="p">?,</span> <span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -1184,8 +1020,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing the retrieved attachment data, an NSError if one occurred,
-        and the content type of the attachment.</p>
+                                  <p>Callback containing either the retrieved attachment data and the content type of the attachment or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1198,9 +1033,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB8DatabaseC16deleteAttachmentySS_SS10docRevisonSS14attachmentNameSb14failOnNotFoundySo7NSErrorCSgc8callbacktF"></a>
-                    <a name="//apple_ref/swift/Method/deleteAttachment(_:docRevison:attachmentName:failOnNotFound:callback:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB8DatabaseC16deleteAttachmentySS_SS10docRevisonSS14attachmentNameSb14failOnNotFoundySo7NSErrorCSgc8callbacktF">deleteAttachment(_:docRevison:attachmentName:failOnNotFound:callback:)</a>
+                    <a name="/s:7CouchDB8DatabaseC16deleteAttachmentySS_SS10docRevisonSS14attachmentNameyAA0A7DBErrorVSgc8callbacktF"></a>
+                    <a name="//apple_ref/swift/Method/deleteAttachment(_:docRevison:attachmentName:callback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DatabaseC16deleteAttachmentySS_SS10docRevisonSS14attachmentNameyAA0A7DBErrorVSgc8callbacktF">deleteAttachment(_:docRevison:attachmentName:callback:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1215,7 +1050,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">deleteAttachment</span><span class="p">(</span><span class="n">_</span> <span class="nv">docId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">docRevison</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">failOnNotFound</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">deleteAttachment</span><span class="p">(</span><span class="n">_</span> <span class="nv">docId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">docRevison</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">attachmentName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -1262,24 +1097,12 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>failOnNotFound</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Bool indicating whether to return an NSError if the attachment could not be found.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
                                 <em>callback</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback containing an NSError if one occurred.</p>
+                                  <p>Callback containing either the <code><a href="../Structs/DocumentResponse.html">DocumentResponse</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1297,8 +1120,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-14)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
