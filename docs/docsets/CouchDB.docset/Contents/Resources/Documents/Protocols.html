@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Typealiases  Reference</title>
+    <title>Protocols  Reference</title>
     <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="css/highlight.css" />
     <meta charset="utf-8">
@@ -15,7 +15,7 @@
   <body>
 
 
-    <a title="Typealiases  Reference"></a>
+    <a title="Protocols  Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -43,7 +43,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="index.html">CouchDB Reference</a>
       <img class="carat" src="img/carat.png" />
-      Typealiases  Reference
+      Protocols  Reference
     </p>
 
     <div class="content-wrapper">
@@ -64,27 +64,39 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Database/QueryParameters.html">– QueryParameters</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/UsersDatabase.html">UsersDatabase</a>
+                <a class="nav-group-task-link" href="Protocols/Document.html">Document</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/BulkDocuments.html">BulkDocuments</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/BulkResponse.html">BulkResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ConnectionProperties.html">ConnectionProperties</a>
               </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Typealiases.html#/s:7CouchDB0A7DBValuea">CouchDBValue</a>
+                <a class="nav-group-task-link" href="Structs/CouchDBError.html">CouchDBError</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Typealiases.html#/s:7CouchDB15SessionCallbacka">SessionCallback</a>
+                <a class="nav-group-task-link" href="Structs/DesignDocument.html">DesignDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DocumentResponse.html">DocumentResponse</a>
               </li>
             </ul>
           </li>
@@ -94,8 +106,8 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>Typealiases</h1>
-            <p>The following typealiases are available globally.</p>
+            <h1>Protocols</h1>
+            <p>The following protocols are available globally.</p>
 
           </div>
         </section>
@@ -103,20 +115,13 @@
         <section class="section">
           <div class="section-content">
             <div class="task-group">
-              <div class="task-name-container">
-                <a name="/CouchDBClient"></a>
-                <a name="//apple_ref/swift/Section/CouchDBClient" class="dashAnchor"></a>
-                <a href="#/CouchDBClient">
-                  <h3 class="section-name">CouchDBClient</h3>
-                </a>
-              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7CouchDB0A7DBValuea"></a>
-                    <a name="//apple_ref/swift/Alias/CouchDBValue" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB0A7DBValuea">CouchDBValue</a>
+                    <a name="/s:7CouchDB8DocumentP"></a>
+                    <a name="//apple_ref/swift/Protocol/Document" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB8DocumentP">Document</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -124,42 +129,18 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Represents a CouchDB configuration value.</p>
+                        <p>A protocol for a single JSON document the can be stored or retrieved from a CouchDB database.
+The <code>_id</code> field is the unique identifier for the document. If it is not set, a random UUID will be assigned for the document.
+The <code>_rev</code> field is the revision of the document. It is returned when you make requests and is used to prevent conflicts from multiple users updating the same document.<br>
+ <a href="http://docs.couchdb.org/en/stable/json-structure.html#couchdb-document">http://docs.couchdb.org/en/stable/json-structure.html#couchdb-document</a></p>
 
+                        <a href="Protocols/Document.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">CouchDBValue</span> <span class="o">=</span> <span class="kt">AnyObject</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7CouchDB15SessionCallbacka"></a>
-                    <a name="//apple_ref/swift/Alias/SessionCallback" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7CouchDB15SessionCallbacka">SessionCallback</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Callback for _session requests, containing the session cookie, the JSON response,
-and NSError if one occurred.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">SessionCallback</span> <span class="o">=</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">JSON</span><span class="p">?,</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">Document</span><span class="p">:</span> <span class="kt">Codable</span></code></pre>
 
                         </div>
                       </div>
@@ -174,8 +155,8 @@ and NSError if one occurred.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-14)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -160,7 +160,7 @@ The following code demonstrates the CRUD operations for a single `Document`:
 ```swift
 var myDocument = MyDocument(_id: "Kitura", _rev: nil, value: "Hello World")
 ```
-- Create Document
+- Create a Document
 ```swift
 database.create(myDocument) { (response, error) in
     if let response = response {
@@ -168,7 +168,7 @@ database.create(myDocument) { (response, error) in
     }
 }
 ```
-- Retrieve Document
+- Retrieve a Document
 ```swift
 database.retrieve("Kitura") { (document: MyDocument?, error: CouchDBError?) in
     if let document = document {
@@ -176,7 +176,7 @@ database.retrieve("Kitura") { (document: MyDocument?, error: CouchDBError?) in
     }
 }
 ```
-- Update Document
+- Update a Document
 ```swift
 myDocument.value = "New Value"
 database.update("Kitura", rev: "<latest_rev>", document: myDocument) { (response, error) in
