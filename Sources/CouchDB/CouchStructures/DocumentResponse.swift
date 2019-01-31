@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016
+ * Copyright IBM Corporation 2018
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  **/
 
-import XCTest
+import Foundation
 
-@testable import CouchDBTests
+/// A struct representing the response from a request to insert, update or delete a `Document`.
+/// http://docs.couchdb.org/en/stable/api/document/common.html#put--db-docid
+public struct DocumentResponse: Codable {
 
-XCTMain([
-    testCase(DocumentCrudTests.allTests),
-    testCase(DocumentViewTests.allTests),
-    testCase(DocumentBulkUpdateTests.allTests),
-    testCase(DBTests.allTests),
-    testCase(UUIDTests.allTests),
-    testCase(AttachmentTests.allTests)
-])
+    /// Operation status.
+    public let ok: Bool
+
+    /// Document ID.
+    public let id: String
+
+    /// Revision MVCC token
+    public let rev: String
+}

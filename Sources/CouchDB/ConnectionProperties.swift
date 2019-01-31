@@ -26,12 +26,10 @@ public struct ConnectionProperties {
     public let host: String
 
     /// Port number where CouchDB server is listening for incoming connections
-    public let port: Int16
+    public let port: UInt16
 
     /// Whether or not to use a secured connection
     public let secured: Bool
-
-    // MARK: Authentication credentials to access CouchDB
 
     /// CouchDB admin username
     let username: String?
@@ -47,7 +45,7 @@ public struct ConnectionProperties {
     ///     - secured: Whether or not to use a secured connection.
     ///     - username: CouchDB admin username. Defaults to `nil`.
     ///     - password: CouchDB admin password. Defaults to `nil`.
-    public init(host: String, port: Int16, secured: Bool, username: String?=nil, password: String?=nil) {
+    public init(host: String, port: UInt16, secured: Bool, username: String?=nil, password: String?=nil) {
         self.host = host
         self.port = port
         self.secured = secured
@@ -57,8 +55,6 @@ public struct ConnectionProperties {
             Log.warning("Initializing a CouchDB connection without a username or password.")
         }
     }
-
-    // MARK: Computed properties
 
     /// Use https or http.
     var HTTPProtocol: String {
@@ -74,8 +70,6 @@ public struct ConnectionProperties {
         }
     }
 }
-
-// MARK: Extension for <CustomStringConvertible>
 
 extension ConnectionProperties: CustomStringConvertible {
     /// String description for a `ConnectionProperties`.

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Structs  Reference</title>
+    <title>Structures  Reference</title>
     <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="css/highlight.css" />
     <meta charset="utf-8">
@@ -15,7 +15,7 @@
   <body>
 
 
-    <a title="Structs  Reference"></a>
+    <a title="Structures  Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -43,7 +43,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="index.html">CouchDB Reference</a>
       <img class="carat" src="img/carat.png" />
-      Structs  Reference
+      Structures  Reference
     </p>
 
     <div class="content-wrapper">
@@ -64,27 +64,39 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Database/QueryParameters.html">– QueryParameters</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/UsersDatabase.html">UsersDatabase</a>
+                <a class="nav-group-task-link" href="Protocols/Document.html">Document</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/BulkDocuments.html">BulkDocuments</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/BulkResponse.html">BulkResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ConnectionProperties.html">ConnectionProperties</a>
               </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Typealiases.html#/s:7CouchDB0A7DBValuea">CouchDBValue</a>
+                <a class="nav-group-task-link" href="Structs/CouchDBError.html">CouchDBError</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Typealiases.html#/s:7CouchDB15SessionCallbacka">SessionCallback</a>
+                <a class="nav-group-task-link" href="Structs/DesignDocument.html">DesignDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DocumentResponse.html">DocumentResponse</a>
               </li>
             </ul>
           </li>
@@ -94,8 +106,8 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>Structs</h1>
-            <p>The following structs are available globally.</p>
+            <h1>Structures</h1>
+            <p>The following structures are available globally.</p>
 
           </div>
         </section>
@@ -132,7 +144,208 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ConnectionProperties</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ConnectionProperties</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB0A7DBErrorV"></a>
+                    <a name="//apple_ref/swift/Struct/CouchDBError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB0A7DBErrorV">CouchDBError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A struct representing the JSON response from CouchDB when an error occurs.<br>
+<a href="http://docs.couchdb.org/en/stable/json-structure.html#couchdb-error-status">http://docs.couchdb.org/en/stable/json-structure.html#couchdb-error-status</a></p>
+
+                        <a href="Structs/CouchDBError.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CouchDBError</span><span class="p">:</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB20AllDatabaseDocumentsV"></a>
+                    <a name="//apple_ref/swift/Struct/AllDatabaseDocuments" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB20AllDatabaseDocumentsV">AllDatabaseDocuments</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A struct representing the JSON returned when querying a Database or View.<br>
+<a href="http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents">http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents</a></p>
+
+                        <a href="Structs/AllDatabaseDocuments.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AllDatabaseDocuments</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB13BulkDocumentsV"></a>
+                    <a name="//apple_ref/swift/Struct/BulkDocuments" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB13BulkDocumentsV">BulkDocuments</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A struct representing an array of JSON documents.
+This is used for adding or updating multiple documents at once using the bulk api.<br>
+<a href="http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs">http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs</a></p>
+
+                        <a href="Structs/BulkDocuments.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BulkDocuments</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB12BulkResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/BulkResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB12BulkResponseV">BulkResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A struct representing an item in the response JSON Array of Objects from an HTTP request to the _bulk_docs API.<br>
+<a href="http://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_bulk_docs">http://docs.couchdb.org/en/stable/api/database/bulk-api.html#post&ndash;db-_bulk_docs</a></p>
+
+                        <a href="Structs/BulkResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BulkResponse</span><span class="p">:</span> <span class="kt">Codable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB14DesignDocumentV"></a>
+                    <a name="//apple_ref/swift/Struct/DesignDocument" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB14DesignDocumentV">DesignDocument</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>This struct represents the agreed upon fields and structure of a design documents.
+The filters, lists, shows and updates fields objects are mapping of function name to string function source code.
+The views mapping is the same except that values are objects with map and reduce (optional) keys which also contains functions source code.<br>
+<a href="http://docs.couchdb.org/en/2.2.0/api/ddoc/common.html#put--db-_design-ddoc">http://docs.couchdb.org/en/2.2.0/api/ddoc/common.html#put&ndash;db-_design-ddoc</a></p>
+
+                        <a href="Structs/DesignDocument.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DesignDocument</span><span class="p">:</span> <span class="kt"><a href="Protocols/Document.html">Document</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB16DocumentResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/DocumentResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB16DocumentResponseV">DocumentResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A struct representing the response from a request to insert, update or delete a <code><a href="Protocols/Document.html">Document</a></code>.
+<a href="http://docs.couchdb.org/en/stable/api/document/common.html#put--db-docid">http://docs.couchdb.org/en/stable/api/document/common.html#put&ndash;db-docid</a></p>
+
+                        <a href="Structs/DocumentResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DocumentResponse</span><span class="p">:</span> <span class="kt">Codable</span></code></pre>
 
                         </div>
                       </div>
@@ -147,8 +360,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-14)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

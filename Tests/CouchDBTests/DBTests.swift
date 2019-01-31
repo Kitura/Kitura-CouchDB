@@ -16,12 +16,6 @@
 
 import XCTest
 
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Foundation
 
 @testable import CouchDB
@@ -36,25 +30,28 @@ class DBTests: CouchDBTest {
     
     /// Test that the database can be created and deleted.
     func testDB() {
-        couchDBClient.createDB(dbName) {(db: Database?, error: NSError?) in
-            if let error = error {
-                XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
-            }
-
-            guard let db = db else {
-                XCTFail("Created database is nil")
-                return
-            }
-
-            print(">> Database successfully created")
-            
-            self.couchDBClient.deleteDB(db) {(error: NSError?) in
+        setUpDatabase() {
+            self.couchDBClient?.deleteDB(self.dbName) {(error) in
                 if let error = error {
-                    XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
+                    XCTFail("DB deletion error: \(error.statusCode) \(error.localizedDescription)")
                 }
-                print(">> Database successfully deleted")
+                print(">> Database successfully deleted ")
+
+                self.couchDBClient?.createDB(self.dbName) {(db: Database?, error) in
+                    if let error = error {
+                        XCTFail("DB creation error: \(error.statusCode) \(error.localizedDescription)")
+                    }
+
+                    guard let db = db else {
+                        XCTFail("Created database is nil")
+                        return
+                    }
+                    print(">> Database successfully created \(db.name)")
+                }
             }
+
         }
+
     }
 
 }

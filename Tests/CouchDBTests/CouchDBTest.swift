@@ -15,12 +15,8 @@
 **/
 
 import XCTest
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
 import Foundation
+import Dispatch
 
 @testable import CouchDB
 
@@ -30,15 +26,18 @@ class CouchDBTest: XCTestCase {
 
     // The database name should be defined in an environment variable TESTDB_NAME
     // in Travis, to allow each Travis build to use a separate database.
-    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "Error-TESTDB_NAME-not-set"
-    
-    let couchDBClient: CouchDBClient! = {
-        let credentials = Utils.readCredentials()
+    let dbName = ProcessInfo.processInfo.environment["TESTDB_NAME"] ?? "kitura_test_db"
+
+    var couchDBClient: CouchDBClient? {
+        guard let credentials = Utils.readCredentials() else {
+            XCTFail("Failed to read credentials from credentials.json file")
+            return nil
+        }
 
         // Connection properties for testing Cloudant or CouchDB instance
         let connProperties = ConnectionProperties(host: credentials.host,
                                                   port: credentials.port,
-                                                  secured: true,
+                                                  secured: (dbName == "kitura_test_db" ?  false : true),
                                                   username: credentials.username,
                                                   password: credentials.password)
 
@@ -48,31 +47,30 @@ class CouchDBTest: XCTestCase {
         print("Hostname is: \(client.connProperties.host)")
 
         return client
-    }()
+    }
 
     var database: Database?
 
-    // MARK: - Initializers and test set-up and tear-down
-
-    override func setUp() {
-        delay(dropDatabaseIfExists)
-    }
-    
-    override func tearDown() {
-        delay(dropDatabaseIfExists)
-    }
-    
     /// Drop the test database, if it exists.
     ///
-    func dropDatabaseIfExists() {
-          // Check if DB exists
-          couchDBClient.dbExists(dbName) { exists, error in
-            if  error != nil {
-                XCTFail("Failed checking existence of database \(self.dbName). Error=\(error!.localizedDescription)")
-            } else {
-                if  exists {
-                    self.dropDatabase()
+    func dropDatabaseIfExists(completion: @escaping () -> Void) {
+        // Check if DB exists
+        delay {
+            self.couchDBClient?.retrieveDB(self.dbName) { (database, error) in
+                if database != nil {
+                    self.dropDatabase(completion)
+                } else {
+                    completion()
                 }
+            }
+        }
+    }
+
+    // setting up  the database
+    func setUpDatabase(isSetUpCompleted: @escaping () -> Void) -> Void {
+        self.dropDatabaseIfExists() {
+            self.createDatabase() {
+                isSetUpCompleted()
             }
         }
     }
@@ -80,15 +78,41 @@ class CouchDBTest: XCTestCase {
     /// Create the test database, failing the test if it already exists, or if there
     /// is a connectivity error.
     ///
-    func createDatabase() {
-        delay(delayedCreateDatabase)
+
+    fileprivate func createDatabase( _ handler: @escaping () -> Void)  -> Void {
+        delay {
+            self.couchDBClient?.createDB(self.dbName) { database, error in
+                if let error = error {
+                    XCTFail("DB creation error: \(error.description)")
+                    return
+                }
+                if database == nil {
+                    XCTFail("Created database is nil")
+                    return
+                }
+                print("Database \"\(self.dbName)\" successfully created")
+                self.database = database
+                handler()
+            }
+        }
     }
 
     /// Drop the test database, failing the test if it does not exist, or if there
     /// is a connectivity error.
     ///
-    func dropDatabase() {
-        delay(delayedDropDatabase)
+    fileprivate func dropDatabase(_ handler: @escaping () -> Void) -> Void {
+        // Retrieve and delete test database
+        delay {
+            self.couchDBClient?.deleteDB(self.dbName) { error in
+                if let error = error {
+                    XCTFail("DB deletion error: \(error.description)")
+                    return
+                }
+                print("Database \"\(self.dbName)\" successfully deleted")
+                handler()
+            }
+
+        }
     }
 
     /// Delay an action by a specified amount of time (default 1 second). The purpose
@@ -106,32 +130,5 @@ class CouchDBTest: XCTestCase {
         start.signal()
         end.wait()
     }
-
-    fileprivate func delayedCreateDatabase() {
-        couchDBClient.createDB(dbName) { database, error in
-            if let error = error {
-                XCTFail("DB creation error: \(error.code) \(error.localizedDescription)")
-                return
-            }
-            if database == nil {
-                XCTFail("Created database is nil")
-                return
-            }
-            print("Database \"\(self.dbName)\" successfully created")
-            self.database = database
-        }
-    }
-
-    fileprivate func delayedDropDatabase() {
-        // Retrieve and delete test database
-        couchDBClient.deleteDB(dbName) { error in
-            if let error = error {
-                XCTFail("DB deletion error: \(error.code) \(error.localizedDescription)")
-                return
-            }
-            print("Database \"\(self.dbName)\" successfully deleted")
-        }
-    }
-    
 }
 

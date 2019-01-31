@@ -1,30 +1,60 @@
+# Travis CI build file.
+
 # whitelist (branches that should be built)
 branches:
   only:
     - master
-    - develop
     - /^issue.*$/
 
+# the matrix of builds should cover each combination of Swift version
+# and platform that is supported. The version of Swift used is specified
+# by .swift-version, unless SWIFT_SNAPSHOT is specified.
 matrix:
   include:
     - os: linux
       dist: trusty
       sudo: required
-      env: SWIFT_SNAPSHOT=4.0.3
-      env: TESTDB_NAME=testdb_1
+      env: SWIFT_SNAPSHOT=4.0.3 TESTDB_NAME=testdb_1404_1
     - os: linux
       dist: trusty
       sudo: required
-      env: TESTDB_NAME=testdb_2
+      env: SWIFT_SNAPSHOT=4.1.3 TESTDB_NAME=testdb_1404_2
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: DOCKER_IMAGE=ubuntu:16.04 DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_1
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: DOCKER_IMAGE=ubuntu:16.04 SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_2
+    # - os: linux
+    #   dist: trusty
+    #   sudo: required
+    #   env: DOCKER_IMAGE=ubuntu:16.04 KITURA_NIO=1 DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_3
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: DOCKER_IMAGE=ubuntu:18.04 DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1804_1
     - os: osx
       osx_image: xcode9.2
       sudo: required
-      env: SWIFT_SNAPSHOT=4.0.3
-      env: TESTDB_NAME=testdb_3
+      env: SWIFT_SNAPSHOT=4.0.3 TESTDB_NAME=testdb_xcode92_1
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode9.4
       sudo: required
-      env: TESTDB_NAME=testdb_4
+      env: SWIFT_SNAPSHOT=4.1.2 JAZZY_ELIGIBLE=true TESTDB_NAME=testdb_xcode94_1 
+    - os: osx
+      osx_image: xcode10.1
+      sudo: required
+      env: SWIFT_SNAPSHOT=4.2 TESTDB_NAME=testdb_xcode10_1
+    - os: osx
+      osx_image: xcode10.1
+      sudo: required
+      env: SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT TESTDB_NAME=testdb_xcode10_2
+    # - os: osx
+    #   osx_image: xcode10
+    #   sudo: required
+    #   env: SWIFT_SNAPSHOT=4.2 KITURA_NIO=1 TESTDB_NAME=testdb_xcode10_3
 
 before_install:
   - git clone https://github.com/IBM-Swift/Package-Builder.git

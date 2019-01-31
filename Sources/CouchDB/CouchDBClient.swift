@@ -15,192 +15,160 @@
  **/
 
 import Foundation
-import SwiftyJSON
 import KituraNet
 
 // MARK: CouchDBClient
 
-#if os(OSX)
-    /// Represents a CouchDB configuration value.
-    public typealias CouchDBValue = AnyObject
-#else
-    public typealias CouchDBValue = Any
-#endif
-
-/// Callback for _session requests, containing the session cookie, the JSON response,
-/// and NSError if one occurred.
-public typealias SessionCallback = (String?, JSON?, NSError?) -> ()
-
-/// Represents a CouchDB connection.
+/**
+ The `CouchDBClient` represents a connection to a CouchDB server. It is initialized with your `ConnectionProperties` and handles the creation, retrieval and deletion of CouchDB databases.
+ ### Usage Example: ###
+ ```swift
+ let conProperties = ConnectionProperties(
+     host: "127.0.0.1",              // http address
+     port: 5984,                     // http port
+     secured: false,                 // https or http
+     username: "<CouchDB-username>", // admin username
+     password: "<CouchDB-password>"  // admin password
+ )
+ let couchDBClient = CouchDBClient(connectionProperties: conProperties)
+ ```
+ */
 public class CouchDBClient {
 
-    /// Connection properties for the `CouchDBClient`.
+    // MARK: Properties
+    
+    /// The `ConnectionProperties` for the `CouchDBClient`.
     public let connProperties: ConnectionProperties
 
-    /// Initialize a `CouchDBClient`.
-    ///
+    // MARK: Initializer
+    
+    /**
+     Initialize a `CouchDBClient`.
+     ### Usage Example: ###
+     ```swift
+     let couchDBClient = CouchDBClient(connectionProperties: conProperties)
+     ```
+     */
     /// - parameter connectionProperties: The connection properties for the CouchDB connection.
     public init(connectionProperties: ConnectionProperties) {
         self.connProperties = connectionProperties
     }
 
-    /// Returns a `Database` instance by name.
-    ///
-    /// - parameter dbName: String name of the desired `Database`.
-    public func database(_ dbName: String) -> Database {
-        return Database(connProperties: self.connProperties, dbName: dbName)
-    }
+    // MARK: Databases
 
-    /// Returns a `UsersDatabase` instance.
-    public func usersDatabase() -> UsersDatabase {
-        return UsersDatabase(connProperties: self.connProperties, dbName: "_users")
-    }
-
-    /// Create a new `Database`.
-    ///
+    /**
+     Create a new `Database`.
+     ### Usage Example: ###
+     ```swift
+     couchDBClient.createDB("NewDB") { (database, error) in
+         if let database = database {
+            // Use database
+         }
+     }
+     ```
+     */
     /// - parameters:
     ///     - dbName: String name of the database
-    ///     - callback: Callback containing the newly created `Database`, or an NSError on failure.
-    public func createDB(_ dbName: String, callback: @escaping (Database?, NSError?) -> ()) {
+    ///     - callback: Callback containing the newly created `Database` on success or a `CouchDBError` on failure.
+    public func createDB(_ dbName: String, callback: @escaping (Database?, CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var db: Database?
             if let response = response {
                 if response.statusCode == .created {
-                    db = Database(connProperties: self.connProperties, dbName: dbName)
+                    return callback(Database(connProperties: self.connProperties, dbName: dbName), nil)
                 } else {
-                    if let descOpt = try? response.readString(), let desc = descOpt {
-                        error = CouchDBUtils.createError(response.statusCode,
-                                                         errorDesc: JSON.parse(string: desc), id: nil, rev: nil)
-                    } else {
-                        error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                    }
+                    return callback(nil, CouchDBUtils.getBodyAsError(response))
                 }
             } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                return callback(nil, CouchDBError(HTTPStatusCode.internalServerError, reason: "No response from createDB request"))
             }
-            callback(db, error)
         }
         req.end()
     }
 
-    /// Returns a Bool indicating whether a `Database` with the given name exists.
-    ///
+    /**
+     Get an existing `Database` from the CouchDB Server.
+     ### Usage Example: ###
+     ```swift
+     couchDBClient.retrieveDB("ExistingDB") { (database, error) in
+        if let database = database {
+            // Use database
+        }
+     }
+     ```
+     */
     /// - parameters:
-    ///     - dbName: String name of the `Database` to look up.
-    ///     - callback: Callback containing the result of the lookup or an NSError if one occurred.
-    public func dbExists(_ dbName: String, callback: @escaping (Bool, NSError?) -> ()) {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
+    ///     - dbName: String name of the desired `Database`.
+    ///     - callback: Callback containing the desired `Database` on success or a `CouchDBError` on failure.
+    public func retrieveDB(_ dbName: String, callback: @escaping (Database?, CouchDBError?) -> ()) {
+        let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "HEAD",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var exists = false
             if let response = response {
-                if response.statusCode == HTTPStatusCode.OK {
-                    exists = true
+                
+                if response.statusCode == .OK {
+                    return callback(Database(connProperties: self.connProperties, dbName: dbName), nil)
+                } else {
+                    return callback(nil, CouchDBError(response.statusCode))
                 }
             } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
+                return callback(nil, CouchDBError(HTTPStatusCode.internalServerError, reason: "No response from createDB request"))
             }
-            callback(exists, error)
         }
         req.end()
     }
-
+    
     /// Delete a `Database` given a local instance of it.
-    ///
     /// - parameters:
     ///     - database: An instance of the `Database` to delete.
-    ///     - callback: Callback containing an NSError if one occurred.
-    public func deleteDB(_ database: Database, callback: @escaping (NSError?) -> ()) {
+    ///     - callback: Callback containing a `CouchDBError` if one occurred.
+    public func deleteDB(_ database: Database, callback: @escaping (CouchDBError?) -> ()) {
         deleteDB(database.name, callback: callback)
     }
 
     /// Delete a `Database` given its name.
-    ///
+    /**
+     ### Usage Example: ###
+     ```swift
+     couchDBClient.deleteDB("ExistingDB") { (error) in
+        if let error = error {
+            // Handle the error
+        }
+     }
+     ```
+     */
     /// - parameters:
     ///     - dbName: String name of the `Database` to delete.
-    ///     - callback: Callback containing an NSError if one occurred.
-    public func deleteDB(_ dbName: String, callback: @escaping (NSError?) -> ()) {
+    ///     - callback: Callback containing a `CouchDBError` if one occurred.
+    public func deleteDB(_ dbName: String, callback: @escaping (CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
                                                          path: "/\(HTTP.escape(url: dbName))", hasBody: false)
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            if let response = response {
-                if response.statusCode != HTTPStatusCode.OK {
-                    if let descOpt = try? response.readString(), let desc = descOpt {
-                        error = CouchDBUtils.createError(response.statusCode,
-                                                         errorDesc: JSON.parse(string: desc), id: nil, rev: nil)
-                    } else {
-                        error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                    }
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(error)
-        }
-        req.end()
+        CouchDBUtils.deleteRequest(options: requestOptions, callback: callback)
     }
 
+    // MARK: UUID
+    
     /// Returns some UUIDs created by CouchDB.
     ///
     /// - parameters:
     ///     - count: The number of UUIDs to get.
-    ///     - callback: Callback containing an array of UUIDs or an NSError if one occured.
-    public func getUUIDs(count : UInt, callback : @escaping ([String]?, NSError?) -> Void) {
+    ///     - callback: Callback containing an array of UUIDs or a `CouchDBError` if one occured.
+    public func getUUIDs(count : UInt, callback : @escaping ([String]?, CouchDBError?) -> Void) {
 
         let url = "/_uuids?count=\(count)"
 
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "GET",
                                                          path: url, hasBody: false)
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var uuids: [String]?
-            if let response = response {
-                if response.statusCode == HTTPStatusCode.OK {
-
-                    var data = Data()
-                    do {
-                        try response.readAllData(into: &data)
-
-                        let responseJSON = JSON(data: data)
-
-                        let uuidsJSON = responseJSON["uuids"]
-
-                        #if swift(>=4.1)
-                        uuids = uuidsJSON.array?.compactMap({ (uuidJSON) -> String? in
-                            return uuidJSON.string
-                        })
-                        #else
-                        uuids = uuidsJSON.array?.flatMap({ (uuidJSON) -> String? in
-                            return uuidJSON.string
-                        })
-                        #endif
-                    } catch let caughtError {
-                        #if os(Linux)
-                            error = NSError(domain: caughtError.localizedDescription, code: -1)
-                        #else
-                            error = caughtError as NSError
-                        #endif
-                    }
-                } else {
-                    error = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(uuids, error)
+        CouchDBUtils.couchRequest(options: requestOptions, passStatusCodes: [.OK]) { (uuids: [String: [String]]?, error) in
+            callback(uuids?["uuids"], nil)
         }
-        req.end()
     }
 
     /// Returns a UUID created by CouchDB.
     ///
-    /// - parameter callback: Callback containing the UUID or an NSError if one occurred.
-    public func getUUID(callback : @escaping (String?, NSError?) -> Void) {
+    /// - parameter callback: Callback containing the UUID or a `CouchDBError` if one occurred.
+    public func getUUID(callback : @escaping (String?, CouchDBError?) -> Void) {
         getUUIDs(count: 1) { (uuids, error) in
             var uuid : String?
             if let uuids = uuids,
@@ -209,185 +177,5 @@ public class CouchDBClient {
             }
             callback(uuid, error)
         }
-    }
-
-    /// Set a CouchDB configuration parameter to a new value.
-    ///
-    /// - parameters:
-    ///     - keyPath: The configuration parameter String to update.
-    ///     - value: The `CouchDBValue` to set the configuration parameter to.
-    ///     - callback: Callback containing an NSError if one occurred.
-    public func setConfig(keyPath: String, value: CouchDBValue, callback: @escaping (NSError?) -> ()) {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
-                                                         method: "PUT",
-                                                         path: "/_config/\(keyPath)",
-                                                         hasBody: true,
-                                                         contentType: "application/json")
-        let req = HTTP.request(requestOptions) { response in
-            var configError: NSError?
-            if let response = response {
-                if response.statusCode != .OK {
-                    configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                }
-            }
-            callback(configError)
-        }
-        #if os(Linux)
-            let body = JSON("\"\(value)\"")
-        #else
-            let body = JSON("\"\(value)\"" as NSString)
-        #endif
-
-        if let body = body.rawString() {
-            req.end(body)
-        } else {
-            req.end()
-        }
-    }
-
-    /// Get the value for a CouchDB configuration parameter.
-    ///
-    /// - parameters:
-    ///     - keyPath: The configuration parameter String to get the value for.
-    ///     - callback: Callback containing the JSON return value for the configuration parameter,
-    ///                 or an NSError if one occurred.
-    public func getConfig(keyPath: String, callback: @escaping (JSON?, NSError?) -> ()) {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
-                                                         method: "GET",
-                                                         path: "/_config/\(keyPath)",
-                                                         hasBody: false,
-                                                         contentType: "application/json")
-        let req = HTTP.request(requestOptions) { response in
-            var configError: NSError?
-            var configJSON: JSON?
-            if let response = response {
-                do {
-                    let body = try response.readString()
-                    if let body = body {
-                        #if os(Linux)
-                            configJSON = JSON(body)
-                        #else
-                            configJSON = JSON(body as NSString)
-                        #endif
-                    }
-                } catch {
-                    configError = CouchDBUtils.createError(response.statusCode, id: nil, rev: nil)
-                }
-            }
-            callback(configJSON, configError)
-        }
-
-        req.end()
-    }
-
-    /// Create a new session for the given user credentials.
-    ///
-    /// - parameters:
-    ///     - name: Username String.
-    ///     - password: Password String.
-    ///     - callback: `SessionCallback` containing the session cookie and JSON response,
-    ///                 or an NSError if one occurred.
-    public func createSession(name: String, password: String, callback: @escaping SessionCallback) {
-        let requestOptions = CouchDBUtils.prepareRequest(connProperties,
-                                                         method: "POST",
-                                                         path: "/_session",
-                                                         hasBody: true,
-                                                         contentType: "application/x-www-form-urlencoded")
-        let body = "name=\(name)&password=\(password)"
-        let id = "org.couchdb.user:\(name)"
-
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var document: JSON?
-            var cookie: String?
-            if let response = response {
-                document = CouchDBUtils.getBodyAsJson(response)
-
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: id, rev: nil)
-                }
-
-                cookie = response.headers["Set-Cookie"]?.first
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: id, rev: nil)
-            }
-            callback(cookie, document, error)
-        }
-        req.end(body)
-    }
-
-    /// Verify a session cookie.
-    ///
-    /// - parameters:
-    ///     - cookie: String session cookie.
-    ///     - callback: `SessionCallback` containing the cookie, JSON response,
-    ///                 and an NSError if the user is not authenticated or an error occurred.
-    public func getSession(cookie: String, callback: @escaping SessionCallback) {
-        var requestOptions: [ClientRequest.Options] = []
-        requestOptions.append(.hostname(connProperties.host))
-        requestOptions.append(.port(connProperties.port))
-        requestOptions.append(.method("GET"))
-        requestOptions.append(.path("/_session"))
-
-        var headers = [String : String]()
-        headers["Accept"] = "application/json"
-        headers["Content-Type"] = "application/json"
-        headers["Cookie"] = cookie
-        requestOptions.append(.headers(headers))
-
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var document: JSON?
-            if let response = response {
-                document = CouchDBUtils.getBodyAsJson(response)
-
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
-                }
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(cookie, document, error)
-        }
-        req.end()
-    }
-
-    /// Logout a session.
-    ///
-    /// - parameters:
-    ///     - cookie: String session cookie.
-    ///     - callback: `SessionCallback` containing the cookie, JSON response,
-    ///                 and NSError if one occurred.
-    public func deleteSession(cookie: String, callback: @escaping SessionCallback) {
-        var requestOptions: [ClientRequest.Options] = []
-        requestOptions.append(.hostname(connProperties.host))
-        requestOptions.append(.port(connProperties.port))
-        requestOptions.append(.method("DELETE"))
-        requestOptions.append(.path("/_session"))
-
-        var headers = [String : String]()
-        headers["Accept"] = "application/json"
-        headers["Content-Type"] = "application/json"
-        headers["Cookie"] = cookie
-        requestOptions.append(.headers(headers))
-
-        let req = HTTP.request(requestOptions) { response in
-            var error: NSError?
-            var document: JSON?
-            var cookie: String?
-            if let response = response {
-                document = CouchDBUtils.getBodyAsJson(response)
-
-                if response.statusCode != HTTPStatusCode.OK {
-                    error = CouchDBUtils.createError(response.statusCode, errorDesc: document, id: nil, rev: nil)
-                }
-
-                cookie = response.headers["Set-Cookie"]?.first
-            } else {
-                error = CouchDBUtils.createError(Database.InternalError, id: nil, rev: nil)
-            }
-            callback(cookie, document, error)
-        }
-        req.end()
     }
 }
