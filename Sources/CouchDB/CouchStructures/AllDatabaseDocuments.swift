@@ -19,6 +19,10 @@ import Foundation
 /// A struct representing the JSON returned when querying a Database or View.  
 /// http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents
 public struct AllDatabaseDocuments {
+    public struct RowHeader: Codable {
+        let id: String
+        let key: String
+    }
     init(total_rows: Int, offset: Int, rows: [[String: Any]], update_seq: String? = nil) {
         self.total_rows = total_rows
         self.offset = offset
@@ -37,4 +41,29 @@ public struct AllDatabaseDocuments {
 
     /// Array of JSON `Document` objects.
     public let rows: [[String: Any]]
+    
+    /// get the Id and Key value for the Documents
+    public var rowHeaders: [RowHeader]? {
+        var rowHeaders = [RowHeader]()
+        for row in rows {
+            guard let data = try? JSONSerialization.data(withJSONObject: row) else {
+                return nil
+            }
+            guard let rowHeader = try? JSONDecoder().decode(RowHeader.self, from: data) else {
+                return nil
+            }
+            rowHeaders.append(rowHeader)
+        }
+        return rowHeaders
+    }
+    
+    /// Iterate through the documents and decode as given type
+    public func findAll<T: Document>(_ type: T.Type) throws -> [T] {
+        var documents = [T]()
+        for row in rows {
+            let data = try JSONSerialization.data(withJSONObject: row["doc"] as Any)
+            documents.append(try JSONDecoder().decode(T.self, from: data))
+        }
+        return documents
+    }
 }
