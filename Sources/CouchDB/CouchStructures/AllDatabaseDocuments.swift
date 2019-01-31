@@ -46,23 +46,25 @@ public struct AllDatabaseDocuments {
     public var rowHeaders: [RowHeader]? {
         var rowHeaders = [RowHeader]()
         for row in rows {
-            guard let data = try? JSONSerialization.data(withJSONObject: row) else {
-                return nil
+            if let data = try? JSONSerialization.data(withJSONObject: row) {
+                if let rowHeader = try? JSONDecoder().decode(RowHeader.self, from: data) {
+                    rowHeaders.append(rowHeader)
+                }
             }
-            guard let rowHeader = try? JSONDecoder().decode(RowHeader.self, from: data) else {
-                return nil
-            }
-            rowHeaders.append(rowHeader)
         }
         return rowHeaders
     }
     
     /// Iterate through the documents and decode as given type
-    public func findAll<T: Document>(_ type: T.Type) throws -> [T] {
+    public func findAll<T: Document>(_ type: T.Type) -> [T] {
         var documents = [T]()
         for row in rows {
-            let data = try JSONSerialization.data(withJSONObject: row["doc"] as Any)
-            documents.append(try JSONDecoder().decode(T.self, from: data))
+            do {
+                let data = try JSONSerialization.data(withJSONObject: row["doc"] as Any)
+                documents.append(try JSONDecoder().decode(T.self, from: data))
+            } catch {
+                // Didn't decode document
+            }
         }
         return documents
     }
