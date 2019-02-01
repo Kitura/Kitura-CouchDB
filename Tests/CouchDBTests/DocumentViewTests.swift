@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016, 2017
+ * Copyright IBM Corporation 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,10 +80,8 @@ class DocumentViewTests: CouchDBTest {
             guard let documents = documents else {
                 return XCTFail("Error in querying by view document \(String(describing: error?.description))")
             }
-            guard let value = ((documents.rows[0])["value"] as? [String:Any])?["value"] as? String,
-                let id = documents.rows[0]["id"] as? String
-                else {
-                    return XCTFail("Error: Keys not found when reading document")
+            guard let value = ((documents.rows[0])["value"] as? [String:Any])?["value"] as? String, let id = documents.rows[0]["id"] as? String else {
+                return XCTFail("Error: Keys not found when reading document")
             }
             
             XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")

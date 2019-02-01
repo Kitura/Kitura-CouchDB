@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016, 2017
+ * Copyright IBM Corporation 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -403,20 +403,6 @@ public class Database {
             req.end()
         }
     }
-
-    /// Retrieve all documents from the database as objects conforming to `Document`
-    ///
-    /// - parameters:
-    ///     - callback: Callback containing an array of objects that conform to `Document` or a `CouchDBError` if one occurred.
-    public func retrieveAll<D>(callback: @escaping ([D]?, CouchDBError?) -> ()) {
-        retrieveAll(includeDocuments: true) { documents, error in
-            if let error = error {
-                return callback(nil, error)
-            }
-
-        }
-    }
-
     
     /// Retrieve all documents from the database
     ///

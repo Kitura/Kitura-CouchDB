@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016, 2017
+ * Copyright IBM Corporation 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,6 @@ class DocumentCrudTests: CouchDBTest {
             let document1 = documents.rows[0]
             guard let id1 = document1["id"] as? String,
                 let value1 = ((document1["doc"] as? [String: Any])?["value"]) as? String
-                //let rev1 = ((document1["doc"] as? [String: Any])?["_rev"]) as? String
                 else {
                     return XCTFail("Error: Keys not found when reading document")
             }
@@ -108,10 +107,8 @@ class DocumentCrudTests: CouchDBTest {
             XCTAssertEqual("value1", value1, "Wrong value read from document")
             
             let document2 = documents.rows[1]
-            guard let id2 = document2["id"] as? String,
-                let value2 = ((document2["doc"] as? [String: Any])?["value"]) as? String
-                else {
-                    return XCTFail("Error: Keys not found when reading document")
+            guard let id2 = document2["id"] as? String, let value2 = ((document2["doc"] as? [String: Any])?["value"]) as? String else {
+                return XCTFail("Error: Keys not found when reading document")
             }
             XCTAssertEqual(self.documentId2, id2, "Wrong documentId read from document")
             XCTAssertEqual("value2", value2, "Wrong value read from document")
