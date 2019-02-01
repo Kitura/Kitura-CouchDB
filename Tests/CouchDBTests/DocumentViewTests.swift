@@ -21,29 +21,29 @@ import Foundation
 @testable import CouchDB
 
 class DocumentViewTests: CouchDBTest {
-
+    
     static var allTests: [(String, (DocumentViewTests) -> () throws -> Void)] {
         return [
-                   ("testViewTest", testViewTest)
+            ("testViewTest", testViewTest)
         ]
     }
     let documentId = "123456"
-
+    
     func testViewTest() {
         setUpDatabase() {
             self.createDocument()
         }
     }
-
+    
     //Create document closure
     func createDocument() {
-        let myDoc = MyDocument(_id: documentId,
-                                 _rev: nil,
-                                 truncated: false,
-                                 created_at: "Tue Aug 28 21:16:23 +0000 2012",
-                                 favorited: false,
-                                 value: "viewTest")
-
+        let myDoc = TypeADocument(_id: documentId,
+                                  _rev: nil,
+                                  truncated: false,
+                                  created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                  favorited: false,
+                                  value: "viewTest")
+        
         database?.create(myDoc, callback: { (document: DocumentResponse?, error) in
             if let error = error {
                 XCTFail("Error in creating document \(error.description)")
@@ -53,15 +53,15 @@ class DocumentViewTests: CouchDBTest {
             }
         })
     }
-
+    
     func createDesign() {
         let name = "test"
         let designDocument = DesignDocument(_id: "_design/\(name)",
-                                            views: [
-                                                "matching" : [
-                                                    "map" : "function(doc) { emit(doc.value, doc); }"
-                                                ]
-                                            ])
+            views: [
+                "matching" : [
+                    "map" : "function(doc) { emit(doc.value, doc); }"
+                ]
+            ])
         database?.createDesign(name, document: designDocument) { (document: DocumentResponse?, error) in
             if let error = error {
                 XCTFail("Error in creating document \(error.description)")
@@ -82,8 +82,8 @@ class DocumentViewTests: CouchDBTest {
             }
             guard let value = ((documents.rows[0])["value"] as? [String:Any])?["value"] as? String,
                 let id = documents.rows[0]["id"] as? String
-            else {
-                return XCTFail("Error: Keys not found when reading document")
+                else {
+                    return XCTFail("Error: Keys not found when reading document")
             }
             
             XCTAssertEqual(self.documentId, id, "Wrong documentId read from document")

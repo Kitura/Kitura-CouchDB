@@ -28,12 +28,12 @@ class AttachmentTests: CouchDBTest {
         ]
     }
     
-    let myDocument = MyDocument(_id: "123456",
-                                 _rev: nil,
-                                 truncated: false,
-                                 created_at: "Tue Aug 28 21:16:23 +0000 2012",
-                                 favorited: false,
-                                 value: "value1")
+    let myDocument = TypeADocument(_id: "123456",
+                                   _rev: nil,
+                                   truncated: false,
+                                   created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                   favorited: false,
+                                   value: "value1")
     
     func testAttachmentTest() {
         setUpDatabase {
