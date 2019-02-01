@@ -16,25 +16,60 @@
 
 import Foundation
 
-/// A struct representing the JSON returned when querying a Database or View.  
+/// A struct representing the JSON returned when querying a Database or View.
 /// http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents
 public struct AllDatabaseDocuments {
+    public struct RowHeader: Codable {
+        let id: String
+        let key: String
+    }
     init(total_rows: Int, offset: Int, rows: [[String: Any]], update_seq: String? = nil) {
         self.total_rows = total_rows
         self.offset = offset
         self.rows = rows
         self.update_seq = update_seq
     }
-
+    
     /// Number of documents in the database/view.
     public let total_rows: Int?
-
+    
     /// Offset where the document list started
     public let offset: Int?
-
+    
     /// Current update sequence for the database.
     public let update_seq: String?
-
+    
     /// Array of JSON `Document` objects.
     public let rows: [[String: Any]]
+    
+    /// get the Id and Key value for the Documents
+    public var rowHeaders: [RowHeader]? {
+        var rowHeaders = [RowHeader]()
+        for row in rows {
+            if let data = try? JSONSerialization.data(withJSONObject: row) {
+                if let rowHeader = try? JSONDecoder().decode(RowHeader.self, from: data) {
+                    rowHeaders.append(rowHeader)
+                }
+            }
+        }
+        return rowHeaders
+    }
+    
+    /// Iterate through the documents and decode as given type
+    public func findAll<T: Document>(_ type: T.Type) -> [T] {
+        var documents = [T]()
+        for row in rows {
+            do {
+                let document = row["doc"]
+                if document == nil {
+                    continue
+                }
+                let data = try JSONSerialization.data(withJSONObject: document as Any)
+                documents.append(try JSONDecoder().decode(T.self, from: data))
+            } catch {
+                // Didn't decode document
+            }
+        }
+        return documents
+    }
 }

@@ -404,6 +404,19 @@ public class Database {
         }
     }
 
+    /// Retrieve all documents from the database as objects conforming to `Document`
+    ///
+    /// - parameters:
+    ///     - callback: Callback containing an array of objects that conform to `Document` or a `CouchDBError` if one occurred.
+    public func retrieveAll<D>(callback: @escaping ([D]?, CouchDBError?) -> ()) {
+        retrieveAll(includeDocuments: true) { documents, error in
+            if let error = error {
+                return callback(nil, error)
+            }
+
+        }
+    }
+
     
     /// Retrieve all documents from the database
     ///
