@@ -20,7 +20,7 @@ import Foundation
 import CouchDB
 
 class Utils {
-    
+
     struct Credentials: Codable {
         let host: String
         let port: UInt16
@@ -33,7 +33,7 @@ class Utils {
             self.password = password
         }
     }
-    
+
     static func readCredentials() -> Credentials? {
         // Read in credentials an Data
         let credentialsData: Data
@@ -52,7 +52,7 @@ class Utils {
             print("Failed to read in the credentials.json file")
             return nil
         }
-        
+
         guard let credentialsJson = try? JSONDecoder().decode(Credentials.self, from: credentialsData) else {
             print("Error in credentials.json.")
             return nil

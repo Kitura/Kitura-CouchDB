@@ -21,20 +21,20 @@ import Foundation
 @testable import CouchDB
 
 class DocumentViewTests: CouchDBTest {
-    
+
     static var allTests: [(String, (DocumentViewTests) -> () throws -> Void)] {
         return [
             ("testViewTest", testViewTest)
         ]
     }
     let documentId = "123456"
-    
+
     func testViewTest() {
         setUpDatabase() {
             self.createDocument()
         }
     }
-    
+
     //Create document closure
     func createDocument() {
         let myDoc = TypeADocument(_id: documentId,
@@ -43,7 +43,7 @@ class DocumentViewTests: CouchDBTest {
                                   created_at: "Tue Aug 28 21:16:23 +0000 2012",
                                   favorited: false,
                                   value: "viewTest")
-        
+
         database?.create(myDoc, callback: { (document: DocumentResponse?, error) in
             if let error = error {
                 XCTFail("Error in creating document \(error.description)")
@@ -53,7 +53,7 @@ class DocumentViewTests: CouchDBTest {
             }
         })
     }
-    
+
     func createDesign() {
         let name = "test"
         let designDocument = DesignDocument(_id: "_design/\(name)",

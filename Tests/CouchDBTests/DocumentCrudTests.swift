@@ -21,13 +21,13 @@ import Foundation
 @testable import CouchDB
 
 class DocumentCrudTests: CouchDBTest {
-    
+
     static var allTests: [(String, (DocumentCrudTests) -> () throws -> Void)] {
         return [
             ("testCrudTest", testCrudTest)
         ]
     }
-    
+
     let documentId1 = "123456"
     let documentId2 = "654321"
     let documentId3 = "abcdef"
@@ -74,7 +74,7 @@ class DocumentCrudTests: CouchDBTest {
             }
         })
     }
-    
+
     //Read document
     func readDocument() {
         database?.retrieve(documentId1, callback: { (document: TypeADocument?, error) in
@@ -168,7 +168,7 @@ class DocumentCrudTests: CouchDBTest {
             self.delay(self.confirmUpdate)
         })
     }
-    
+
     //Re-read document to confirm update
     func confirmUpdate() {
         database?.retrieve(documentId1, callback: { (document: TypeADocument?, error) in
