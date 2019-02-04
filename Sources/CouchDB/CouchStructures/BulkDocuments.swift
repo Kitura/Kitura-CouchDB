@@ -28,11 +28,28 @@ public struct BulkDocuments {
     /// An array of JSON `Document` objects.
     public var docs: [[String: Any]]
 
-    /// Initialize a `BulkDocuments` instance.
+    /// Initialize a `BulkDocuments` instance from the documents `[String: Any]` representation.
     ///
     /// - parameter docs: An array of JSON `Document` objects.
     /// - parameter new_edits: A Bool to set whether CouchDB assigns documents new revision IDs.
     public init(docs: [[String: Any]], new_edits: Bool? = nil) {
+        self.docs = docs
+        self.new_edits = new_edits
+    }
+    
+    /// Initialize a `BulkDocuments` instance by encoding a `Document` array.
+    ///
+    /// - parameter docs: An array of JSON `Document` objects.
+    /// - parameter new_edits: A Bool to set whether CouchDB assigns documents new revision IDs.
+    /// - throws: An encoding error if JSONEncoder fails to encode the Document.
+    public init<T: Document>(encoding: [T], new_edits: Bool? = nil) throws {
+        var docs = [[String: Any]]()
+        for document in encoding {
+            let jsonData = try JSONEncoder().encode(document)
+            if let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
+                docs.append(jsonObject)
+            }
+        }
         self.docs = docs
         self.new_edits = new_edits
     }

@@ -162,7 +162,7 @@ func readAllDocuments() {
             print("Error: \(error.description) Code: \(error.statusCode)")
         } else {
             print(">> Successfully read \(String(describing: documents?.total_rows)) documents from database")
-            let typedDocuments = documents?.findAll(MyDocument.self)
+            let typedDocuments = documents?.decodeDocuments(ofType: MyDocument.self)
             print(">> Successfully read \(String(describing: typedDocuments?.count)) documents from database")
             readDocument()
         }

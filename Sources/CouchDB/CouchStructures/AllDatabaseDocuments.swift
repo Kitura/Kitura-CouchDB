@@ -19,10 +19,7 @@ import Foundation
 /// A struct representing the JSON returned when querying a Database or View.
 /// http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents
 public struct AllDatabaseDocuments {
-    public struct RowHeader: Codable {
-        let id: String
-        let key: String
-    }
+
     init(total_rows: Int, offset: Int, rows: [[String: Any]], update_seq: String? = nil) {
         self.total_rows = total_rows
         self.offset = offset
@@ -39,35 +36,23 @@ public struct AllDatabaseDocuments {
     /// Current update sequence for the database.
     public let update_seq: String?
     
-    /// Array of JSON `Document` objects.
+    /// The JSON response from a request to the view endpoint.
+    /// Each element of the array contains an "id", "key" and "value" field.
+    /// If "include_docs" was true, also contains the corresponding `Document` inside the "doc" field.
+    /// http://docs.couchdb.org/en/stable/api/ddoc/views.html#api-ddoc-view
     public let rows: [[String: Any]]
     
-    /// get the Id and Key value for the Documents
-    public var rowHeaders: [RowHeader]? {
-        var rowHeaders = [RowHeader]()
-        for row in rows {
-            if let data = try? JSONSerialization.data(withJSONObject: row) {
-                if let rowHeader = try? JSONDecoder().decode(RowHeader.self, from: data) {
-                    rowHeaders.append(rowHeader)
-                }
-            }
-        }
-        return rowHeaders
-    }
-    
-    /// Iterate through the documents and decode as given type
-    public func findAll<T: Document>(_ type: T.Type) -> [T] {
+    /// This function iterates through the `AllDatabaseDocuments` rows
+    /// and returns the documents that could be successfully decoded as the given type.
+    /// If the "includeDocuments" query parameter was false, this will return an empty array.
+    public func decodeDocuments<T: Document>(ofType: T.Type) -> [T] {
         var documents = [T]()
         for row in rows {
-            do {
-                let document = row["doc"]
-                if document == nil {
-                    continue
-                }
-                let data = try JSONSerialization.data(withJSONObject: document as Any)
-                documents.append(try JSONDecoder().decode(T.self, from: data))
-            } catch {
-                // Didn't decode document
+            if let document = row["doc"],
+                let data = try? JSONSerialization.data(withJSONObject: document),
+                let decodedDocument = try? JSONDecoder().decode(T.self, from: data)
+            {
+                documents.append(decodedDocument)
             }
         }
         return documents

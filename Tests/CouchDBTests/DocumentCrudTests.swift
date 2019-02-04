@@ -122,8 +122,8 @@ class DocumentCrudTests: CouchDBTest {
     
     func retrieveAllTyped(_ documents: AllDatabaseDocuments) {
         // ensure that objects can be strongly typed if documents are returned
-        let typeADocs = documents.findAll(TypeADocument.self)
-        let typeBDocs = documents.findAll(TypeBDocument.self)
+        let typeADocs = documents.decodeDocuments(ofType: TypeADocument.self)
+        let typeBDocs = documents.decodeDocuments(ofType: TypeBDocument.self)
         XCTAssertEqual(2, typeADocs.count, "Incorrect number of TypeADocument objects retrieved from database")
         XCTAssertEqual(1, typeBDocs.count, "Incorrect number of TypeBDocument objects retrieved from database")
         guard let myRetrievedDocA = typeADocs.first, let myRetrievedDocB = typeBDocs.first else {
@@ -144,8 +144,8 @@ class DocumentCrudTests: CouchDBTest {
             guard let emptyDocuments = emptyDocuments else {
                 return XCTFail("Error in retrieving all documents when includeDocuments is false \(String(describing: error?.description))")
             }
-            let typeAEmpty = emptyDocuments.findAll(TypeADocument.self)
-            let typeBEmpty = emptyDocuments.findAll(TypeBDocument.self)
+            let typeAEmpty = emptyDocuments.decodeDocuments(ofType: TypeADocument.self)
+            let typeBEmpty = emptyDocuments.decodeDocuments(ofType: TypeBDocument.self)
             XCTAssertNotEqual(typeADocs.count, typeAEmpty.count, "Strongly typed document array should not return any documents if includeDocuments is false")
             XCTAssertNotEqual(typeBDocs.count, typeBEmpty.count, "Strongly typed document array should not return any documents if includeDocuments is false")
             self.delay {
