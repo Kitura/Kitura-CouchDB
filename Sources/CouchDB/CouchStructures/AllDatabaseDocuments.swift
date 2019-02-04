@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2018
+ * Copyright IBM Corporation 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Foundation
 
-/// A struct representing the JSON returned when querying a Database or View.  
+/// A struct representing the JSON returned when querying a Database or View.
 /// http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents
 public struct AllDatabaseDocuments {
     public struct RowHeader: Codable {
@@ -29,16 +29,16 @@ public struct AllDatabaseDocuments {
         self.rows = rows
         self.update_seq = update_seq
     }
-
+    
     /// Number of documents in the database/view.
     public let total_rows: Int?
-
+    
     /// Offset where the document list started
     public let offset: Int?
-
+    
     /// Current update sequence for the database.
     public let update_seq: String?
-
+    
     /// Array of JSON `Document` objects.
     public let rows: [[String: Any]]
     
@@ -60,7 +60,11 @@ public struct AllDatabaseDocuments {
         var documents = [T]()
         for row in rows {
             do {
-                let data = try JSONSerialization.data(withJSONObject: row["doc"] as Any)
+                let document = row["doc"]
+                if document == nil {
+                    continue
+                }
+                let data = try JSONSerialization.data(withJSONObject: document as Any)
                 documents.append(try JSONDecoder().decode(T.self, from: data))
             } catch {
                 // Didn't decode document
