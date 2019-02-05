@@ -404,6 +404,7 @@ public class Database {
         }
     }
     
+    
     /// Retrieve all documents from the database
     ///
     /// - parameters:
