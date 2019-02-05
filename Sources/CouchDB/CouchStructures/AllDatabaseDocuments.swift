@@ -19,7 +19,6 @@ import Foundation
 /// A struct representing the JSON returned when querying a Database or View.
 /// http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents
 public struct AllDatabaseDocuments {
-
     init(total_rows: Int, offset: Int, rows: [[String: Any]], update_seq: String? = nil) {
         self.total_rows = total_rows
         self.offset = offset
