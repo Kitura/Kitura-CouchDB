@@ -1,5 +1,5 @@
 /**
-* Copyright IBM Corporation 2016, 2017
+* Copyright IBM Corporation 2016, 2017, 2019
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ else {
 }
 
 let username: String?
-let password: String? 
+let password: String?
 if args.count == 5 {
     username = args[3]
     password = args[4]
@@ -104,11 +104,11 @@ struct MyDocument: Document {
     let value: String
 }
 var myDocument = MyDocument(_id: documentId,
-                                _rev: nil,
-                                truncated: false,
-                                created_at: Date(),
-                                favorited: false,
-                                value: "value1")
+                            _rev: nil,
+                            truncated: false,
+                            created_at: Date(),
+                            favorited: false,
+                            value: "value1")
 // MARK: Chainer
 
 func chainer(_ document: MyDocument?, next: (String) -> Void) {
@@ -148,11 +148,26 @@ func createDocument() {
             print("Error: \(error.localizedDescription) Code: \(error.statusCode)")
         } else {
             print(">> Successfully created the following JSON document in CouchDB:\n\t\(String(describing: document))")
-            readDocument()
+            readAllDocuments()
         }
     }
 }
 
+// MARK: Read all documents
+
+func readAllDocuments() {
+    database?.retrieveAll(includeDocuments: true) { documents, error in
+        if let error = error {
+            print("Oops something went wrong; could not read document.")
+            print("Error: \(error.description) Code: \(error.statusCode)")
+        } else {
+            print(">> Successfully read \(String(describing: documents?.total_rows)) documents from database")
+            let typedDocuments = documents?.decodeDocuments(ofType: MyDocument.self)
+            print(">> Successfully read \(String(describing: typedDocuments?.count)) documents from database")
+            readDocument()
+        }
+    }
+}
 
 // MARK: Read document
 
@@ -174,15 +189,15 @@ func readDocument() {
 
 func updateDocument(revisionNumber: String) {
     database?.update(documentId, rev: revisionNumber, document: myDocument) { (response, error) in
-            if let error = error {
-                print(">> Oops something went wrong; could not update document.")
-                print("Error: \(error.description) Code: \(error.statusCode)")
-            } else {
-                myDocument._rev = response?.rev
-                print(">> Successfully updated the JSON document with ID" +
-                    "\(documentId) in CouchDB:\n\t\(String(describing: response))")
-                chainer(myDocument, next: deleteDocument)
-            }
+        if let error = error {
+            print(">> Oops something went wrong; could not update document.")
+            print("Error: \(error.description) Code: \(error.statusCode)")
+        } else {
+            myDocument._rev = response?.rev
+            print(">> Successfully updated the JSON document with ID" +
+                "\(documentId) in CouchDB:\n\t\(String(describing: response))")
+            chainer(myDocument, next: deleteDocument)
+        }
     }
 }
 
@@ -191,12 +206,12 @@ func updateDocument(revisionNumber: String) {
 
 func deleteDocument(revisionNumber: String) {
     database?.delete(documentId, rev: revisionNumber) { (error) in
-            if let error = error {
-                print(">> Oops something went wrong; could not delete document.")
-                print("Error: \(error.description) Code: \(error.statusCode)")
-            } else {
-                print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
-            }
+        if let error = error {
+            print(">> Oops something went wrong; could not delete document.")
+            print("Error: \(error.description) Code: \(error.statusCode)")
+        } else {
+            print(">> Successfully deleted the JSON document with ID \(documentId) from CouchDB.")
+        }
     }
 }
 

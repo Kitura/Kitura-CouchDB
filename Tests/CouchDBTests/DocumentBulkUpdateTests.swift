@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016, 2017
+ * Copyright IBM Corporation 2016, 2017, 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ class DocumentBulkUpdateTests: CouchDBTest {
         return [
             ("testBulkInsert", testBulkInsert),
             ("testBulkUpdate", testBulkUpdate),
-            ("testBulkDelete", testBulkDelete)
+            ("testBulkDelete", testBulkDelete),
+            ("testCodableBulkDelete", testCodableBulkDelete),
         ]
     }
 
@@ -68,6 +69,19 @@ class DocumentBulkUpdateTests: CouchDBTest {
                 "userId": "8901234",
                 "addressId": "2345678"]
 
+    let bulkDoc1 = BulkTest(_id: "bulk123",
+                                 _rev: nil,
+                                 _deleted: false,
+                                 value: "value1")
+    let bulkDoc2 = BulkTest(_id: "bulk456",
+                            _rev: nil,
+                            _deleted: false,
+                            value: "value2")
+    let bulkDoc3 = BulkTest(_id: "bulk789",
+                            _rev: nil,
+                            _deleted: false,
+                            value: "value3")
+    
     // MARK: - Xcode tests
 
     func testBulkInsert() {
@@ -220,4 +234,67 @@ class DocumentBulkUpdateTests: CouchDBTest {
             }
         }
     }
+    
+    func testCodableBulkDelete() {
+        setUpDatabase() {
+            guard let database = self.database else {
+                return XCTFail("Failed to retrieve database")
+            }
+            
+            guard let documents = try? BulkDocuments(encoding: [self.bulkDoc1, self.bulkDoc2, self.bulkDoc3]) else {
+                return XCTFail("Failed to encode documents")
+            }
+            
+            // Bulk insert documents
+            database.bulk(documents:  documents) { bulkResponse, error in
+                guard let bulkResponse = bulkResponse else {
+                    return XCTFail("Failed to bulk insert documents into database, error: \(String(describing: error?.localizedDescription))")
+                }
+                
+                XCTAssert(bulkResponse.count == documents.docs.count, "Incorrect number of documents inserted, error: Couldn't insert all documents")
+                
+                // Get all documents and build the payload sent for bulk deletion
+                database.retrieveAll(includeDocuments: true) { bulkResponse, error in
+                    guard let retrievedDocuments = bulkResponse?.decodeDocuments(ofType: BulkTest.self) else {
+                        return XCTFail("Failed to decode all documents, error: \(String(describing: error?.localizedDescription))")
+                    }
+                    
+                    XCTAssert(retrievedDocuments.count == documents.docs.count, "Incorrect number of documents retrieved, error: Couldn't insert all documents")
+                    
+                    let documentsToDelete = retrievedDocuments.map() {
+                        BulkTest(_id: $0._id, _rev: $0._rev, _deleted: true, value: $0.value)
+                    }
+                    guard let bulkDelete = try? BulkDocuments(encoding: documentsToDelete) else {
+                        return XCTFail("Failed to encode documents to delete")
+                    }
+                    // Bulk delete documents
+                    database.bulk(documents: bulkDelete) { bulkResponse, error in
+                        guard let bulkResponse = bulkResponse else {
+                            return XCTFail("Failed to bulk delete documents from database, error: \(String(describing: error?.localizedDescription))")
+                        }
+                        
+                        // Check if all documents were deleted successfully
+                        guard (bulkResponse.reduce(true) { $0 && ($1.ok ?? false) }) == true else {
+                            return XCTFail("Failed to bulk delete documents from database, error: Not all documents were deleted successfully")
+                        }
+                        
+                        // Get all documents (there should be none)
+                        database.retrieveAll() { bulkResponse, error in
+                            if let error = error {
+                                return XCTFail("Failed to retrieve all documents, error: \(error.localizedDescription)")
+                            }
+                            XCTAssert(bulkResponse?.rows.count == 0, "Failed to bulk delete documents from database, error: Not all documents were deleted")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct BulkTest: Document {
+    let _id: String?
+    var _rev: String?
+    var _deleted: Bool?
+    let value: String
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2018
+ * Copyright IBM Corporation 2018, 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ class AttachmentTests: CouchDBTest {
         ]
     }
     
-    let myDocument = MyDocument(_id: "123456",
-                                 _rev: nil,
-                                 truncated: false,
-                                 created_at: "Tue Aug 28 21:16:23 +0000 2012",
-                                 favorited: false,
-                                 value: "value1")
+    let myDocument = TypeADocument(_id: "123456",
+                                   _rev: nil,
+                                   truncated: false,
+                                   created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                   favorited: false,
+                                   value: "value1")
     
     func testAttachmentTest() {
         setUpDatabase {
