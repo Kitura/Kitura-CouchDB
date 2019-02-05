@@ -403,7 +403,7 @@ public class Database {
             req.end()
         }
     }
-    
+
     
     /// Retrieve all documents from the database
     ///
