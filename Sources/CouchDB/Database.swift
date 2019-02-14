@@ -405,8 +405,37 @@ public class Database {
     }
 
     
-    /// Retrieve all documents from the database
-    ///
+    /**
+     Retrieve all documents in the database using the CouchDB `_all_docs` view.
+     If `includeDocuments` is false, each returned `AllDatabaseDocuments` row will be structured:
+     ```
+     [
+        "id": "<_id>",
+        "key": "<_id>",
+        "value": [ "rev": "<_rev>" ]
+     ]
+     ```
+     If `includeDocuments` is true, each row will have an additional "doc" field containing the JSON document.
+     These documents can then be decoded to a given swift type using `decodeDocuments(ofType:)`.
+     https://docs.couchdb.org/en/stable/api/database/bulk-api.html  
+     ### Usage Example: ###
+     ```swift
+     struct MyDocument: Document {
+         let _id: String?
+         var _rev: String?
+         var value: String
+     }
+     database.retrieveAll(includeDocuments: true) { (allDocs, error) in
+         if let allDocs = allDocs,
+             let decodedDocs = allDocs.decodeDocuments(ofType: MyDocument)
+         {
+             for doc in decodedDocs {
+                 print("Retrieved MyDocument with value: \(doc.value)")
+             }
+         }
+     }
+     ```
+     */
     /// - parameters:
     ///     - includeDocuments: Bool indicating whether to return the full contents of the documents.
     ///                         Defaults to `false`.
