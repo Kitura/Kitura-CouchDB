@@ -19,8 +19,9 @@ import Foundation
 /**
  A struct representing the JSON returned when querying a Database or View.
  If `includeDocuments` was true for the query, each row will have an additional "doc" field containing the JSON document.
- These documents can then be decoded to a given swift type using `decodeDocuments(ofType:)`.
- http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents  
+ These documents can then be decoded to a given Swift type using `decodeDocuments(ofType:)`.
+ 
+ CouchDB reference: [`All_Database_Documents`](http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents)
  ### Usage Example: ###
  ```swift
  struct MyDocument: Document {

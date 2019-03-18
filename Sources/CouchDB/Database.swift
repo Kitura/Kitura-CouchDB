@@ -407,7 +407,7 @@ public class Database {
     
     /**
      Retrieve all documents in the database using the CouchDB `_all_docs` view.
-     If `includeDocuments` is false, each returned `AllDatabaseDocuments` row will be structured:
+     If `includeDocuments` is false, each returned `AllDatabaseDocuments` row will be structured as follows:
      ```
      [
         "id": "<_id>",
