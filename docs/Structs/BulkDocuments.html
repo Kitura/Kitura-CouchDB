@@ -115,8 +115,9 @@
                 </div>
               </div>
             <p>A struct representing an array of JSON documents.
-This is used for adding or updating multiple documents at once using the bulk api.<br>
-<a href="http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs">http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs</a></p>
+This is used for adding or updating multiple documents at once using the bulk api.  </p>
+
+<p>CouchDB reference: <a href="http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs"><code>/db/_bulk_docs</code></a></p>
 
           </div>
         </section>
@@ -138,7 +139,7 @@ This is used for adding or updating multiple documents at once using the bulk ap
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>If false, prevents the database from assigning documents new revision IDs
+                        <p>If false, prevents the database from assigning documents new revision IDs.<br>
 If new_edits is nil, CouchDB defaults to true.</p>
 
                       </div>
@@ -193,7 +194,7 @@ If new_edits is nil, CouchDB defaults to true.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Initialize a <code>BulkDocuments</code> instance.</p>
+                        <p>Initialize a <code>BulkDocuments</code> instance from the documents <code>[String: Any]</code> representation.</p>
 
                       </div>
                       <div class="declaration">
@@ -201,6 +202,57 @@ If new_edits is nil, CouchDB defaults to true.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">docs</span><span class="p">:</span> <span class="p">[[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]],</span> <span class="nv">new_edits</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>docs</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An array of JSON <code><a href="../Protocols/Document.html">Document</a></code> objects.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB13BulkDocumentsVACSayxG8encoding_SbSg9new_editstKcAA8DocumentRzlufc"></a>
+                    <a name="//apple_ref/swift/Method/init(encoding:new_edits:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB13BulkDocumentsVACSayxG8encoding_SbSg9new_editstKcAA8DocumentRzlufc">init(encoding:new_edits:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initialize a <code>BulkDocuments</code> instance by encoding a <code><a href="../Protocols/Document.html">Document</a></code> array.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An encoding error if JSONEncoder fails to encode the Document.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Document.html">Document</a></span><span class="o">&gt;</span><span class="p">(</span><span class="nv">encoding</span><span class="p">:</span> <span class="p">[</span><span class="kt">T</span><span class="p">],</span> <span class="nv">new_edits</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -234,7 +286,7 @@ If new_edits is nil, CouchDB defaults to true.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-03-18)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

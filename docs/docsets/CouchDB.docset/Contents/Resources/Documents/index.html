@@ -205,31 +205,34 @@
 </code></pre>
 
 <ul>
-<li>Create a new database
-<code>swift
-couchDBClient.createDB(&quot;NewDB&quot;) { (database, error) in
-if let database = database {
-    // Use database
-}
-}
-</code></li>
-<li>Get an existing database
-<code>swift
-couchDBClient.retrieveDB(&quot;ExistingDB&quot;) { (database, error) in
-if let database = database {
-    // Use database
-}
-}
-</code></li>
-<li>Delete a database
-<code>swift
-couchDBClient.deleteDB(&quot;ExistingDB&quot;) { (error) in
-if let error = error {
-    // Handle the error
-}
-}
-</code></li>
+<li>Create a new database</li>
 </ul>
+<pre class="highlight swift"><code><span class="n">couchDBClient</span><span class="o">.</span><span class="nf">createDB</span><span class="p">(</span><span class="s">"NewDB"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">database</span> <span class="o">=</span> <span class="n">database</span> <span class="p">{</span>
+        <span class="c1">// Use database</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<ul>
+<li>Get an existing database</li>
+</ul>
+<pre class="highlight swift"><code><span class="n">couchDBClient</span><span class="o">.</span><span class="nf">retrieveDB</span><span class="p">(</span><span class="s">"ExistingDB"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">database</span> <span class="o">=</span> <span class="n">database</span> <span class="p">{</span>
+        <span class="c1">// Use database</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<ul>
+<li>Delete a database</li>
+</ul>
+<pre class="highlight swift"><code><span class="n">couchDBClient</span><span class="o">.</span><span class="nf">deleteDB</span><span class="p">(</span><span class="s">"ExistingDB"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">error</span> <span class="o">=</span> <span class="n">error</span> <span class="p">{</span>
+        <span class="c1">// Handle the error</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 <h4 id='database' class='heading'>Database</h4>
 
 <p>The <code><a href="Classes/Database.html">Database</a></code> class is used to make HTTP requests to the corresponding CouchDB database. This class can make CRUD (Create, Retrieve, Update, Delete) requests for:</p>
@@ -241,45 +244,50 @@ if let error = error {
 <li>A <code><a href="Protocols/Document.html">Document</a></code> attachment</li>
 </ul>
 
-<p>The following code demonstrates the CRUD operations for a single <code><a href="Protocols/Document.html">Document</a></code>:</p>
+<p>The following code demonstrates the CRUD operations for a single <code><a href="Protocols/Document.html">Document</a></code>:  </p>
 <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">myDocument</span> <span class="o">=</span> <span class="kt">MyDocument</span><span class="p">(</span><span class="nv">_id</span><span class="p">:</span> <span class="s">"Kitura"</span><span class="p">,</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="s">"Hello World"</span><span class="p">)</span>
 </code></pre>
 
 <ul>
-<li>Create a Document
-<code>swift
-database.create(myDocument) { (response, error) in
-if let response = response {
-    print(&quot;Document: \(response.id), created with rev: \(response.rev)&quot;)
-}
-}
-</code></li>
-<li>Retrieve a Document
-<code>swift
-database.retrieve(&quot;Kitura&quot;) { (document: MyDocument?, error: CouchDBError?) in
-if let document = document {
-    print(&quot;Retrieved document with value: \(document.value)&quot;)
-}
-}
-</code></li>
-<li>Update a Document
-<code>swift
-myDocument.value = &quot;New Value&quot;
-database.update(&quot;Kitura&quot;, rev: &quot;&lt;latest_rev&gt;&quot;, document: myDocument) { (response, error) in
-if let response = response {
-    print(&quot;Document: \(response.id), updated&quot;)
-}
-}
-</code></li>
-<li>Delete a Document
-<code>swift
-database.delete(&quot;Kitura&quot;, rev: &quot;&lt;latest_rev&gt;&quot;) { (error) in
-if error == nil {
-    print(&quot;Document successfully deleted&quot;)
-}
-}
-</code></li>
+<li>Create a Document:<br></li>
 </ul>
+<pre class="highlight swift"><code><span class="n">database</span><span class="o">.</span><span class="nf">create</span><span class="p">(</span><span class="n">myDocument</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">response</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Document: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">id</span><span class="se">)</span><span class="s">, created with rev: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">rev</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<ul>
+<li>Retrieve a Document:<br></li>
+</ul>
+<pre class="highlight swift"><code><span class="n">database</span><span class="o">.</span><span class="nf">retrieve</span><span class="p">(</span><span class="s">"Kitura"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="nv">document</span><span class="p">:</span> <span class="kt">MyDocument</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">CouchDBError</span><span class="p">?)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">document</span> <span class="o">=</span> <span class="n">document</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Retrieved document with value: </span><span class="se">\(</span><span class="n">document</span><span class="o">.</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<ul>
+<li>Update a Document:<br></li>
+</ul>
+<pre class="highlight swift"><code><span class="n">myDocument</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s">"New Value"</span>
+<span class="n">database</span><span class="o">.</span><span class="nf">update</span><span class="p">(</span><span class="s">"Kitura"</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="s">"&lt;latest_rev&gt;"</span><span class="p">,</span> <span class="nv">document</span><span class="p">:</span> <span class="n">myDocument</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">response</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Document: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">id</span><span class="se">)</span><span class="s">, updated"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<ul>
+<li>Delete a Document:<br></li>
+</ul>
+<pre class="highlight swift"><code><span class="n">database</span><span class="o">.</span><span class="nf">delete</span><span class="p">(</span><span class="s">"Kitura"</span><span class="p">,</span> <span class="nv">rev</span><span class="p">:</span> <span class="s">"&lt;latest_rev&gt;"</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Document successfully deleted"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 
 <p>For more information visit our <a href="https://ibm-swift.github.io/Kitura-CouchDB/index.html">API reference</a>.</p>
 <h2 id='community' class='heading'>Community</h2>
@@ -296,7 +304,7 @@ if error == nil {
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-03-18)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
