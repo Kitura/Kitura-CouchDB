@@ -18,7 +18,8 @@ import Foundation
 import KituraNet
 
 /// A struct representing the JSON response from CouchDB when an error occurs.  
-/// http://docs.couchdb.org/en/stable/json-structure.html#couchdb-error-status
+///
+/// CouchDB reference: [`CouchDB_Error_Status`](http://docs.couchdb.org/en/stable/json-structure.html#couchdb-error-status)
 public struct CouchDBError: Codable, Swift.Error, CustomStringConvertible {
     
     /// Return a human readable description of the error.

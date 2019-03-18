@@ -18,10 +18,11 @@ import Foundation
 
 /// A struct representing an array of JSON documents.
 /// This is used for adding or updating multiple documents at once using the bulk api.  
-/// http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
+/// 
+/// CouchDB reference: [`/db/_bulk_docs`](http://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs)
 public struct BulkDocuments {
 
-    /// If false, prevents the database from assigning documents new revision IDs
+    /// If false, prevents the database from assigning documents new revision IDs.  
     /// If new_edits is nil, CouchDB defaults to true.
     public let new_edits: Bool?
 

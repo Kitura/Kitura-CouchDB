@@ -114,8 +114,27 @@
 
                 </div>
               </div>
-            <p>A struct representing the JSON returned when querying a Database or View.<br>
-<a href="http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents">http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents</a></p>
+            <p>A struct representing the JSON returned when querying a Database or View.
+If <code>includeDocuments</code> was true for the query, each row will have an additional <q>doc</q> field containing the JSON document.
+These documents can then be decoded to a given Swift type using <code>decodeDocuments(ofType:)</code>.</p>
+
+<p>CouchDB reference: <a href="http://docs.couchdb.org/en/stable/json-structure.html#all-database-documents"><code>All_Database_Documents</code></a></p>
+<h3 id='usage-example' class='heading'>Usage Example:</h3>
+<pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">MyDocument</span><span class="p">:</span> <span class="kt">Document</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">_id</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">String</span>
+<span class="p">}</span>
+<span class="n">database</span><span class="o">.</span><span class="nf">retrieveAll</span><span class="p">(</span><span class="nv">includeDocuments</span><span class="p">:</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">allDocs</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">allDocs</span> <span class="o">=</span> <span class="n">allDocs</span><span class="p">,</span>
+       <span class="k">let</span> <span class="nv">decodedDocs</span> <span class="o">=</span> <span class="n">allDocs</span><span class="o">.</span><span class="nf">decodeDocuments</span><span class="p">(</span><span class="nv">ofType</span><span class="p">:</span> <span class="kt">MyDocument</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="k">in</span> <span class="n">decodedDocs</span> <span class="p">{</span>
+           <span class="nf">print</span><span class="p">(</span><span class="s">"Retrieved MyDocument with value: </span><span class="se">\(</span><span class="n">doc</span><span class="o">.</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 
           </div>
         </section>
@@ -218,7 +237,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Array of JSON <code><a href="../Protocols/Document.html">Document</a></code> objects.</p>
+                        <p>The JSON response from a request to the view endpoint.
+Each element of the array contains an <q>id</q>, <q>key</q> and <q>value</q> field.
+If <q>include_docs</q> was true, also contains the corresponding <code><a href="../Protocols/Document.html">Document</a></code> inside the <q>doc</q> field.
+<a href="http://docs.couchdb.org/en/stable/api/ddoc/views.html#api-ddoc-view">http://docs.couchdb.org/en/stable/api/ddoc/views.html#api-ddoc-view</a></p>
 
                       </div>
                       <div class="declaration">
@@ -226,6 +248,35 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">rows</span><span class="p">:</span> <span class="p">[[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CouchDB20AllDatabaseDocumentsV06decodeE0SayxGxm6ofType_tAA8DocumentRzlF"></a>
+                    <a name="//apple_ref/swift/Method/decodeDocuments(ofType:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CouchDB20AllDatabaseDocumentsV06decodeE0SayxGxm6ofType_tAA8DocumentRzlF">decodeDocuments(ofType:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>This function iterates through the <code>AllDatabaseDocuments</code> rows
+and returns the documents that could be successfully decoded as the given type.
+If the <q>includeDocuments</q> query parameter was false, this will return an empty array.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">decodeDocuments</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Document.html">Document</a></span><span class="o">&gt;</span><span class="p">(</span><span class="nv">ofType</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">T</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -240,7 +291,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-03-18)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

@@ -633,7 +633,34 @@ saved.
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Retrieve all documents from the database</p>
+                        <p>Retrieve all documents in the database using the CouchDB <code>_all_docs</code> view.
+If <code>includeDocuments</code> is false, each returned <code><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></code> row will be structured as follows:</p>
+<pre class="highlight swift"><code><span class="p">[</span>
+   <span class="s">"id"</span><span class="p">:</span> <span class="s">"&lt;_id&gt;"</span><span class="p">,</span>
+   <span class="s">"key"</span><span class="p">:</span> <span class="s">"&lt;_id&gt;"</span><span class="p">,</span>
+   <span class="s">"value"</span><span class="p">:</span> <span class="p">[</span> <span class="s">"rev"</span><span class="p">:</span> <span class="s">"&lt;_rev&gt;"</span> <span class="p">]</span>
+<span class="p">]</span>
+</code></pre>
+
+<p>If <code>includeDocuments</code> is true, each row will have an additional <q>doc</q> field containing the JSON document.
+These documents can then be decoded to a given swift type using <code>decodeDocuments(ofType:)</code>.
+<a href="https://docs.couchdb.org/en/stable/api/database/bulk-api.html">https://docs.couchdb.org/en/stable/api/database/bulk-api.html</a>  </p>
+<h3 id='usage-example' class='heading'>Usage Example:</h3>
+<pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">MyDocument</span><span class="p">:</span> <span class="kt">Document</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">_id</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">_rev</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+    <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">String</span>
+<span class="p">}</span>
+<span class="n">database</span><span class="o">.</span><span class="nf">retrieveAll</span><span class="p">(</span><span class="nv">includeDocuments</span><span class="p">:</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">allDocs</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">allDocs</span> <span class="o">=</span> <span class="n">allDocs</span><span class="p">,</span>
+        <span class="k">let</span> <span class="nv">decodedDocs</span> <span class="o">=</span> <span class="n">allDocs</span><span class="o">.</span><span class="nf">decodeDocuments</span><span class="p">(</span><span class="nv">ofType</span><span class="p">:</span> <span class="kt">MyDocument</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="k">in</span> <span class="n">decodedDocs</span> <span class="p">{</span>
+            <span class="nf">print</span><span class="p">(</span><span class="s">"Retrieved MyDocument with value: </span><span class="se">\(</span><span class="n">doc</span><span class="o">.</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 
                       </div>
                       <div class="declaration">
@@ -643,38 +670,6 @@ saved.
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retrieveAll</span><span class="p">(</span><span class="nv">includeDocuments</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">callback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></span><span class="p">?,</span> <span class="kt"><a href="../Structs/CouchDBError.html">CouchDBError</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>includeDocuments</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Bool indicating whether to return the full contents of the documents.
-                Defaults to <code>false</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>callback</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Callback containing <code><a href="../Structs/AllDatabaseDocuments.html">AllDatabaseDocuments</a></code> or a <code><a href="../Structs/CouchDBError.html">CouchDBError</a></code> if one occurred.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -1120,7 +1115,7 @@ If an attachment exists with the same name it will be replaced with the new atta
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-01-30)</p>
+      <p>&copy; 2019 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2019-03-18)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

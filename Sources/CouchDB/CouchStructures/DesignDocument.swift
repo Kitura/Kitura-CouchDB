@@ -19,7 +19,8 @@ import Foundation
 /// This struct represents the agreed upon fields and structure of a design documents.
 /// The filters, lists, shows and updates fields objects are mapping of function name to string function source code.
 /// The views mapping is the same except that values are objects with map and reduce (optional) keys which also contains functions source code.  
-/// http://docs.couchdb.org/en/2.2.0/api/ddoc/common.html#put--db-_design-ddoc
+/// 
+/// CouchDB reference: [`/db/_design/design-doc`](http://docs.couchdb.org/en/2.2.0/api/ddoc/common.html#put--db-_design-ddoc)
 public struct DesignDocument: Document {
 
     // MARK: Document fields

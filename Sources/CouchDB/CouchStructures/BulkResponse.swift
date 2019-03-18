@@ -16,8 +16,9 @@
 
 import Foundation
 
-/// A struct representing an item in the response JSON Array of Objects from an HTTP request to the _bulk_docs API.  
-/// http://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_bulk_docs
+/// A struct representing an item in the response JSON Array of Objects from an HTTP request to the _bulk_docs API.
+///
+/// CouchDB reference: [`/db/_bulk_docs`](http://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_bulk_docs)
 public struct BulkResponse: Codable {
     /// A Bool representing whether the document was successfully processed
     public let ok: Bool?
