@@ -60,7 +60,7 @@ matrix:
     - os: osx
       osx_image: xcode10.1
       sudo: required
-      env: KITURA_NIO=1 TESTDB_NAME=testdb_xcode10_3
+      env: KITURA_NIO=1 BREW_INSTALL_PACKAGES="libressl" TESTDB_NAME=testdb_xcode10_3
 
 before_install:
   - git clone https://github.com/IBM-Swift/Package-Builder.git
