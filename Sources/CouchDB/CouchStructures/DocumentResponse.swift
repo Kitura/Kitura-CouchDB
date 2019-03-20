@@ -17,7 +17,8 @@
 import Foundation
 
 /// A struct representing the response from a request to insert, update or delete a `Document`.
-/// http://docs.couchdb.org/en/stable/api/document/common.html#put--db-docid
+/// 
+///  CouchDB reference: [`/db/doc`](http://docs.couchdb.org/en/stable/api/document/common.html#put--db-docid)
 public struct DocumentResponse: Codable {
 
     /// Operation status.
