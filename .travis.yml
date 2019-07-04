@@ -61,10 +61,11 @@ matrix:
       osx_image: xcode10.2
       sudo: required
       env: KITURA_NIO=1 BREW_INSTALL_PACKAGES="libressl" TESTDB_NAME=testdb_xcode10_3
-    - os: osx
-      osx_image: xcode10.2
-      sudo: required
-      env: SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT TESTDB_NAME=testdb_xcode10_4
+# Pending Travis Xcode 11 image
+#    - os: osx
+#      osx_image: xcode11
+#      sudo: required
+#      env: SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT TESTDB_NAME=testdb_xcode11_1
 
 before_install:
   - git clone https://github.com/IBM-Swift/Package-Builder.git
