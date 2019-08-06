@@ -30,17 +30,17 @@ matrix:
       dist: xenial
       sudo: required
       services: docker
-      env: DOCKER_IMAGE=swift:5.0.1-xenial DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_2
+      env: DOCKER_IMAGE=swift:5.0.2-xenial DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_2
     - os: linux
       dist: xenial
       sudo: required
       services: docker
-      env: DOCKER_IMAGE=swift:5.0.1-xenial KITURA_NIO=1 DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_3
+      env: DOCKER_IMAGE=swift:5.0.2-xenial KITURA_NIO=1 DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1604_3
     - os: linux
       dist: xenial
       sudo: required
       services: docker
-      env: DOCKER_IMAGE=swift:5.0.1 SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1804_1
+      env: DOCKER_IMAGE=swift:5.0.2 SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT DOCKER_ENVIRONMENT="TESTDB_NAME" TESTDB_NAME=testdb_1804_1
     - os: osx
       osx_image: xcode9.2
       sudo: required
@@ -48,7 +48,7 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       sudo: required
-      env: SWIFT_SNAPSHOT=4.1.2 JAZZY_ELIGIBLE=true TESTDB_NAME=testdb_xcode94_1 
+      env: SWIFT_SNAPSHOT=4.1.2 TESTDB_NAME=testdb_xcode94_1
     - os: osx
       osx_image: xcode10.1
       sudo: required
@@ -56,11 +56,11 @@ matrix:
     - os: osx
       osx_image: xcode10.2
       sudo: required
-      env: TESTDB_NAME=testdb_xcode10_2
+      env: SWIFT_SNAPSHOT=5.0.1 JAZZY_ELIGIBLE=true TESTDB_NAME=testdb_xcode10_2
     - os: osx
       osx_image: xcode10.2
       sudo: required
-      env: KITURA_NIO=1 BREW_INSTALL_PACKAGES="libressl" TESTDB_NAME=testdb_xcode10_3
+      env: SWIFT_SNAPSHOT=5.0.1 KITURA_NIO=1 BREW_INSTALL_PACKAGES="libressl" TESTDB_NAME=testdb_xcode10_3
     - os: osx
       osx_image: xcode11
       sudo: required
