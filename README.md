@@ -62,7 +62,7 @@ To run the CouchDB Sample, you must set up and connect to a local CouchDB databa
     git clone https://github.com/IBM-Swift/Kitura-CouchDB.git
     ```
 
-5. Update the following code in `Sources\CouchDBSample\main.swift` with your admin username and password (the host will default to 127.0.0.1 and the port will default to 5984):
+5. Update the following code in `Sources/CouchDBSample/main.swift` with your admin username and password (the host will default to 127.0.0.1 and the port will default to 5984):
 
     ```swift
     let connProperties = ConnectionProperties(
