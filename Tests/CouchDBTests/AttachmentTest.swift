@@ -27,7 +27,7 @@ class AttachmentTests: CouchDBTest {
             ("testAttachmentTest", testAttachmentTest)
         ]
     }
-    
+
     let myDocument = TypeADocument(_id: "123456",
                                    _rev: nil,
                                    truncated: false,
@@ -35,9 +35,19 @@ class AttachmentTests: CouchDBTest {
                                    favorited: false,
                                    value: "value1")
     
+    let myDocument1 = TypeADocument(_id: "123+456",
+                                   _rev: nil,
+                                   truncated: false,
+                                   created_at: "Tue Aug 28 21:16:23 +0000 2012",
+                                   favorited: false,
+                                   value: "value1")
+
     func testAttachmentTest() {
         setUpDatabase {
-            self.delay{self.createDocument(document: self.myDocument)}
+            self.delay{
+                self.createDocument(document: self.myDocument)
+                self.createDocument(document: self.myDocument1)
+            }
         }
     }
     
@@ -51,15 +61,15 @@ class AttachmentTests: CouchDBTest {
             self.delay{self.addAttachment(id: response.id, rev: response.rev)}
         })
     }
-    
+
     func addAttachment(id: String, rev: String) {
         let attachmentData = "Hello World".data(using: .utf8)!
-        database?.createAttachment(id, docRevison: rev, attachmentName: "myAttachment", attachmentData: attachmentData, contentType: "text/*", callback: { (response, error) in
+        database?.createAttachment(id, docRevison: rev, attachmentName: "myAttachment\(id)" , attachmentData: attachmentData, contentType: "text/*", callback: { (response, error) in
             guard let response = response else {
                 return XCTFail("Error creating attachment: \(String(describing: error))")
             }
             print("Added Attachment")
-            self.delay{self.retrieveAttachment(id: response.id, name: "myAttachment", rev: response.rev)}
+            self.delay{self.retrieveAttachment(id: response.id, name: "myAttachment\(id)", rev: response.rev)}
         })
     }
     

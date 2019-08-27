@@ -72,7 +72,7 @@ public class CouchDBClient {
     ///     - callback: Callback containing the newly created `Database` on success or a `CouchDBError` on failure.
     public func createDB(_ dbName: String, callback: @escaping (Database?, CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "PUT",
-                                                         path: "/\(HTTP.escape(url: dbName))", hasBody: false)
+                                                         path: "/\(CouchDBUtils.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             if let response = response {
                 if response.statusCode == .created {
@@ -103,7 +103,7 @@ public class CouchDBClient {
     ///     - callback: Callback containing the desired `Database` on success or a `CouchDBError` on failure.
     public func retrieveDB(_ dbName: String, callback: @escaping (Database?, CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "HEAD",
-                                                         path: "/\(HTTP.escape(url: dbName))", hasBody: false)
+                                                         path: "/\(CouchDBUtils.escape(url: dbName))", hasBody: false)
         let req = HTTP.request(requestOptions) { response in
             if let response = response {
                 
@@ -143,7 +143,7 @@ public class CouchDBClient {
     ///     - callback: Callback containing a `CouchDBError` if one occurred.
     public func deleteDB(_ dbName: String, callback: @escaping (CouchDBError?) -> ()) {
         let requestOptions = CouchDBUtils.prepareRequest(connProperties, method: "DELETE",
-                                                         path: "/\(HTTP.escape(url: dbName))", hasBody: false)
+                                                         path: "/\(CouchDBUtils.escape(url: dbName))", hasBody: false)
         CouchDBUtils.deleteRequest(options: requestOptions, callback: callback)
     }
 

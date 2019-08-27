@@ -76,7 +76,35 @@ class CouchDBUtils {
         }
         return nil
     }
-    
+
+    // A set of characters that are valid in requests.
+    // Fix to Kitura-CouchDB issue #104(https://github.com/IBM-Swift/Kitura-CouchDB/issues/104).
+    // CouchDB Agent creates the documents with unescaped `id` or `attachmentname` etc with `+` but expects
+    // the the character to be escaped while retrieving as documented in CouchDB issues:
+    // https://github.com/apache/couchdb/issues/2144 and https://github.com/apache/couchdb/issues/1830
+    // Workaround is to percent encode `+`. Following `customAllowedCharacterSet` variable escapes `+` in url.
+
+    private static let customAllowedCharacterSet =  NSCharacterSet(charactersIn:"\"#%/<>?@\\^`{|}+ ").inverted
+
+    /**
+     Transform the URL into escaped characters.
+
+     - note: URLs can only be sent over the Internet using the ASCII character set, so character escaping will
+     transform unsafe ASCII characters with a '%' followed by two hexadecimal digits.
+
+     ### Usage Example: ###
+     ````swift
+     CouchDBUtils.escape(url: testString)
+     ````
+     */
+     static func escape(url: String) -> String {
+        if let escaped = url.addingPercentEncoding(withAllowedCharacters: customAllowedCharacterSet) {
+            return escaped
+        }
+
+        return url
+    }
+
     class func documentRequest<D: Document>(document: D, options: [ClientRequest.Options], callback: @escaping (DocumentResponse?, CouchDBError?) -> ()) {
         do {
             let requestBody = try JSONEncoder().encode(document)
