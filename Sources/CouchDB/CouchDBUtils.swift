@@ -16,6 +16,7 @@
 
 import Foundation
 import KituraNet
+import NIOHTTP1
 
 class CouchDBUtils {
     class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequest.Options] {
@@ -86,22 +87,13 @@ class CouchDBUtils {
 
     private static let customAllowedCharacterSet =  NSCharacterSet(charactersIn:"\"#%/<>?@\\^`{|}+ ").inverted
 
-    /**
-     Transform the URL into escaped characters.
+    // Applies percent-encoding to a string, suitable for use as a CouchDB document path. In addition to characters normally encoded
+    // in a URL path, instances of the + character are also percent-encoded.
 
-     - note: URLs can only be sent over the Internet using the ASCII character set, so character escaping will
-     transform unsafe ASCII characters with a '%' followed by two hexadecimal digits.
-
-     ### Usage Example: ###
-     ````swift
-     CouchDBUtils.escape(url: testString)
-     ````
-     */
      static func escape(url: String) -> String {
         if let escaped = url.addingPercentEncoding(withAllowedCharacters: customAllowedCharacterSet) {
             return escaped
         }
-
         return url
     }
 
@@ -145,5 +137,4 @@ class CouchDBUtils {
         }
     }
 }
-
 

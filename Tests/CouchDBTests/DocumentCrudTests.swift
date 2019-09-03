@@ -33,30 +33,30 @@ class DocumentCrudTests: CouchDBTest {
     let documentId3 = "abcdef"
     let documentId4 = "654321+"
     let documentId5 = "abcdef+"
-    let myDocument1 = TypeADocument(_id: "123456",
+
+    lazy var myDocument1 = TypeADocument(_id: documentId1,
                                     _rev: nil,
                                     truncated: false,
                                     created_at: "Tue Aug 28 21:16:23 +0000 2012",
                                     favorited: false,
                                     value: "value1")
-    
-    let myDocument2 = TypeADocument(_id: "654321",
+    lazy var myDocument2 = TypeADocument(_id: documentId2,
                                     _rev: nil,
                                     truncated: false,
                                     created_at: "Mon Aug 27 20:16:20 +0000 2012",
                                     favorited: false,
                                     value: "value2")
-    let myDocument4 = TypeADocument(_id: "654321+",
+    lazy var myDocument4 = TypeADocument(_id: documentId4,
                                     _rev: nil,
                                     truncated: false,
                                     created_at: "Mon Aug 27 20:16:20 +0000 2012",
                                     favorited: false,
                                     value: "value+3")
-    let myDocument3 = TypeBDocument(_id: "abcdef",
+    lazy var myDocument3 = TypeBDocument(_id: documentId3,
                                     _rev: nil,
                                     otherValue: "valueA",
                                     starred: true)
-    let myDocument5 = TypeBDocument(_id: "abcdef+",
+    lazy var myDocument5 = TypeBDocument(_id: documentId5,
                                     _rev: nil,
                                     otherValue: "valueA+",
                                     starred: true)
