@@ -16,7 +16,6 @@
 
 import Foundation
 import KituraNet
-import NIOHTTP1
 
 class CouchDBUtils {
     class func prepareRequest(_ connProperties: ConnectionProperties, method: String, path: String, hasBody: Bool, contentType: String = "application/json") -> [ClientRequest.Options] {
