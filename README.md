@@ -1,16 +1,16 @@
 <p align="center">
-    <a href="http://kitura.io/">
-        <img src="https://raw.githubusercontent.com/IBM-Swift/Kitura/master/Sources/Kitura/resources/kitura-bird.svg?sanitize=true" height="100" alt="Kitura">
+    <a href="http://kitura.dev/">
+        <img src="https://raw.githubusercontent.com/Kitura/Kitura/master/Sources/Kitura/resources/kitura-bird.svg?sanitize=true" height="100" alt="Kitura">
     </a>
 </p>
 
 
 <p align="center">
-    <a href="https://ibm-swift.github.io/Kitura-CouchDB/index.html">
+    <a href="https://kitura.github.io/Kitura-CouchDB/index.html">
     <img src="https://img.shields.io/badge/apidoc-KituraCouchDB-1FBCE4.svg?style=flat" alt="APIDoc">
     </a>
-    <a href="https://travis-ci.org/IBM-Swift/Kitura-CouchDB">
-    <img src="https://travis-ci.org/IBM-Swift/Kitura-CouchDB.svg?branch=master" alt="Build Status - Master">
+    <a href="https://travis-ci.org/Kitura/Kitura-CouchDB">
+    <img src="https://travis-ci.org/Kitura/Kitura-CouchDB.svg?branch=master" alt="Build Status - Master">
     </a>
     <img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
     <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
@@ -28,10 +28,10 @@ Kitura-CouchDB is a pure Swift client which allows Kitura applications to intera
 
 #### Add dependencies
 
-Add the `Kitura-CouchDB` package to the dependencies within your application’s `Package.swift` file. Substitute `"x.x.x"` with the latest `Kitura-CouchDB` [release](https://github.com/IBM-Swift/Kitura-CouchDB/releases).
+Add the `Kitura-CouchDB` package to the dependencies within your application’s `Package.swift` file. Substitute `"x.x.x"` with the latest `Kitura-CouchDB` [release](https://github.com/Kitura/Kitura-CouchDB/releases).
 
 ```swift
-.package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", from: "x.x.x")
+.package(url: "https://github.com/Kitura/Kitura-CouchDB.git", from: "x.x.x")
 ```
 
 Add `CouchDB` to your target's dependencies:
@@ -59,7 +59,7 @@ To run the CouchDB Sample, you must set up and connect to a local CouchDB databa
 4. Clone this repository:
 
     ```bash
-    git clone https://github.com/IBM-Swift/Kitura-CouchDB.git
+    git clone https://github.com/Kitura/Kitura-CouchDB.git
     ```
 
 5. Update the following code in `Sources\CouchDBSample\main.swift` with your admin username and password (the host will default to 127.0.0.1 and the port will default to 5984):
@@ -201,10 +201,10 @@ database.delete("Kitura", rev: "<latest_rev>") { (error) in
 }
 ```
 
-For more information visit our [API reference](https://ibm-swift.github.io/Kitura-CouchDB/index.html).
+For more information visit our [API reference](https://kitura.github.io/Kitura-CouchDB/index.html).
 
 ## Community
 We love to talk server-side Swift, and Kitura. Join our [Slack](http://swift-at-ibm-slack.mybluemix.net/) to meet the team!
 
 ## License
-This library is licensed under Apache 2.0. Full license text is available in [LICENSE](https://github.com/IBM-Swift/Kitura-CouchDB/blob/master/LICENSE.txt).
+This library is licensed under Apache 2.0. Full license text is available in [LICENSE](https://github.com/Kitura/Kitura-CouchDB/blob/master/LICENSE.txt).
