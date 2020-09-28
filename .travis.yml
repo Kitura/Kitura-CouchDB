@@ -76,8 +76,8 @@ matrix:
       env: SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT TESTDB_NAME=testdb_xcode11_3
 
 before_install:
-  - git clone https://github.com/IBM-Swift/Package-Builder.git
-  - git clone -b master "https://$GITHUB_USER:$GITHUB_PWD@github.com/IBM-Swift/Kitura-TestingCredentials.git"
+  - git clone https://github.com/Kitura/Package-Builder.git
+  - git clone -b master "https://$GITHUB_USER:$GITHUB_PWD@github.com/Kitura/Kitura-TestingCredentials.git"
 
 script:
   - ./Package-Builder/build-package.sh -projectDir $TRAVIS_BUILD_DIR -credentialsDir $TRAVIS_BUILD_DIR/Kitura-TestingCredentials/Kitura-CouchDB
