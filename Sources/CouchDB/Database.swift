@@ -19,6 +19,9 @@ import KituraNet
 
 // MARK: Database
 
+// Type Alias for Database (See [Kitura/Swift-Kuery-ORM#22](https://github.com/Kitura/Swift-Kuery-ORM/issues/22))
+public typealias CouchDatabase = Database
+
 /**
  The `Database` class is used to make HTTP requests to the corresponding CouchDB database. This class can make CRUD (Create, Retrieve, Update, Delete) requests for:  
  
