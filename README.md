@@ -6,7 +6,7 @@
 
 
 <p align="center">
-    <a href="https://ibm-swift.github.io/Kitura-CouchDB/index.html">
+    <a href="https://kitura.github.io/Kitura-CouchDB/index.html">
     <img src="https://img.shields.io/badge/apidoc-KituraCouchDB-1FBCE4.svg?style=flat" alt="APIDoc">
     </a>
     <a href="https://travis-ci.org/Kitura/Kitura-CouchDB">
@@ -201,7 +201,7 @@ database.delete("Kitura", rev: "<latest_rev>") { (error) in
 }
 ```
 
-For more information visit our [API reference](https://ibm-swift.github.io/Kitura-CouchDB/index.html).
+For more information visit our [API reference](https://kitura.github.io/Kitura-CouchDB/index.html).
 
 ## Community
 We love to talk server-side Swift, and Kitura. Join our [Slack](http://swift-at-ibm-slack.mybluemix.net/) to meet the team!

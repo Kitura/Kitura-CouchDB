@@ -78,7 +78,7 @@ class CouchDBUtils {
     }
 
     // A set of characters that are valid in requests.
-    // Fix to Kitura-CouchDB issue #104(https://github.com/IBM-Swift/Kitura-CouchDB/issues/104).
+    // Fix to Kitura-CouchDB issue #104(https://github.com/Kitura/Kitura-CouchDB/issues/104).
     // CouchDB Agent creates the documents with unescaped `id` or `attachmentname` etc with `+` but expects
     // the the character to be escaped while retrieving as documented in CouchDB issues:
     // https://github.com/apache/couchdb/issues/2144 and https://github.com/apache/couchdb/issues/1830

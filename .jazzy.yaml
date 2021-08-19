@@ -1,5 +1,5 @@
 module: CouchDB
-author: IBM
+author: IBM & Kitura project authors
 github_url: https://github.com/Kitura/Kitura-CouchDB/
 
 theme: fullwidth
@@ -10,5 +10,3 @@ readme: README.md
 
 skip_undocumented: false
 hide_documentation_coverage: false
-
-xcodebuild_arguments: [-project, Kitura-CouchDB.xcodeproj, -target, CouchDB, LIBRARY_SEARCH_PATHS=.build/debug]
